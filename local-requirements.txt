@@ -1,0 +1,64 @@
+# Core Apache Airflow y Cloud Composer
+apache-airflow==2.10.2
+apache-airflow-providers-common-compat==1.3.0  # Para soporte de imports antiguos
+
+# Airflow Providers
+apache-airflow-providers-google==10.26.0
+apache-airflow-providers-apache-beam==6.0.0
+apache-airflow-providers-celery==3.10.0
+apache-airflow-providers-cncf-kubernetes==10.1.0
+apache-airflow-providers-common-sql==1.21.0
+apache-airflow-providers-http==5.0.0
+apache-airflow-providers-postgres==5.14.0
+apache-airflow-providers-ssh==4.0.0
+apache-airflow-providers-sqlite==4.0.0
+apache-airflow-providers-ftp==3.12.0
+
+# Conectores de Google Cloud esenciales
+google-api-core==2.24.1
+google-api-python-client==2.160.0
+google-auth==2.38.0
+google-auth-httplib2==0.2.0
+google-auth-oauthlib==1.2.1
+google-cloud-core==2.4.1
+
+# Servicios de Google Cloud comúnmente usados
+google-cloud-storage==2.19.0
+google-cloud-bigquery==3.29.0
+google-cloud-logging==3.11.4
+google-cloud-secret-manager==2.23.0
+google-cloud-dataproc==5.17.0
+google-cloud-pubsub==2.28.0
+google-cloud-aiplatform==1.80.0
+google-cloud-container==2.56.0
+google-cloud-datacatalog==3.25.0
+google-cloud-dataform==0.5.15
+google-cloud-translate==3.20.0
+
+# Beam y procesamiento de datos
+apache-beam==2.62.0
+pandas==2.1.4
+pandas-gbq==0.27.0
+pyarrow==16.1.0
+numpy==1.26.4
+db-dtypes==1.4.1
+
+# SQLAlchemy y base de datos
+SQLAlchemy==1.4.54
+sqlalchemy-bigquery==1.12.1
+PyMySQL==1.1.1
+psycopg2-binary==2.9.10
+
+# Dependencias útiles para DAGs
+pendulum==3.0.0
+croniter==6.0.0
+python-dateutil==2.9.0.post0
+PyYAML==6.0.2
+requests==2.32.3
+tenacity==9.0.0
+
+# Logging y monitoring
+prometheus_client==0.21.1
+
+# Autenticación y seguridad
+cryptography==44.0.1
