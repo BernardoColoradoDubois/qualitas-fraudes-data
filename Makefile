@@ -1,6 +1,5 @@
 include .env
 
-
 composer-update-dags:
 	gsutil cp ./dags/* gs://${GCP_COMPOSER_WORK_BUCKET_NAME}/dags/
 

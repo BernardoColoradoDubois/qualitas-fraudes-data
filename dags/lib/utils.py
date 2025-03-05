@@ -1,6 +1,6 @@
 from google.cloud import storage
 
-def leer_archivo_bucket(bucket_name, file_path):
+def get_bucket_file_contents(bucket_name, file_path):
   try:
     storage_client = storage.Client()
     bucket = storage_client.bucket(bucket_name)
