@@ -1,0 +1,67 @@
+[
+  {
+    "name": "REPORTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SINIESTRO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_STATUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_INV",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TEXT_INVEST",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USUARIO_INV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TEXT_LOC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_LOC",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_CARGA",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_PROCESO",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BATCHDATE",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SYSUSERID",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Z_ID",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

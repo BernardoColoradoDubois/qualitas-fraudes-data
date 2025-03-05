@@ -1,0 +1,58 @@
+[
+  {
+    "name": "ANALISTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ID_ANALISTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOMBRE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CORREO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ESTATUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ESTATUS_DT",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ASIG_DT",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CARRUSEL",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+
+  },
+  {
+    "name": "BATCHDATE",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SYSUSERID",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ID_USER_94",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

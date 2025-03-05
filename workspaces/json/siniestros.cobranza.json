@@ -1,0 +1,582 @@
+[
+  {
+    "name": "POL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ENDO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INCISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESDE",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HASTA",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_EMI",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INCISOS",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESCRIP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MOD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERIE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERIE_CON_SIN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BON_TEC",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ESTATUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AGENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_NETA",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_NETA_C_DESC",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RECARGO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COMISION_RF",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMER_REC",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUBSEC",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_PAGADA",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REMESA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TEXTO_PAGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_PENDIENTE",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VALOR_CONVENIDO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DISPOSITIVO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_BENEF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BENEF_PREFERENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FORMA_PAGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USUARIO_EMI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CATEGORIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_AMIS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_REDUCIDA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COBERTURA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ZONA_AUT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ZONA_CAM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MOTOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PLACA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERIE_SAT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_INST_SAT",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OFIC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOM_OFIC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MULTIANUAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_DM",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_RT",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MONEDA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERVICIO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_BONIF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TAR_COUTAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VALOR_COMERCIAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TEXTO1_AGTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CONDUCTOR_HABITUAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_RC",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_TOTAL",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DERECHO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IVA",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUBRAMO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RECIBOS",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RECIBOS_PAGADOS",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOM_PROM_POLIZA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOM_PROM_AGTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_CAMBIO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_AV",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PROV_AV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RENUEVA_A",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RENOVADA_POR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TELEFONO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESCRIP_ESTATUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_CARGA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIR_ASEG_CALLE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COLONIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POBL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ESTADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SINIESTROS",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_SERV_ASISAT",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERV_ASISAT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_SERV_ASISAT_Q",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CORREO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PERIODO_GRACIA",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOMBRE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AP_PATERNO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AP_MATERNO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_INTERNO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_EXTERNO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OCUPANTES",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VERSION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_AMP_POL",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TARIFA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RFC_ASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ESTATUS_INCISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_VIG_RECIBO",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_MANUAL_AUTORIZO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CP_CONTRATANTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DOMICILIO_FISCAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RFC_CONTRATANTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BENEF_PREF_TEXTO_EN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ASEGURADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_PERSONA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_NACIMIENTO",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REMOLQUE",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PASAJEROS",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "UDI",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_NETA_INC",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_NETA_C_DESC2",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_TOTAL_POL",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POL_DED_ADM",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOM_AGENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_CARGA",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BATCHDATE",
+    "type": "DATE",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SYSUSERID",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CONSECUTIVO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AVQ_PLUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

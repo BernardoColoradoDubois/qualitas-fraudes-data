@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Z_ID",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAUSA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAUSA_HOMOLOGADA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BATCHDATE",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SYSUSERID",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
