@@ -13,7 +13,7 @@ dag = DAG(
     'airflow_monitoring',
     default_args=default_args,
     description='liveness monitoring dag',
-    schedule_interval='*/10 * * * *',
+    schedule_interval='0 0 1 1 *',
     max_active_runs=2,
     catchup=False,
     dagrun_timeout=timedelta(minutes=10),

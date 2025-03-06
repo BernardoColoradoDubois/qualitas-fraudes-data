@@ -1,0 +1,202 @@
+[
+  {
+    "name": "Z_ID",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "REPORTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POLIZA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ENDOSO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INCISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ASEGURADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ID_ASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAUSA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_OCU",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HOR_OCU",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_REP",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HOR_REP",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_REG",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HOR_REG",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_INI_VIG",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MODELO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERIE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SEVERIDAD",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ESTATUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RESERVA",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "UBICACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ENTIDAD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OFICINA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LEIDO_SAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OFICINA_DE_ATENCION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ID_AJUSTADOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LATITUD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LONGITUD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CONDUCTOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PLACA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_EMI",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POL_REHAB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_FIN_VIG",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OBSERVACIONES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BATCHDATE",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SYSUSERID",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

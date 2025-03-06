@@ -1,0 +1,97 @@
+[
+  {
+    "name": "SINIESTRO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ID_OF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_OF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USUARIO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOMBRE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CORREO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MOTIVO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OBSERVACIONES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DOC_ADICIONAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SIN_SNA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ID_ANALISTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_ASIG",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AREA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PUESTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ID_MOTIVO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MONTO_ESTIMADO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BATCHDATE",
+    "type": "TIMESTAMP",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SYSUSERID",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

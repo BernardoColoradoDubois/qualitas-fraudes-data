@@ -41,7 +41,7 @@ function Composer-Update-Workspaces {
     }
 
     Write-Host "Copying workspaces to gs://$bucketName/workspaces/"
-    gsutil cp .\workspaces\* gs://$bucketName/workspaces/
+    gsutil cp -r .\workspaces\* gs://$bucketName/workspaces/
 }
 
 # Función para actualizar todo
