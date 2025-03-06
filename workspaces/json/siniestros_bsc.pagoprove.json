@@ -1,0 +1,279 @@
+[
+  {
+    "name": "Z_ID",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "TRAMITE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE",
+    "precision": "14",
+    "scale": "2"
+  },
+  {
+    "name": "REFAC",
+    "type": "NUMERIC",
+    "mode": "NULLABLE",
+    "precision": "14",
+    "scale": "2"
+  },
+  {
+    "name": "CVE_BENEF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BENEF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_DOCTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DOCTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IMPORTE",
+    "type": "NUMERIC",
+    "mode": "NULLABLE",
+    "precision": "14",
+    "scale": "2"
+  },
+  {
+    "name": "NRO_OP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_PAGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_GASTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_PAGO",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MONE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COBER",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ENDO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_SUBR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERVICIO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AMIS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "UNIDAD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MODELO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_POL",
+    "type": "NUMERIC",
+    "mode": "NULLABLE",
+    "precision": "14",
+    "scale": "2"
+  },
+  {
+    "name": "ASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_AGTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SINIESTRO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_OCU",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_AJU",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_CAUSA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_REG",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_TXT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IMP_DED",
+    "type": "NUMERIC",
+    "mode": "NULLABLE",
+    "precision": "14",
+    "scale": "2"
+  },
+  {
+    "name": "IMP_TOT",
+    "type": "NUMERIC",
+    "mode": "NULLABLE",
+    "precision": "14",
+    "scale": "3"
+  },
+  {
+    "name": "ORIGEN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE BENEF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FPAGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BANCO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CHEQUE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CARATULA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ENTIDAD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_NAGS",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FACTURA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USU FILTRO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USU TECNICO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USU PAGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USU RESERVA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VALUACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TMPO_PAGO_PT",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  }
+]

@@ -1,0 +1,357 @@
+[
+  {
+    "name": "Z_ID",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "RAMO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUBRAMO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SINIESTRO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPOSIN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OF_VENTAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GERENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AGENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OF_ATEN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AJUSTADOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_REG",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_MOV",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_MOV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GASTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MONEDA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COBERTURA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IMPORTE",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CSTROS",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CRVAINICIAL",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IRVAINICIAL",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAJMAS",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IAJMAS",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAJMENOS",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IAJMENOS",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CPAGOS",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IPAGOS",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CGASTO",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IGASTO",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CDED",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IDED",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CREC",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IREC",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CSALV",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ISALV",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAPUFE",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_COBER",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_TEXTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FLAG_REC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_RESP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_CAMBIO",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REPORTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DEPRES1",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DEPRES2",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DEPRES3",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DEPRESLIT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MONTO_INDEM_RECUP",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MONTO_INDEM_RECUP_DM",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IMPORTEMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IRVAINICIALMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IAJMASMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IAJMENOSMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IPAGOSMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IGASTOMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IDEDMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IRECMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ISALVMN",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USUARIO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POLIZA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RELEVANTES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_RVA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COAS",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_OCU",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOMASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_POB_ACC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MODELO_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REC_CANTO",
+    "type": "NUMERIC",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INVSALV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_EDO_ACC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SINIESDIA",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_ABOGADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

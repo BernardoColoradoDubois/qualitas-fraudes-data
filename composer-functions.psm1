@@ -29,7 +29,7 @@ function Composer-Update-Dags {
     }
 
     Write-Host "Copying DAGs to gs://$bucketName/dags/"
-    gsutil cp .\dags\* gs://$bucketName/dags/
+    gsutil cp -r .\dags\* gs://$bucketName/dags/
 }
 
 # Función para actualizar workspaces

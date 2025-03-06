@@ -1,0 +1,512 @@
+[
+  {
+    "name": "Z_ID",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "CVE_AJUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REPORTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SINIESTRO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_REP",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_REP",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_PAS",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_PAS",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TMPO_PASADO",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_LLEGA",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_LLEGA",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TMPO_ARRIBO",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_TERM",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_TERM",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TMPO_AJUST",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TMPO_ATENCION",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OFIC_VTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAUSA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CABINISTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUBR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TR_CARR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_AGENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REPORTE_OK",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORARIO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LUGAR_ACC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RANGO_ARRIBO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_REG",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CONT_STROS",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_HOR_REP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_HOR_ASI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_HOR_ARR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_HOR_TER",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ASIGNACION",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ARRIBO",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NRRep",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "POLIZA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CONDUCTOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_EDO_ACC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REINGENIERIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GEOLOC",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GEOUBIC",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GEOASIG",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_POB_ACC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_CAB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_EVENTO",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REIN",
+    "type": "INTEGER",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "HORA_INI_CAP",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_INI_CAP",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_INICIO",
+    "type": "TIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_TERMINO",
+    "type": "TIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AJU_GA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GEOASIGR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_ROBO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "EVTO_ESP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOMASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVENAGS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SEGUROTERCERO",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ASEGURADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIP_RESP_ORI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INGRESO",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CRM",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MODELO_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PLACAS_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERIE_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ORGANISMO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_ECO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CALIDAD",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_PRES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_RESP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LATITUD",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LONGITUD",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVE_ABOGADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "EXCLUIR",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RVAINICIAL",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Today",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Colas",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DiaSemana",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_OCU",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUMREC",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PROVREC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ULTREC",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CORREO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LESIONADOS",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOMLESIONADOS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CORREOVALIDO",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_ASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_OCU",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GRUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PASEM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_POLIZA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TMPO_PAGO_PT",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ETA",
+    "type": "FLOAT",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "EXTEMP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COND_NOMBRE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COND_PATERNO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COND_MATERNO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SINPOL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CATEGORIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GEOTEL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GEORAD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TOKEN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
