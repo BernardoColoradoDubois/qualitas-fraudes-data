@@ -12,16 +12,12 @@
   {
     "name": "MO",
     "type": "NUMERIC",
-    "mode": "NULLABLE",
-    "precision": "14",
-    "scale": "2"
+    "mode": "NULLABLE"
   },
   {
     "name": "REFAC",
     "type": "NUMERIC",
-    "mode": "NULLABLE",
-    "precision": "14",
-    "scale": "2"
+    "mode": "NULLABLE"
   },
   {
     "name": "CVE_BENEF",
@@ -46,9 +42,7 @@
   {
     "name": "IMPORTE",
     "type": "NUMERIC",
-    "mode": "NULLABLE",
-    "precision": "14",
-    "scale": "2"
+    "mode": "NULLABLE"
   },
   {
     "name": "NRO_OP",
@@ -133,9 +127,7 @@
   {
     "name": "PRIMA_POL",
     "type": "NUMERIC",
-    "mode": "NULLABLE",
-    "precision": "14",
-    "scale": "2"
+    "mode": "NULLABLE"
   },
   {
     "name": "ASEG",
@@ -190,16 +182,12 @@
   {
     "name": "IMP_DED",
     "type": "NUMERIC",
-    "mode": "NULLABLE",
-    "precision": "14",
-    "scale": "2"
+    "mode": "NULLABLE"
   },
   {
     "name": "IMP_TOT",
     "type": "NUMERIC",
-    "mode": "NULLABLE",
-    "precision": "14",
-    "scale": "3"
+    "mode": "NULLABLE"
   },
   {
     "name": "ORIGEN",

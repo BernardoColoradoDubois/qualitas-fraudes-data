@@ -26,6 +26,33 @@ def get_bucket_file_contents(path):
     return None
 
 
-def upload_storage_csv_to_bigquery(gcs_uri,dataset_id,table_id,schema_fields,project_id=None,write_disposition="WRITE_TRUNCATE",skip_leading_rows=1,**kwargs):
+def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_id,write_disposition="WRITE_TRUNCATE",skip_leading_rows=1,**kwargs):
 
-  print(f"Subiendo archivo {gcs_uri} a BigQuery")
+  client = bigquery.Client(project=project_id)
+  
+  table_id = f"{project_id}.{dataset}.{table}"
+  
+  schema = []
+  
+  for field in schema_fields:
+    
+    schema.append(bigquery.SchemaField(name=field['name'],field_type=field['type'],mode=field['mode']))
+    
+  job_config = bigquery.LoadJobConfig(
+    schema=schema,
+    skip_leading_rows=1,
+    write_disposition=write_disposition,
+    source_format=bigquery.SourceFormat.CSV
+  ) 
+  
+  load_job = client.load_table_from_uri(
+    gcs_uri, 
+    table_id, 
+    job_config=job_config
+  )
+  
+  load_job.result()  # Waits for the job to complete.
+
+  destination_table = client.get_table(table_id)  # Make an API request.
+
+  print("Loaded {} rows.".format(destination_table.num_rows))
