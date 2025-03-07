@@ -30,7 +30,7 @@ t2 = PythonOperator(
   task_id='load_data',
   python_callable=upload_storage_csv_to_bigquery,
   op_kwargs={
-    'gcs_uri': 'gs://quafraudestorage/PAGO_PROVE.csv',
+    'gcs_uri': 'gs://quafraudestorage/PAGOPROVE.csv',
     'dataset': 'sample_landing_siniestros_bsc',
     'table': 'pago_prove',
     'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.pagoprove.json')),
