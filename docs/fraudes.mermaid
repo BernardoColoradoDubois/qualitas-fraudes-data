@@ -1,0 +1,115 @@
+erDiagram
+
+asegurados ||--|{ polizas_vigentes : manejan
+
+polizas_vigentes ||--|{ vehiculos : contienen
+
+polizas_vigentes ||--o{ pagos_polizas : realizan
+
+proveedores ||--o{ siniestros : sirven
+
+gerentes ||--o{ siniestros : gestionan
+
+vehiculos ||--o{ siniestros : sufren
+
+causas ||--o{ siniestros : originan
+
+oficinas ||--o{ siniestros : gestionan
+
+agentes ||--o{ siniestros : atienden
+
+siniestros ||--o{ etiquetas_sise : descritos
+
+siniestros ||--o{ coberturas : conllevan
+
+siniestros ||--o{ pagos_siniestros : generan
+
+proveedores {
+    string id PK
+    string nombre
+    string tipo
+    date fecha_alta 
+}
+
+asegurados {
+    string id PK
+}
+
+polizas_vigentes {
+    string id PK
+}
+
+pagos_polizas {
+    string id PK
+    string id_poliza FK
+    string endoso
+    string poliza
+    number prima_neta
+    number iva
+    number importe
+    string remesa
+    date fecha_vencimiento
+    date fecha_aplicacion
+    date fecha_carga
+}
+
+vehiculos {
+    string id PK
+}
+
+causas {
+    string id PK
+    string nombre
+}
+
+etiquetas_sise{
+    string id PK
+    string id_siniestro FK
+    string codigo_estatus
+    date fecha_carga
+}
+
+coberturas{
+    string id PK
+    string id_siniestro FK
+    string codigo_cobertura
+    string cobertura
+    string tipo_movimiento
+    string moneda
+    number gasto
+    number importe
+    date fecha_registro
+    date fecha_movimiento
+}
+
+pagos_siniestros{
+    string id PK
+    string id_siniestro FK
+    number importe
+    date fecha_pago
+}
+
+gerentes{
+    string id PK
+    string nombre
+}
+
+oficinas{
+    string id PK
+    string nombre
+}
+
+siniestros{
+    string id PK
+    string id_gerente FK
+    string id_oficina FK
+    string id_agente FK
+    string id_causa FK
+    string id_proveedor FK
+    string id_vehiculo FK
+}
+
+agentes{
+    string id PK
+    string nombre
+}

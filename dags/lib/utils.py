@@ -26,7 +26,7 @@ def get_bucket_file_contents(path):
     return None
 
 
-def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_id,write_disposition="WRITE_TRUNCATE",skip_leading_rows=1,**kwargs):
+def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_id,write_disposition="WRITE_TRUNCATE",skip_leading_rows=1,max_bad_records=0,**kwargs):
 
   client = bigquery.Client(project=project_id)
   
@@ -41,6 +41,7 @@ def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_i
   job_config = bigquery.LoadJobConfig(
     schema=schema,
     skip_leading_rows=1,
+    max_bad_records=0,
     write_disposition=write_disposition,
     source_format=bigquery.SourceFormat.CSV
   ) 

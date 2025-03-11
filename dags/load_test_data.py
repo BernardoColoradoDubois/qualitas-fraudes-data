@@ -10,7 +10,7 @@ import json
 default_args = {
     'start_date': airflow.utils.dates.days_ago(0),
     'retries': 1,
-    'retry_delay': timedelta(minutes=5)
+    'retry_delay': timedelta(minutes=1)
 }
 
 dag = DAG(
@@ -24,19 +24,19 @@ dag = DAG(
 )
 
 # priority_weight has type int in Airflow DB, uses the maximum.
-t1 = BashOperator(task_id='init',bash_command='echo init',dag=dag)
+init = BashOperator(task_id='init',bash_command='echo init',dag=dag)
 
-t2 = PythonOperator(
-  task_id='load_data',
+load_appercab = PythonOperator(
+  task_id='load_appercab_bsc',
   python_callable=upload_storage_csv_to_bigquery,
   op_kwargs={
-    'gcs_uri': 'gs://quafraudestorage/PAGOPROVE.csv',
+    'gcs_uri': 'gs://quafraudestorage/APERCAB_BSC.csv',
     'dataset': 'sample_landing_siniestros_bsc',
-    'table': 'pago_prove',
-    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.pagoprove.json')),
+    'table': 'apercab_bsc',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.apercab_bsc.json')),
     'project_id': 'qualitasfraude',
   },
   dag=dag
 )
   
-t1 >> t2
+init >> load_appercab
