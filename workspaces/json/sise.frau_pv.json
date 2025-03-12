@@ -1,0 +1,1002 @@
+[
+  {
+    "name": "FRAU_PV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_ASEG",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "FEC_EMI",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "VIG_DESDE",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "VIG_HASTA",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "RENOVADA_POR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RENUEVA_A",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_MONEDA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_FACTURACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_EMISION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PORC_RF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PORC_IVA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PORC_BONIF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_CAMBIO_DP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RSR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AAMM_TARIFA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AAMM_VALORES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AAMM_DERPOL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEGURADA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_NETA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DER_POL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REC_FIN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IVA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BONIFICACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BONIF_RF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BONIF_TEC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_ENDO_RF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_TOTAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_PLAN_PAGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_PRODUCTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AGENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PROMOTOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COMIS_NORMAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COMIS_RF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COMIS_TEC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COTIZACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ENDO_QUE_MODIF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_CONDUCTO_PAGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ACREEDOR_PREND",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_CANC_AUT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_COBZA_COAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_AMORTIZACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_REHABILITACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_OFIC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_PROCESO_SISE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_INI_CARGA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_FIN_CARGA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_OPER",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POL_END_COAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COMPANIA_PILOTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CIAS_PARTICIPANTES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PART_CIAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PART_CIAS_PN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_CANCELACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REASEGURO_AUT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TURISTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAMBIO_MONEDA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USUARIO_EMITE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IVA_RCP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BON_NORM_RCP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REMESA_DERECHO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_BONIF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_TARIFA_MANUAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESCTO_X_ZONA_AUTOS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESCTO_X_ZONA_CAMIONES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRORRATEO_DERECHOS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_PRORR_DERECHO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EE_Y_ADAP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_TAR_EE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RENOVACION_AUTOMATICA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FLOT_POL_IND",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_BONIF_RENT_AUT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CONDICIONES_VIGENTES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_RECARGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_REHAB_MAS60",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_ENDO_POL_VENC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FORMATO_RECIBO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_TARIFA_ESP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_PER_GRACIA_AGTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PORC_DESC_PER_GRACIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_POL_TURISTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_VEH_TUR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_ASIST_TURISTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POLITICA_BONO_AGENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POLITICA_BONO_PROM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_MODIF_BONO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_REUTILIZAR_COTIZACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_CAMBIAR_ASEG_ENDO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_RC_EXTRANJERO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_AGENCIA1",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_ADMV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_PT_RCBOS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_POL_CON_DED_ADMVO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_PAGO_MENS_TRIM_BUSES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_ELIM_ASISTSAT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PLAN_PISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_TAR_MANUAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_AGENCIA2",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "UDI_AGENCIA2",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_TARIF_DIF_COTIZACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DER_POL_1ER_RCBO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USUARIO_MARCA_REC_CANC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_MOD_COBER_EE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_CAMBIO_DP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_RENOVACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_AJUSTE_AUTOM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POL_COMP_AGENCIAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_MOD_COM_NORM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_MOD_COM_X_RECARGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_CAMBIO_COD_ASEGURADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_PAQ_FAM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_AMPARAR_SERIES_DUP_C_AGTES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_VEH_FRONT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_ECOLOGICO_OPL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LEYENDA_DED_ADMVO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_MOD_ANT_CON_TAR_NO_PERM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_CANCELACION_AUT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_TAR_NO_VIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "EXCLUSION_DIA_BISIESTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VALIDACION_VEH_NO_ROBADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_SERVPUB_VIG_183DIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_AMP_VEH_MENOR25_ANIOS_RCPAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VIG_GARANTIA_FABRICANTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_ASEG_MARCADO_ART140",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_AGENCIA3",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "UDI_AGENCIA3",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUBRAMO_DESCUENTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POLIZA_A_MSI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_CREACION_ENDO_X_CFP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_SERIES_CON_PT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_INCISOS_POL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_VEH_NO_INCL_BONIF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_DED_ENCONTRACK",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CP_ASEGURADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CP_ALTERNO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USUARIO_MODIFICA_CP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_EDO_Y_GPO_CP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_POL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CTRL_DIAS_PER_GRACIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_DIAS_PER_GRACIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_MODIF_CP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INCLUYE_ROBO_VALOR_TOTAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_EMISION_EN_SISE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_CON_PEPS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IMPRESION_CERT_RC_OBL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COBR_EMITIDAS_EN_INCISOS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_CANCELAR_POL_RC_OBL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COB_AFECTADAS_POR_DED_ADMVO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_POL_CARGA_OPL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_CARGA_POL_OPL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_NETA_X_INCISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_SIN_BT_X_INCISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_SIN_ACUMULADO_X_INCISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_NETA_BT_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUBRAMO_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DERPOL_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REC_FIN_X_INCISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IVA_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TOTAL_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BT_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BN_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BR_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "METODO_PAGO_OPL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SW_VERIFICA_AGT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_AGTE_CUES_DIRECTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_SERIE_APP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_POL_DEPURADA_HIST",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_NEGOCIO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HISTORIAL_ADEG_EN_PLIZA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_PERSONA_SUJETA_A_REVISION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_PERSONA_NO_ASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BLOQUEO_POLIZAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POL_EMITIDA_VIA_COBZA_DELEGADA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POLIZA_A_REEXPEDIR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RFC_NORM_ASEG_UNICO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_PMA_INSUFICIENTE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ENDOSO_CFP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_CAMBIO_FP_SIN_RF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_POL_RC_CONTRACTUAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POL_REFER_RC_CONTRAT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ENDO_REFER_RC_CONTRACT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INCI_REFER_RC_CONTRACT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_EMI_REFER_RC_CONTRACT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESDE_REFER_RC_CONTRACT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HASTA_REFER_RC_CONTRACT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_POL_RC_CONTRACT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_DOC_RC_CONTRACT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RCBOS_SUBSEC_BON_TEC_X_INCI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RCBOS_SUBSEC_BON_TEC_X_INCI_2",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUBTOTAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ASEG_UNICO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_EMITIR_ASEG_ALTO_RIESGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUT_SERIES_CANCELADAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_PROCESO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_POL_AUTOEXPEDIBLE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PORC_BONRF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_PER_GRACIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_ENDO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CONSEC",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  }
+]

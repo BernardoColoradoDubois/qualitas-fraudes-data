@@ -1,0 +1,117 @@
+[
+  {
+    "name": "RECIBO",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "FEC_VTO",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "POLIZA",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "ENDOSO",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "IMPORTE",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "REMESA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_IMP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_ANUL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_NETA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DER_POL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REC_FIN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IVA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BONIFICACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BONIF_RF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BONIF_TEC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_TOTAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USU_APLICA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_APLICACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "HORA_APLICA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "IMPRESION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RFC_FACT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USUARIO_EMITE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_PROCESO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
