@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Z_ID",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "OFICINA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIRECCION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COLONIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POBLACION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "EDOPOB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ZONA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]

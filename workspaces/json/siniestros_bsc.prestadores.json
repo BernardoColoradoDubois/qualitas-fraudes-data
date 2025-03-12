@@ -1,0 +1,212 @@
+[
+  {
+    "name": "Id",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Nombre",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Marca",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Tipo",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Oficina",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUSPENCION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Status",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Fbaja",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CodEstado",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Poblacion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Direccion",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Colonia",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Telefono",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Dir_Comer",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Col_Comer",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Pob_Comer",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Edo_Comer",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Num_Docto",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Nom_Comer",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Grupo",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_ALTA",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CTA_ESP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_AJUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_TIPO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RFC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Correo_Comercial",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "Correo_Contacto",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_MOTOS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TEL_SIICA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AE",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LATITUD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "LONGITUD",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "EDOCOM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "POBCOMER",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RECIBE24",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ZONAPROV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VED",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_PERSONA",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "Correo_Comercial2",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CEXP",
+    "type": "INTEGER",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TBODY",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_EMPL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
