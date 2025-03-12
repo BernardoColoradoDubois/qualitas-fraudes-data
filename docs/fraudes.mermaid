@@ -33,17 +33,34 @@ proveedores {
 
 asegurados {
     string id PK
+    string nombre
+    string apellido_paterno
+    string apellido_materno
+    string fecha_alta
 }
 
 polizas_vigentes {
     string id PK
+    string id_asegurado
+    string poliza
+    string ramo
+    string endoso
+    number prima_neta
+    number prima_total
+    number iva
+    number subtotal
+    date fecha_emision
+    date vigente_desde
+    date vigente_hasta
 }
 
 pagos_polizas {
     string id PK
     string id_poliza FK
+    string seccion
     string endoso
     string poliza
+    string numero_cobranza
     number prima_neta
     number iva
     number importe
@@ -55,6 +72,22 @@ pagos_polizas {
 
 vehiculos {
     string id PK
+    string seccion
+    string poliza
+    string endoso
+    string inciso
+    string marca_completa
+    string marca_corta
+    string subramo
+    string modelo
+    string origen
+    string tipo_vehiculo
+    string serie
+    string placas
+    string tipo_cobertura
+    string categoria
+    string valor_0km
+    string suma_aseg
 }
 
 causas {
@@ -62,14 +95,14 @@ causas {
     string nombre
 }
 
-etiquetas_sise{
+etiquetas_sise {
     string id PK
     string id_siniestro FK
     string codigo_estatus
     date fecha_carga
 }
 
-coberturas{
+coberturas {
     string id PK
     string id_siniestro FK
     string codigo_cobertura
@@ -82,24 +115,24 @@ coberturas{
     date fecha_movimiento
 }
 
-pagos_siniestros{
+pagos_siniestros {
     string id PK
     string id_siniestro FK
     number importe
     date fecha_pago
 }
 
-gerentes{
+gerentes {
     string id PK
     string nombre
 }
 
-oficinas{
+oficinas {
     string id PK
     string nombre
 }
 
-siniestros{
+siniestros {
     string id PK
     string id_gerente FK
     string id_oficina FK
@@ -107,9 +140,14 @@ siniestros{
     string id_causa FK
     string id_proveedor FK
     string id_vehiculo FK
+    date fecha_reporte
+    date fecha_ocurrido
+    date fecha_registro
+    number latitud
+    number longitud
 }
 
-agentes{
+agentes {
     string id PK
     string nombre
 }
