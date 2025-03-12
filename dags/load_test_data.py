@@ -93,9 +93,36 @@ load_tsuc_bsc = PythonOperator(
   dag=dag
 )
 
+load_fraud_pv = PythonOperator(
+  task_id='load_fraud_pv',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/FRAUD_PV.csv',
+    'dataset': 'sample_landing_sise',
+    'table': 'fraud_pv',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/sise.fraud_pv.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
+load_fraud_rp = PythonOperator(
+  task_id='load_fraud_rp',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/FRAUD_RP.csv',
+    'dataset': 'sample_landing_sise',
+    'table': 'fraud_rp',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/sise.fraud_rp.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
 
 init >> load_appercab 
 init >> load_pagprove
 init >> load_reservas_bsc
 init >> load_prestadores
 init >> load_tsuc_bsc
+init >> load_fraud_pv
+init >> load_fraud_rp
