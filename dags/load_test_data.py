@@ -39,4 +39,35 @@ load_appercab = PythonOperator(
   dag=dag
 )
   
-init >> load_appercab
+
+load_pagprove = PythonOperator(
+  task_id='load_pagprove',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/PAGPROVE.csv',
+    'dataset': 'sample_landing_siniestros_bsc',
+    'table': 'pagprove',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.pagoprove.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+    
+
+load_reservas_bsc = PythonOperator(
+  task_id='load_reservas_bsc',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/RESERVAS_BSC.csv',
+    'dataset': 'sample_landing_siniestros_bsc',
+    'table': 'reservas_bsc',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.reservas_bsc.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
+
+init >> load_appercab 
+init >> load_pagprove
+init >> load_reservas_bsc
