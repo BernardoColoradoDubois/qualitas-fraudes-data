@@ -1,3 +1,5 @@
+-- Crea la tabla STG_ETIQUETA_SINIESTRO_1 en el esquema STG_FRAUDES 
+--y crea una columna Z_ID con un valor por defecto si es nulo y una columna REPORTE con un valor por defecto si es nulo
 CREATE OR REPLACE TABLE `STG_FRAUDES.STG_ETIQUETA_SINIESTRO_1` AS 
 SELECT
   CASE  
