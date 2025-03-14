@@ -18,7 +18,7 @@ oficinas ||--o{ siniestros : gestionan
 
 agentes ||--o{ siniestros : atienden
 
-siniestros ||--o{ etiquetas_sise : descritos
+siniestros ||--o{ etiquetas_siniestros : descritos
 
 siniestros ||--o{ coberturas : conllevan
 
@@ -95,7 +95,7 @@ causas {
     string nombre
 }
 
-etiquetas_sise {
+etiquetas_siniestros {
     string id PK
     string id_siniestro FK
     string codigo_estatus

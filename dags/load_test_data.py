@@ -33,7 +33,7 @@ load_appercab = PythonOperator(
     'gcs_uri': 'gs://quafraudestorage/APERCAB_BSC.csv',
     'dataset': 'sample_landing_siniestros_bsc',
     'table': 'apercab_bsc',
-    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.apercab_bsc.json')),
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.apercab_bsc.json')),
     'project_id': 'qualitasfraude',
   },
   dag=dag
@@ -47,7 +47,7 @@ load_pagprove = PythonOperator(
     'gcs_uri': 'gs://quafraudestorage/PAGPROVE.csv',
     'dataset': 'sample_landing_siniestros_bsc',
     'table': 'pagprove',
-    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.pagoprove.json')),
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.pagoprove.json')),
     'project_id': 'qualitasfraude',
   },
   dag=dag
@@ -61,7 +61,7 @@ load_reservas_bsc = PythonOperator(
     'gcs_uri': 'gs://quafraudestorage/RESERVAS_BSC.csv',
     'dataset': 'sample_landing_siniestros_bsc',
     'table': 'reservas_bsc',
-    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.reservas_bsc.json')),
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.reservas_bsc.json')),
     'project_id': 'qualitasfraude',
   },
   dag=dag
@@ -74,7 +74,7 @@ load_prestadores = PythonOperator(
     'gcs_uri': 'gs://quafraudestorage/Prestadores.csv',
     'dataset': 'sample_landing_siniestros_bsc',
     'table': 'prestadores',
-    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.prestadores.json')),
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.prestadores.json')),
     'project_id': 'qualitasfraude',
   },
   dag=dag
@@ -87,7 +87,7 @@ load_tsuc_bsc = PythonOperator(
     'gcs_uri': 'gs://quafraudestorage/TSUC_BSC.csv',
     'dataset': 'sample_landing_siniestros_bsc',
     'table': 'tsuc_bsc',
-    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/siniestros_bsc.tsuc_bsc.json')),
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.tsuc_bsc.json')),
     'project_id': 'qualitasfraude',
   },
   dag=dag
@@ -100,7 +100,7 @@ load_fraud_pv = PythonOperator(
     'gcs_uri': 'gs://quafraudestorage/FRAUD_PV.csv',
     'dataset': 'sample_landing_sise',
     'table': 'fraud_pv',
-    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/sise.fraud_pv.json')),
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/sise.fraud_pv.json')),
     'project_id': 'qualitasfraude',
   },
   dag=dag
@@ -113,7 +113,7 @@ load_fraud_rp = PythonOperator(
     'gcs_uri': 'gs://quafraudestorage/FRAUD_RP.csv',
     'dataset': 'sample_landing_sise',
     'table': 'fraud_rp',
-    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/json/sise.fraud_rp.json')),
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/sise.fraud_rp.json')),
     'project_id': 'qualitasfraude',
   },
   dag=dag
