@@ -23,12 +23,48 @@ dag = DAG(
     dagrun_timeout=timedelta(minutes=10),
 )
 
-sample_query_workflow = PythonOperator( 
-  task_id='sample_query_workflow', 
+init = BashOperator(task_id='init',bash_command='echo init',dag=dag)
+
+dm_causa_cobertura = PythonOperator( 
+  task_id='dm_causa_cobertura', 
   python_callable=execute_query_workflow, 
   op_kwargs={ 
     'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAUSA_COBERTURA')
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAUSA_COBERTURA.sql')
   }, 
   dag=dag 
 )
+
+dm_cat_causa = PythonOperator( 
+  task_id='dm_cat_causa', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAT_CAUSA.sql')
+  }, 
+  dag=dag 
+)
+
+stg_etiqueta_siniestro_1 = PythonOperator( 
+  task_id='stg_etiqueta_siniestro_1', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_1.sql')
+  }, 
+  dag=dag 
+)
+
+stg_etiqueta_siniestro_2 = PythonOperator( 
+  task_id='stg_etiqueta_siniestro_2', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_2.sql')
+  }, 
+  dag=dag 
+)
+
+init >> dm_causa_cobertura
+init >> dm_cat_causa
+init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2
