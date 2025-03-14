@@ -4,7 +4,7 @@ from airflow.decorators import task
 from airflow.operators.bash import BashOperator
 from datetime import timedelta
 from airflow.operators.python import PythonOperator
-from lib.utils import execute_query_workflow,execute_query_to_load_database
+from lib.utils import execute_query_workflow,get_bucket_file_contents
 import json
 
 default_args = {
@@ -14,7 +14,7 @@ default_args = {
 }
 
 dag = DAG(
-    'data_transform',
+    'fraudes_pipeline',
     default_args=default_args,
     description='liveness monitoring dag',
     schedule_interval='0 0 1 1 *',
@@ -28,19 +28,7 @@ sample_query_workflow = PythonOperator(
   python_callable=execute_query_workflow, 
   op_kwargs={ 
     'project_id': 'qualitasfraude', 
-    'query': "CREATE OR REPLACE TABLE `SAMPLE.SAMPLE` AS SELECT * FROM `qualitasfraude.sample_landing_siniestros.sas_sinies`;"
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAUSA_COBERTURA')
   }, 
   dag=dag 
 )
-
-sample_query = PythonOperator( 
-  task_id='sample_query', 
-  python_callable=execute_query_to_load_database, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': "SELECT * FROM `qualitasfraude.sample_landing_siniestros.sas_sinies` LIMIT 100;"
-  }, 
-  dag=dag 
-)
-
-sample_query_workflow >> sample_query

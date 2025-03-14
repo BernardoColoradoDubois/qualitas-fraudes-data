@@ -57,3 +57,19 @@ def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_i
   destination_table = client.get_table(table_id)  # Make an API request.
 
   print("Loaded {} rows.".format(destination_table.num_rows))
+
+def execute_query_workflow(project_id,query,**kwargs):
+
+  client = bigquery.Client(project=project_id)
+  query_job = client.query(query)  # Make an API request.
+  result = query_job.result()
+  print(result.__dict__)  
+  
+def execute_query_to_load_database(project_id,query,**kwargs):
+
+  client = bigquery.Client(project=project_id)
+  query_job = client.query(query)  # Make an API request.
+  result = query_job.result()
+  
+  df = result.to_dataframe()
+  print(df.head())
