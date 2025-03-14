@@ -45,6 +45,36 @@ dm_cat_causa = PythonOperator(
   dag=dag 
 )
 
+dm_oficinas = PythonOperator( 
+  task_id='dm_oficinas', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql')
+  }, 
+  dag=dag 
+)
+
+dm_proveedores = PythonOperator( 
+  task_id='dm_proveedores', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/PROVEEDORES/DM_PROVEEDORES.sql')
+  }, 
+  dag=dag 
+)
+
+dm_sas_sinies = PythonOperator( 
+  task_id='dm_sas_sinies', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/SINIESTROS/DM_SAS_SINIES.sql')
+  }, 
+  dag=dag 
+)
+
 stg_etiqueta_siniestro_1 = PythonOperator( 
   task_id='stg_etiqueta_siniestro_1', 
   python_callable=execute_query_workflow, 
@@ -65,6 +95,29 @@ stg_etiqueta_siniestro_2 = PythonOperator(
   dag=dag 
 )
 
+stg_etiqueta_siniestro_3 = PythonOperator( 
+  task_id='stg_etiqueta_siniestro_3', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql')
+  }, 
+  dag=dag 
+)
+
+dm_etiqueta_siniestro= PythonOperator( 
+  task_id='dm_etiqueta_siniestro', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/DM_ETIQUETA_SINIESTRO.sql')
+  }, 
+  dag=dag 
+)
+
 init >> dm_causa_cobertura
 init >> dm_cat_causa
-init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2
+init >> dm_oficinas
+init >> dm_proveedores
+init >> dm_sas_sinies
+init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> dm_etiqueta_siniestro
