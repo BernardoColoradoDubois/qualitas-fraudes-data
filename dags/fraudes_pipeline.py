@@ -70,7 +70,7 @@ dm_sas_sinies = PythonOperator(
   python_callable=execute_query_workflow, 
   op_kwargs={ 
     'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/SINIESTROS/DM_SAS_SINIES.sql')
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/SINIESTROS/DM_SINIESTROS.sql')
   }, 
   dag=dag 
 )
