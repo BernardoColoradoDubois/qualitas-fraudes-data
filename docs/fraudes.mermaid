@@ -133,18 +133,47 @@ oficinas {
 }
 
 siniestros {
-    string id PK
-    string id_gerente FK
-    string id_oficina FK
-    string id_agente FK
-    string id_causa FK
-    string id_proveedor FK
-    string id_vehiculo FK
-    date fecha_reporte
-    date fecha_ocurrido
-    date fecha_registro
-    number latitud
-    number longitud
+    string ID
+    string REPORTE
+    string POLIZA
+    string ENDOSO
+    string INCISO
+    string ID_VEHICULO
+    string ASEGURADO
+    string ID_ASEGURADO
+    string CAUSA
+    timestamp FECHA_OCURRIDO
+    timestamp HORA_OCURRIDO
+    timestamp FECHA_REPORTE
+    timestamp HORA_REPORTE
+    timestamp FECHA_REGISTRO
+    timestamp HORA_REGISTRO
+    timestamp FECHA_INICIO_VIGENCIA
+    string MARCA
+    string MODELO
+    string SERIE
+    numeric SEVERIDAD
+    string STATUS
+    numeric RESERVA
+    string UBICACION
+    string ENTIDAD
+    string ID_OFICINA
+    string LEIDO_SAS
+    string ID_OFICINA_DE_ATENCION
+    string ID_AJUSTADOR
+    string LATITUD
+    string LONGITUD
+    string CONDUCTOR
+    string CODIGO_USO
+    string USO
+    numeric SUMA_ASEGURADA
+    string PLACA
+    timestamp FECHA_EMISION
+    string POLIZA_REHABILITADA
+    timestamp FECHA_FIN_VIGENCIA
+    string OBSERVACIONES
+    timestamp FECHA_LOTE
+    string ID_USUARIO_SISTEMA
 }
 
 agentes {
