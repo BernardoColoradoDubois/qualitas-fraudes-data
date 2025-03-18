@@ -8,7 +8,7 @@ from lib.utils import execute_query_to_load_oracle_database,get_bucket_file_cont
 from airflow.providers.oracle.hooks.oracle import OracleHook
 import json
 
-oracle_hook = OracleHook(oracle_conn_id='oracle_conn_id')
+oracle_hook = OracleHook(oracle_conn_id='fraudes_oracle_insumos')
 
 default_args = {
     'start_date': airflow.utils.dates.days_ago(0),
