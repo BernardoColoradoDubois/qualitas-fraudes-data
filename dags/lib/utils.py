@@ -65,7 +65,7 @@ def execute_query_workflow(project_id,query,**kwargs):
   result = query_job.result()
   print(result.__dict__)  
   
-def execute_query_to_load_database(project_id,query,**kwargs):
+def execute_query_to_load_oracle_database(project_id,query,**kwargs):
 
   client = bigquery.Client(project=project_id)
   query_job = client.query(query)  # Make an API request.
