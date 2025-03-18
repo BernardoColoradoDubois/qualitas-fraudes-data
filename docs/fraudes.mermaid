@@ -25,10 +25,44 @@ siniestros ||--o{ coberturas : conllevan
 siniestros ||--o{ pagos_siniestros : generan
 
 proveedores {
-    string id PK
-    string nombre
-    string tipo
-    date fecha_alta 
+    string ID PK
+    string NOMBRE
+    string MARCA
+    string TIPO
+    string OFICINA
+    string SUSPENCION
+    string STATUS
+    datetime FECHA_BAJA
+    string CODIGO_ESTADO
+    string POBLACION
+    string DIRECCION
+    string DIRECCION_COMER
+    string COLONIA_COMER
+    string POBLACION_COMER
+    string ESTADO_COMER
+    string NUMERO_DOCTO
+    string NOMBRE_COMER
+    string GRUPO
+    datetime FECHA_ALTA
+    string CTA_ESP
+    string TIPO_AJUSTE
+    string TIPO_MARCA
+    string RFC
+    string CORREO_COMERCIAL
+    string CORREO_CONTACTO
+    string CORREO_COMERCIAL_2
+    string MARCA_MOTOS
+    string TELEFONO_SIICA
+    int64 AE
+    string LATITUD
+    string LONGITUD
+    string RECIBE_24
+    string ZONA_PROVEEDOR
+    string VED
+    string TIPO_PERSONA
+    int64 CEXP
+    string TBODY
+    string NUMERO_EMPLEADO
 }
 
 asegurados {
@@ -90,17 +124,33 @@ vehiculos {
     string suma_aseg
 }
 
-causas {
-    string id PK
-    string nombre
+DM_CAT_CAUSA {
+    string ID PK
+    string CAUSA
+    string CAUSA_HOMOLOGADA
+    timestamp FECHA_LOTE
+    string ID_USUARIO_SISTEMA FK
 }
 
 etiquetas_siniestros {
-    string id PK
-    string id_siniestro FK
-    string codigo_estatus
-    date fecha_carga
-}
+    string ID PK
+    string ID_REPORTE FK
+    string ID_SINIESTRO FK
+    string CODIGO_ESTATUS
+    timestamp FECHA_INVESTIGACION
+    string TEXTO_INVESTIGACION
+    string USUARIO_INVESTIGACION
+    string TEXTO_LOCALIZADO
+    timestamp FECHA_LOCALIZADO
+    timestamp FECHA_CARGA
+    timestamp FECHA_HORA_PROCESO
+    timestamp FECHA_LOTE
+    string ID_USUARIO_SISTEMA FK
+    int64 CONSECUTIVO
+    timestamp VALIDO_DESDE
+    timestamp VALIDO_HASTA
+    boolean VALIDO
+    }
 
 coberturas {
     string id PK
@@ -113,6 +163,15 @@ coberturas {
     number importe
     date fecha_registro
     date fecha_movimiento
+}
+
+causas {
+    string REGLA
+    string CAUSAS
+    string COBERTURA
+    string CODIGO_COBERTURA
+    timestamp FECHA_LOTE
+    string ID_USUARIO_SISTEMA FK
 }
 
 pagos_siniestros {
@@ -128,20 +187,26 @@ gerentes {
 }
 
 oficinas {
-    string id PK
-    string nombre
+    string ID PK
+    string OFICINA
+    string DIRECCION
+    string COLONIA
+    string POBLACION
+    string CODIGO_POBLACION
+    string CODIGO_POSTAL
+    string ZONA
 }
 
 siniestros {
-    string ID
+    string ID PK
     string REPORTE
     string POLIZA
     string ENDOSO
     string INCISO
-    string ID_VEHICULO
+    string ID_VEHICULO FK
     string ASEGURADO
-    string ID_ASEGURADO
-    string CAUSA
+    string ID_ASEGURADO FK
+    string ID_CAUSA FK
     timestamp FECHA_OCURRIDO
     timestamp HORA_OCURRIDO
     timestamp FECHA_REPORTE
@@ -157,10 +222,10 @@ siniestros {
     numeric RESERVA
     string UBICACION
     string ENTIDAD
-    string ID_OFICINA
+    string ID_OFICINA FK
     string LEIDO_SAS
-    string ID_OFICINA_DE_ATENCION
-    string ID_AJUSTADOR
+    string ID_OFICINA_DE_ATENCION FK
+    string ID_AJUSTADOR FK
     string LATITUD
     string LONGITUD
     string CONDUCTOR
@@ -173,7 +238,7 @@ siniestros {
     timestamp FECHA_FIN_VIGENCIA
     string OBSERVACIONES
     timestamp FECHA_LOTE
-    string ID_USUARIO_SISTEMA
+    string ID_USUARIO_SISTEMA FK
 }
 
 agentes {
