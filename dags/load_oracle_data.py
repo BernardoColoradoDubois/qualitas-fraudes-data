@@ -31,7 +31,10 @@ sample_query = PythonOperator(
   python_callable=execute_query_to_load_oracle_database, 
   op_kwargs={ 
     'project_id': 'qualitasfraude', 
-    'query': "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS`;"
-  }, 
+    'query': "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS`;",
+    'oracle_hook': oracle_hook,
+    'table_name' : 'DM_CAUSAS',
+    'schema' : 'INSUMOS'
+  },
   dag=dag 
 )
