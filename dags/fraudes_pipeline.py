@@ -35,12 +35,12 @@ dm_causa_cobertura = PythonOperator(
   dag=dag 
 )
 
-dm_cat_causa = PythonOperator( 
-  task_id='dm_cat_causa', 
+dm_causas = PythonOperator( 
+  task_id='dm_causas', 
   python_callable=execute_query_workflow, 
   op_kwargs={ 
     'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAT_CAUSA.sql')
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAUSAS.sql')
   }, 
   dag=dag 
 )

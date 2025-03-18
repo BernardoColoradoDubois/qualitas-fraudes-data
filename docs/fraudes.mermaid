@@ -6,25 +6,25 @@ polizas_vigentes ||--|{ vehiculos : contienen
 
 polizas_vigentes ||--o{ pagos_polizas : realizan
 
-proveedores ||--o{ siniestros : sirven
+DM_PROVEEDORES ||--o{ DM_SINIESTROS : sirven
 
-gerentes ||--o{ siniestros : gestionan
+gerentes ||--o{ DM_SINIESTROS : gestionan
 
-vehiculos ||--o{ siniestros : sufren
+vehiculos ||--o{ DM_SINIESTROS : sufren
 
-causas ||--o{ siniestros : originan
+DM_CAUSAS ||--o{ DM_SINIESTROS : originan
 
-oficinas ||--o{ siniestros : gestionan
+DM_OFICINAS ||--o{ DM_SINIESTROS : gestionan
 
-agentes ||--o{ siniestros : atienden
+agentes ||--o{ DM_SINIESTROS : atienden
 
-siniestros ||--o{ etiquetas_siniestros : descritos
+DM_SINIESTROS ||--o{ DM_ETIQUETA_SINIESTRO : descritos
 
-siniestros ||--o{ coberturas : conllevan
+DM_SINIESTROS ||--o{ coberturas : conllevan
 
-siniestros ||--o{ pagos_siniestros : generan
+DM_SINIESTROS ||--o{ pagos_siniestros : generan
 
-proveedores {
+DM_PROVEEDORES {
     string ID PK
     string NOMBRE
     string MARCA
@@ -65,6 +65,7 @@ proveedores {
     string NUMERO_EMPLEADO
 }
 
+
 asegurados {
     string id PK
     string nombre
@@ -72,6 +73,7 @@ asegurados {
     string apellido_materno
     string fecha_alta
 }
+
 
 polizas_vigentes {
     string id PK
@@ -88,6 +90,7 @@ polizas_vigentes {
     date vigente_hasta
 }
 
+
 pagos_polizas {
     string id PK
     string id_poliza FK
@@ -103,6 +106,7 @@ pagos_polizas {
     date fecha_aplicacion
     date fecha_carga
 }
+
 
 vehiculos {
     string id PK
@@ -124,7 +128,8 @@ vehiculos {
     string suma_aseg
 }
 
-DM_CAT_CAUSA {
+
+DM_CAUSAS {
     string ID PK
     string CAUSA
     string CAUSA_HOMOLOGADA
@@ -132,7 +137,8 @@ DM_CAT_CAUSA {
     string ID_USUARIO_SISTEMA FK
 }
 
-etiquetas_siniestros {
+
+DM_ETIQUETA_SINIESTRO {
     string ID PK
     string ID_REPORTE FK
     string ID_SINIESTRO FK
@@ -152,6 +158,7 @@ etiquetas_siniestros {
     boolean VALIDO
     }
 
+
 coberturas {
     string id PK
     string id_siniestro FK
@@ -165,14 +172,15 @@ coberturas {
     date fecha_movimiento
 }
 
-causas {
-    string REGLA
-    string CAUSAS
-    string COBERTURA
-    string CODIGO_COBERTURA
-    timestamp FECHA_LOTE
-    string ID_USUARIO_SISTEMA FK
-}
+%% PENDIENTE
+%%DM_CAUSA_COBERTURA {
+%%    string REGLA
+%%    string CAUSAS
+%%    string COBERTURA
+%%    string CODIGO_COBERTURA
+%%    timestamp FECHA_LOTE
+%%    string ID_USUARIO_SISTEMA FK
+%%}
 
 pagos_siniestros {
     string id PK
@@ -186,7 +194,7 @@ gerentes {
     string nombre
 }
 
-oficinas {
+DM_OFICINAS {
     string ID PK
     string OFICINA
     string DIRECCION
@@ -197,7 +205,7 @@ oficinas {
     string ZONA
 }
 
-siniestros {
+DM_SINIESTROS {
     string ID PK
     string REPORTE
     string POLIZA
