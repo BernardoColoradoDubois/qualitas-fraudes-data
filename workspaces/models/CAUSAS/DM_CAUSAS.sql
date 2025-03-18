@@ -5,4 +5,4 @@ CAUSA,
 CAUSA_HOMOLOGADA,
 BATCHDATE AS FECHA_LOTE,
 SYSUSERID AS ID_USUARIO_SISTEMA
-FROM `qualitasfraude.sample_landing_siniestros.DM_CAUSAS`
+FROM `qualitasfraude.sample_landing_siniestros.cat_causa`
