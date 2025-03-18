@@ -65,8 +65,8 @@ dm_proveedores = PythonOperator(
   dag=dag 
 )
 
-dm_sas_sinies = PythonOperator( 
-  task_id='dm_sas_sinies', 
+dm_siniestros = PythonOperator( 
+  task_id='dm_siniestros', 
   python_callable=execute_query_workflow, 
   op_kwargs={ 
     'project_id': 'qualitasfraude', 
@@ -119,5 +119,5 @@ init >> dm_causa_cobertura
 init >> dm_cat_causa
 init >> dm_oficinas
 init >> dm_proveedores
-init >> dm_sas_sinies
+init >> dm_siniestros
 init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> dm_etiqueta_siniestro
