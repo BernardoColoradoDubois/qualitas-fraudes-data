@@ -116,7 +116,7 @@ dm_etiqueta_siniestro= PythonOperator(
 )
 
 init >> dm_causa_cobertura
-init >> dm_cat_causa
+init >> dm_causas
 init >> dm_oficinas
 init >> dm_proveedores
 init >> dm_siniestros
