@@ -3,12 +3,13 @@ from airflow import DAG
 from airflow.decorators import task
 from airflow.operators.bash import BashOperator
 from datetime import timedelta
+# import cx_Oracle
 from airflow.operators.python import PythonOperator
 from lib.utils import execute_query_to_load_oracle_database,get_bucket_file_contents
-from airflow.providers.oracle.hooks.oracle import OracleHook
 import json
+# from airflow.providers.oracle.hooks.oracle import OracleHook
 
-oracle_hook = OracleHook(oracle_conn_id='fraudes_oracle_insumos')
+# oracle_hook = OracleHook(oracle_conn_id='fraudes_oracle_insumos')
 
 default_args = {
     'start_date': airflow.utils.dates.days_ago(0),
@@ -32,7 +33,7 @@ sample_query = PythonOperator(
   op_kwargs={ 
     'project_id': 'qualitasfraude', 
     'query': "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS`;",
-    'oracle_hook': oracle_hook,
+    # 'oracle_hook': oracle_hook,
     'table_name' : 'DM_CAUSAS',
     'schema' : 'INSUMOS'
   },

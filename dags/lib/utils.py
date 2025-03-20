@@ -3,6 +3,11 @@ import re
 import os
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
+import oracledb
+# import cx_Oracle
+
+#from airflow.providers.oracle.hooks.oracle import OracleHook
+from sqlalchemy import create_engine
 
 def get_bucket_file_contents(path):
 
@@ -65,13 +70,29 @@ def execute_query_workflow(project_id,query,**kwargs):
   result = query_job.result()
   print(result.__dict__)  
   
-def execute_query_to_load_oracle_database(project_id,query,oracle_hook,table_name,schema,**kwargs):
+def execute_query_to_load_oracle_database(project_id,query,table_name,schema,**kwargs):
 
   client = bigquery.Client(project=project_id)
-  query_job = client.query(query)  # Make an API request.
+  query_job = client.query(query)
   result = query_job.result()
   
   df = result.to_dataframe()
-  engine = oracle_hook.get_sqlalchemy_engine()
-  df.to_sql(table_name, engine, schema=schema, if_exists='append' ,index=False ,method=None)
+  print("DATAFRAME BIGQUERY:")
+  print(df)
+  username = "INSUMOS"
+  password = "INSUMOS"
+  dsn = "qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com:1521/?service_name=ORCL"
+  oracledb.init_oracle_client(lib_dir="gs://us-central1-ccompquafrau-38b343aa-bucket/data/oracle_client")
+  
+  engine = create_engine(f"oracle+oracledb://{username}:{password}@{dsn}", thick_mode=None)
+
+  df.to_sql(
+            name=table_name,  # Target table in Oracle
+            con=engine,  # SQLAlchemy engine connection
+            schema=schema,  # Target schema
+            if_exists='append',  # Append to the table if it exists
+            index=False,  # Don't write the DataFrame index as a column
+            method=None  # Default insert method
+        )
+
 
