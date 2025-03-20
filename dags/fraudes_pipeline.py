@@ -115,9 +115,20 @@ dm_etiqueta_siniestro= PythonOperator(
   dag=dag 
 )
 
+dm_pagos_polizas= PythonOperator( 
+  task_id='dm_pagos_polizas', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude', 
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/PAGOS_POLIZAS/DM_PAGOS_POLIZAS.sql')
+  }, 
+  dag=dag 
+)
+
 init >> dm_causa_cobertura
 init >> dm_causas
 init >> dm_oficinas
 init >> dm_proveedores
 init >> dm_siniestros
+init >> dm_pagos_polizas
 init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> dm_etiqueta_siniestro
