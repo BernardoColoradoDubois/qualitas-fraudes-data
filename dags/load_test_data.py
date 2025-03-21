@@ -119,6 +119,19 @@ load_fraud_rp = PythonOperator(
   dag=dag
 )
 
+load_pagos_proveedores = PythonOperator(
+  task_id='load_pagos_proveedores',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/PAGOSPROVEEDORES.csv',
+    'dataset': 'sample_landing_siniestros_bsc',
+    'table': 'pagosproveedores',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.pagosproveedores.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
 init >> load_appercab 
 init >> load_pagprove
 init >> load_reservas_bsc
@@ -126,3 +139,4 @@ init >> load_prestadores
 init >> load_tsuc_bsc
 init >> load_fraud_pv
 init >> load_fraud_rp
+init >> load_pagos_proveedores
