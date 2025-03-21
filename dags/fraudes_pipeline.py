@@ -125,6 +125,7 @@ dm_pagos_polizas= PythonOperator(
   dag=dag 
 )
 
+# dag coberturas movimientos
 dm_coberturas_movimiento = PythonOperator( 
   task_id='dm_coberturas_movimiento', 
   python_callable=execute_query_workflow, 
