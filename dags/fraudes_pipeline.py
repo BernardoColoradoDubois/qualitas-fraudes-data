@@ -125,10 +125,22 @@ dm_pagos_polizas= PythonOperator(
   dag=dag 
 )
 
+dm_coberturas_movimiento = PythonOperator( 
+  task_id='dm_coberturas_movimiento', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude',
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/DM_COBERTURAS_MOVIMIENTOS.sql')
+  }, 
+  dag=dag 
+)
+
+
 init >> dm_causa_cobertura
 init >> dm_causas
 init >> dm_oficinas
 init >> dm_proveedores
 init >> dm_siniestros
 init >> dm_pagos_polizas
+init >> dm_coberturas_movimiento
 init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> dm_etiqueta_siniestro
