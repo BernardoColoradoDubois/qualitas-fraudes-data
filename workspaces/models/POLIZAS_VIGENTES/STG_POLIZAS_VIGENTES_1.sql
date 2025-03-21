@@ -204,4 +204,5 @@ SELECT
   ,DESC_PER_GRACIA
   ,TIPO_ENDO
   ,CONSEC
-FROM `sample_landing_sise.fraud_pv`;
+FROM `sample_landing_sise.fraud_pv`
+WHERE RENOVADA_POR IS NOT NULL;
