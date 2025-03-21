@@ -45,8 +45,9 @@ def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_i
     
   job_config = bigquery.LoadJobConfig(
     schema=schema,
+    allow_quoted_newlines=True,
     skip_leading_rows=1,
-    max_bad_records=0,
+    max_bad_records=1,
     write_disposition=write_disposition,
     source_format=bigquery.SourceFormat.CSV
   ) 
