@@ -20,7 +20,7 @@ agentes ||--o{ DM_SINIESTROS : atienden
 
 DM_SINIESTROS ||--o{ DM_ETIQUETA_SINIESTRO : descritos
 
-DM_SINIESTROS ||--o{ coberturas : conllevan
+DM_SINIESTROS ||--o{ DM_COBERTURAS : conllevan
 
 DM_SINIESTROS ||--o{ pagos_siniestros : generan
 
@@ -149,27 +149,85 @@ DM_ETIQUETA_SINIESTRO {
     string TEXTO_LOCALIZADO
     timestamp FECHA_LOCALIZADO
     timestamp FECHA_CARGA
-    timestamp FECHA_HORA_PROCESO
     timestamp FECHA_LOTE
     string ID_USUARIO_SISTEMA FK
     int64 CONSECUTIVO
     timestamp VALIDO_DESDE
     timestamp VALIDO_HASTA
     boolean VALIDO
-    }
+}
 
 
-coberturas {
-    string id PK
-    string id_siniestro FK
-    string codigo_cobertura
-    string cobertura
-    string tipo_movimiento
-    string moneda
-    number gasto
-    number importe
-    date fecha_registro
-    date fecha_movimiento
+DM_COBERTURAS_MOVIMIENTOS {
+    string ID PK
+    string RAMO
+    string SUBRAMO
+    string SINIESTRO FK
+    string TIPO_SINIESTRO
+    string ID_OFICINA_VENTAS FK
+    string GERENTE
+    string AGENTE
+    string ID_OFICINA_DE_ATENCION FK
+    string AJUSTADOR
+    datetime FECHA_REGISTRO
+    datetime FECHA_MOVIMIENTO
+    string TIPO_MOVIMIENTO
+    string GASTO
+    string TIPO_MONEDA
+    string COBERTURA
+    float64 IMPORTE
+    int64 CAPUFE
+    string CODIGO_COBERTURA
+    string CODIGO_TEXTO
+    float64 TIPO_CAMBIO
+    string REPORTE
+    string USUARIO
+    string POLIZA
+    string RELEVANTES
+    datetime FECHA_OCURRIDO
+    string TIPO_VEHICULO
+    string MODELO_VEHICULO
+    int64 CSTROS
+    int64 CRVA_INICIAL
+    float64 IRVA_INICIAL
+    int64 CAJMAS
+    float64 IAJMAS
+    int64 CAJMENOS
+    float64 IAJMENOS
+    int64 CPAGOS
+    float64 IPAGOS
+    int64 CGASTO
+    float64 IGASTO
+    int64 CDED
+    float64 IREC
+    int64 CSALV
+    float64 ISALV
+    string FLAG_REC
+    string COD_RESP
+    string DEPRES1
+    string DEPRES2
+    string DEPRES3
+    string DEPRESLIT
+    float64 MONTO_INDEM_RECUP
+    float64 MONTO_INDEM_RECUP_DM
+    float64 IMPORTE_MN
+    float64 IRVA_INICIAL_MN
+    float64 IAJMASMN
+    float64 IAJMENOSMN
+    float64 IPAGOSMN
+    float64 IGASTOMN
+    float64 IDEDMN
+    float64 IRECMN
+    float64 ISALVMN
+    string MARCA_RVA
+    float64 COAS
+    string NOMBRE_ASEGURADORA
+    string CODIGO_POBLACION_ACC
+    numeric REC_CANTO
+    string INVSALV
+    string CODIGO_ESTADO_ACC
+    int64 SINIESDIA
+    string CLAVE_ABOGADO
 }
 
 %% PENDIENTE
