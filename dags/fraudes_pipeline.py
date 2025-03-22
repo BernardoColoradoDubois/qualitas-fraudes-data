@@ -147,8 +147,6 @@ dm_pagos_proveedores = PythonOperator(
   dag=dag 
 )
 
-
-
 init >> dm_causa_cobertura
 init >> dm_causas
 init >> dm_oficinas
