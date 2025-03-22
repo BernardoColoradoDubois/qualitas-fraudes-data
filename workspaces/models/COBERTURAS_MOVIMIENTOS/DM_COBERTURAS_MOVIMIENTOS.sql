@@ -69,4 +69,4 @@ SELECT
     COD_EDO_ACC as CODIGO_ESTADO_ACC,
     SINIESDIA,
     CVE_ABOGADO AS CLAVE_ABOGADO
-FROM `qualitasfraude.sample_landing_siniestros_bsc.reservas_bsc`;
+FROM `sample_landing_siniestros_bsc.reservas_bsc`;

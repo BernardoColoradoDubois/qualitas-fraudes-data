@@ -6,4 +6,4 @@ COBERTURA,
 COD_COBER AS CODIGO_COBERTURA,
 BATCHDATE AS FECHA_LOTE,
 SYSUSERID AS ID_USUARIO_SISTEMA
-FROM `qualitasfraude.sample_landing_siniestros.causa_cobertura`
+FROM `sample_landing_siniestros.causa_cobertura`
