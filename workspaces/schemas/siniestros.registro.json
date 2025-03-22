@@ -56,7 +56,7 @@
   },
   {
     "name": "FECHA_ASIG",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -86,7 +86,7 @@
   },
   {
     "name": "BATCHDATE",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {

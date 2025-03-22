@@ -16,7 +16,7 @@
   },
   {
     "name": "FEC_INV",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -36,22 +36,22 @@
   },
   {
     "name": "FEC_LOC",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "FEC_CARGA",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "HORA_PROCESO",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "BATCHDATE",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {

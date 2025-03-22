@@ -41,37 +41,37 @@
   },
   {
     "name": "FEC_OCU",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "HOR_OCU",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "FEC_REP",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "HOR_REP",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "FEC_REG",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "HOR_REG",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "FEC_INI_VIG",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -171,7 +171,7 @@
   },
   {
     "name": "FEC_EMI",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -181,7 +181,7 @@
   },
   {
     "name": "FEC_FIN_VIG",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -191,7 +191,7 @@
   },
   {
     "name": "BATCHDATE",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {

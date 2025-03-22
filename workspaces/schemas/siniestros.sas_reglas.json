@@ -21,17 +21,17 @@
   },
   {
     "name": "FEC_REG",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "HOR_REG",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "BATCHDATE",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {

@@ -16,7 +16,7 @@
   },
   {
     "name": "BATCHDATE",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {

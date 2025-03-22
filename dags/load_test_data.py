@@ -26,6 +26,16 @@ dag = DAG(
 # priority_weight has type int in Airflow DB, uses the maximum.
 init = BashOperator(task_id='init',bash_command='echo init',dag=dag)
 
+init_load_siniestros_bsc = BashOperator(task_id='init_load_siniestros_bsc',bash_command='echo init',dag=dag)
+init_load_siniestros = BashOperator(task_id='init_load_siniestros',bash_command='echo init',dag=dag)
+init_load_sise = BashOperator(task_id='init_load_sise',bash_command='echo init',dag=dag)
+
+end_load_siniestros_bsc = BashOperator(task_id='end_load_siniestros_bsc',bash_command='echo end',dag=dag)
+end_load_siniestros = BashOperator(task_id='end_load_siniestros',bash_command='echo end',dag=dag)
+end_load_sise = BashOperator(task_id='end_load_sise',bash_command='echo end',dag=dag)
+
+end = BashOperator(task_id='end',bash_command='echo end',dag=dag)
+
 load_appercab = PythonOperator(
   task_id='load_appercab_bsc',
   python_callable=upload_storage_csv_to_bigquery,
@@ -196,16 +206,24 @@ load_fraud_rp = PythonOperator(
   dag=dag
 )
 
-init >> load_appercab 
-init >> load_pagprove
-init >> load_pagos_proveedores
-init >> load_prestadores
-init >> load_reservas_bsc
-init >> load_tsuc_bsc
-init >> load_analistas
-init >> load_cat_causa
-init >> load_causa_cobertura
-init >> load_cobranza_hist
-init >> load_cobranza
-init >> load_fraud_pv
-init >> load_fraud_rp
+init >> init_load_siniestros_bsc
+init >> init_load_siniestros
+init >> init_load_sise
+
+init_load_siniestros_bsc >> load_appercab >> end_load_siniestros_bsc
+init_load_siniestros_bsc >> load_pagprove >> end_load_siniestros_bsc
+init_load_siniestros_bsc >> load_pagos_proveedores >> end_load_siniestros_bsc
+init_load_siniestros_bsc >> load_prestadores >> end_load_siniestros_bsc
+init_load_siniestros_bsc >> load_reservas_bsc >> end_load_siniestros_bsc
+init_load_siniestros_bsc >> load_tsuc_bsc >> end_load_siniestros_bsc
+init_load_siniestros >> load_analistas >> end_load_siniestros
+init_load_siniestros >> load_cat_causa >> end_load_siniestros
+init_load_siniestros >> load_causa_cobertura >> end_load_siniestros
+init_load_siniestros >> load_cobranza_hist >> end_load_siniestros
+init_load_siniestros >> load_cobranza >> end_load_siniestros
+init_load_sise >> load_fraud_pv >> end_load_sise
+init_load_sise >> load_fraud_rp >> end_load_sise
+
+end_load_siniestros_bsc >> end
+end_load_siniestros >> end
+end_load_sise >> end

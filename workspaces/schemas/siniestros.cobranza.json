@@ -21,17 +21,17 @@
   },
   {
     "name": "DESDE",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "HASTA",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "FEC_EMI",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -201,7 +201,7 @@
   },
   {
     "name": "FEC_INST_SAT",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -471,7 +471,7 @@
   },
   {
     "name": "FECHA_VIG_RECIBO",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -511,7 +511,7 @@
   },
   {
     "name": "FEC_NACIMIENTO",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
@@ -556,12 +556,12 @@
   },
   {
     "name": "FEC_CARGA",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
     "name": "BATCHDATE",
-    "type": "TIMESTAMP",
+    "type": "DATETIME",
     "mode": "NULLABLE"
   },
   {
