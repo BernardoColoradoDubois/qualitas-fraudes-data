@@ -136,6 +136,18 @@ dm_coberturas_movimiento = PythonOperator(
   dag=dag 
 )
 
+# dag coberturas movimientos
+dm_pagos_proveedores = PythonOperator( 
+  task_id='dm_pagos_proveedores', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude',
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/PAGOS_PROVEEDORES/DM_PAGOS_PROVEEDORES.sql')
+  }, 
+  dag=dag 
+)
+
+
 
 init >> dm_causa_cobertura
 init >> dm_causas
