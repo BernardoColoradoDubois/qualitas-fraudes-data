@@ -4,9 +4,7 @@ asegurados ||--|{ polizas_vigentes : manejan
 
 polizas_vigentes ||--|{ vehiculos : contienen
 
-polizas_vigentes ||--o{ pagos_polizas : realizan
-
-DM_PROVEEDORES ||--o{ DM_SINIESTROS : sirven
+polizas_vigentes ||--o{ DM_PAGOS_POLIZAS : realizan
 
 gerentes ||--o{ DM_SINIESTROS : gestionan
 
@@ -20,7 +18,7 @@ agentes ||--o{ DM_SINIESTROS : atienden
 
 DM_SINIESTROS ||--o{ DM_ETIQUETA_SINIESTRO : descritos
 
-DM_SINIESTROS ||--o{ DM_COBERTURAS : conllevan
+DM_SINIESTROS ||--o{ DM_COBERTURAS_MOVIMIENTOS : conllevan
 
 DM_SINIESTROS ||--o{ pagos_siniestros : generan
 
@@ -65,7 +63,6 @@ DM_PROVEEDORES {
     string NUMERO_EMPLEADO
 }
 
-
 asegurados {
     string id PK
     string nombre
@@ -73,7 +70,6 @@ asegurados {
     string apellido_materno
     string fecha_alta
 }
-
 
 polizas_vigentes {
     string id PK
@@ -90,21 +86,31 @@ polizas_vigentes {
     date vigente_hasta
 }
 
-
-pagos_polizas {
-    string id PK
-    string id_poliza FK
-    string seccion
-    string endoso
-    string poliza
-    string numero_cobranza
-    number prima_neta
-    number iva
-    number importe
-    string remesa
-    date fecha_vencimiento
-    date fecha_aplicacion
-    date fecha_carga
+DM_PAGOS_POLIZAS {
+    string ID_RECIBO
+    timestamp FECHA_VENCIMIENTO
+    string POLIZA
+    string ENDOSO
+    string POLIZA_ENDOSO
+    numeric IMPORTE
+    string REMESA
+    timestamp MARCA_IMP
+    timestamp MARCA_ANUL
+    numeric PRIMA_NETA
+    numeric DERECHO_POLIZA
+    numeric RECIBO_FIN
+    numeric IVA
+    numeric BONIFICACION
+    numeric BONIFICACION_RF
+    numeric BONIFICACION_TEC
+    numeric PRIMA_TOTAL
+    string USUARIO_APLICA
+    timestamp FECHA_APLICACION
+    string IMPRESION
+    string RFC_FACTURACION
+    string USUARIO_EMITE
+    string ESTATUS
+    timestamp FECHA_PROCESO
 }
 
 
