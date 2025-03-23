@@ -48,6 +48,8 @@ SQLAlchemy==1.4.54
 sqlalchemy-bigquery==1.12.1
 PyMySQL==1.1.1
 psycopg2-binary==2.9.10
+cx_Oracle==8.3.0
+oracledb
 
 # Dependencias útiles para DAGs
 pendulum==3.0.0
@@ -62,3 +64,4 @@ prometheus_client==0.21.1
 
 # Autenticación y seguridad
 cryptography==44.0.1
+python-dotenv
