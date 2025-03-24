@@ -3,9 +3,7 @@ from dotenv import load_dotenv
 
 from google.oauth2.service_account import Credentials as GoogleCloudCredentials
 from google.cloud.bigquery import Client
-from sqlalchemy import create_engine
 import pandas as pd
-import oracledb
 import cx_Oracle
 
 
@@ -27,14 +25,17 @@ credentials = GoogleCloudCredentials.from_service_account_file(filename=key_file
 client = Client(credentials=credentials)
 
 # Realizamos una consulta a BigQuery y cargamos los resultados en un DataFrame`
-query = "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS` WHERE ID IS NOT NULL AND ID <> '*' ORDER BY ID;"
+query = "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS` ORDER BY ID;"
 query_job = client.query(query)
 result = query_job.result()
+
+#  Convertimos el resultado a un DataFrame
 df = result.to_dataframe()
 
+# Convertimos el DataFrame a una lista de tuplas
 dt = [tuple(x) for x in df.values]
 
-#conn_string = f'oracle+cx_oracle://{oracle_user}:{oracle_password}@{oracle_host}:{oracle_port}/{oracle_service}'
+# Conectamos a Oracle y cargamos los datos
 conn_string = f'{oracle_user}/{oracle_password}@{oracle_host}:{oracle_port}/{oracle_service}'
 connection = cx_Oracle.connect(conn_string)
 cursor = connection.cursor()
