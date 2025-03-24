@@ -180,6 +180,19 @@ load_cobranza = PythonOperator(
   dag=dag
 )
 
+load_etiqueta_siniestro = PythonOperator(
+  task_id='load_etiqueta_siniestro',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/ETIQUETA_SINIESTRO.csv',
+    'dataset': 'sample_landing_siniestros',
+    'table': 'etiqueta_siniestro',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros.etiqueta_siniestro.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
 load_fraud_pv = PythonOperator(
   task_id='load_fraud_pv',
   python_callable=upload_storage_csv_to_bigquery,
@@ -221,6 +234,7 @@ init_load_siniestros >> load_cat_causa >> end_load_siniestros
 init_load_siniestros >> load_causa_cobertura >> end_load_siniestros
 init_load_siniestros >> load_cobranza_hist >> end_load_siniestros
 init_load_siniestros >> load_cobranza >> end_load_siniestros
+init_load_siniestros >> load_etiqueta_siniestro >> end_load_siniestros
 init_load_sise >> load_fraud_pv >> end_load_sise
 init_load_sise >> load_fraud_rp >> end_load_sise
 

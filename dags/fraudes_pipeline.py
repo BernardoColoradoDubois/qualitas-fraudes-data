@@ -147,12 +147,15 @@ dm_pagos_proveedores = PythonOperator(
   dag=dag 
 )
 
-init >> dm_causa_cobertura
-init >> dm_causas
-init >> dm_oficinas
-init >> dm_proveedores
-init >> dm_siniestros
-init >> dm_pagos_polizas
-init >> dm_coberturas_movimiento
-init >> dm_pagos_proveedores
-init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> dm_etiqueta_siniestro
+end = BashOperator(task_id='end',bash_command='echo end',dag=dag)
+
+
+init >> dm_causa_cobertura >> end
+init >> dm_causas >> end
+init >> dm_oficinas >> end
+init >> dm_proveedores >> end
+init >> dm_siniestros >> end
+init >> dm_pagos_polizas >> end
+init >> dm_coberturas_movimiento >> end
+init >> dm_pagos_proveedores >> end
+init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> dm_etiqueta_siniestro >> end

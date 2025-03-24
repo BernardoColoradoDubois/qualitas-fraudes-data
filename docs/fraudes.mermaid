@@ -87,15 +87,15 @@ polizas_vigentes {
 }
 
 DM_PAGOS_POLIZAS {
-    string ID_RECIBO
-    timestamp FECHA_VENCIMIENTO
+    string ID PK
+    datetime FECHA_VENCIMIENTO
     string POLIZA
     string ENDOSO
     string POLIZA_ENDOSO
     numeric IMPORTE
     string REMESA
-    timestamp MARCA_IMP
-    timestamp MARCA_ANUL
+    datetime MARCA_IMP
+    datetime MARCA_ANUL
     numeric PRIMA_NETA
     numeric DERECHO_POLIZA
     numeric RECIBO_FIN
@@ -105,12 +105,11 @@ DM_PAGOS_POLIZAS {
     numeric BONIFICACION_TEC
     numeric PRIMA_TOTAL
     string USUARIO_APLICA
-    timestamp FECHA_APLICACION
-    string IMPRESION
+    datetime FECHA_APLICACION
     string RFC_FACTURACION
     string USUARIO_EMITE
     string STATUS
-    timestamp FECHA_PROCESO
+    datetime FECHA_PROCESO
 }
 
 
@@ -139,7 +138,7 @@ DM_CAUSAS {
     string ID PK
     string CAUSA
     string CAUSA_HOMOLOGADA
-    timestamp FECHA_LOTE
+    datetime FECHA_LOTE
     string ID_USUARIO_SISTEMA FK
 }
 
@@ -149,17 +148,17 @@ DM_ETIQUETA_SINIESTRO {
     string ID_REPORTE FK
     string ID_SINIESTRO FK
     string CODIGO_ESTATUS
-    timestamp FECHA_INVESTIGACION
+    datetime FECHA_INVESTIGACION
     string TEXTO_INVESTIGACION
     string USUARIO_INVESTIGACION
     string TEXTO_LOCALIZADO
-    timestamp FECHA_LOCALIZADO
-    timestamp FECHA_CARGA
-    timestamp FECHA_LOTE
+    datetime FECHA_LOCALIZADO
+    datetime FECHA_CARGA
+    datetime FECHA_LOTE
     string ID_USUARIO_SISTEMA FK
     int64 CONSECUTIVO
-    timestamp VALIDO_DESDE
-    timestamp VALIDO_HASTA
+    datetime VALIDO_DESDE
+    datetime VALIDO_HASTA
     boolean VALIDO
 }
 
@@ -242,7 +241,7 @@ DM_COBERTURAS_MOVIMIENTOS {
 %%    string CAUSAS
 %%    string COBERTURA
 %%    string CODIGO_COBERTURA
-%%    timestamp FECHA_LOTE
+%%    datetime FECHA_LOTE
 %%    string ID_USUARIO_SISTEMA FK
 %%}
 
@@ -279,13 +278,13 @@ DM_SINIESTROS {
     string ASEGURADO
     string ID_ASEGURADO FK
     string ID_CAUSA FK
-    timestamp FECHA_OCURRIDO
-    timestamp HORA_OCURRIDO
-    timestamp FECHA_REPORTE
-    timestamp HORA_REPORTE
-    timestamp FECHA_REGISTRO
-    timestamp HORA_REGISTRO
-    timestamp FECHA_INICIO_VIGENCIA
+    datetime FECHA_OCURRIDO
+    datetime HORA_OCURRIDO
+    datetime FECHA_REPORTE
+    datetime HORA_REPORTE
+    datetime FECHA_REGISTRO
+    datetime HORA_REGISTRO
+    datetime FECHA_INICIO_VIGENCIA
     string MARCA
     string MODELO
     string SERIE
@@ -305,11 +304,11 @@ DM_SINIESTROS {
     string USO
     numeric SUMA_ASEGURADA
     string PLACA
-    timestamp FECHA_EMISION
+    datetime FECHA_EMISION
     string POLIZA_REHABILITADA
-    timestamp FECHA_FIN_VIGENCIA
+    datetime FECHA_FIN_VIGENCIA
     string OBSERVACIONES
-    timestamp FECHA_LOTE
+    datetime FECHA_LOTE
     string ID_USUARIO_SISTEMA FK
 }
 

@@ -9,3 +9,5 @@ EDOPOB AS CODIGO_POBLACION,
 CP AS CODIGO_POSTAL,
 ZONA
 FROM `qualitasfraude.sample_landing_siniestros_bsc.tsuc_bsc`
+WHERE Z_ID <> '990'
+ORDER BY Z_ID
