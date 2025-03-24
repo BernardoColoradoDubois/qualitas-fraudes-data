@@ -2,13 +2,13 @@
 # Script para instalar Oracle Instant Client en Cloud Composer
 
 # Actualizar repositorios
-apt-get update -y
+sudo apt-get update -y
 
 # Instalar dependencias necesarias
-apt-get install -y libaio1 wget unzip
+sudo apt-get install -y libaio1 wget unzip
 
 # Crear directorio para Oracle Client
-mkdir -p /opt/oracle
+sudo mkdir -p /opt/oracle
 
 cd /opt/oracle
 
@@ -16,8 +16,7 @@ wget https://download.oracle.com/otn_software/linux/instantclient/2370000/instan
 
 unzip  /opt/oracle/instantclient-basic-linux.x64-23.7.0.25.01.zip
 
-sh -c "echo /opt/oracle/instantclient_23_7> \ 
-  /etc/ld.so.conf.d/oracle-instantclient.conf"
+sh -c "echo /opt/oracle/instantclient_23_7 > /etc/ld.so.conf.d/oracle-instantclient.conf"
 
 ldconfig
 
