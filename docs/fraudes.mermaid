@@ -274,16 +274,14 @@ DM_SINIESTROS {
     string POLIZA
     string ENDOSO
     string INCISO
-    string ID_VEHICULO FK
+    string ID_POLIZA_ENDOSO
+    string ID_POLIZA_ENDOSO_INCISO
     string ASEGURADO
-    string ID_ASEGURADO FK
-    string ID_CAUSA FK
+    string ID_ASEGURADO
+    string ID_CAUSA
     datetime FECHA_OCURRIDO
-    datetime HORA_OCURRIDO
     datetime FECHA_REPORTE
-    datetime HORA_REPORTE
     datetime FECHA_REGISTRO
-    datetime HORA_REGISTRO
     datetime FECHA_INICIO_VIGENCIA
     string MARCA
     string MODELO
@@ -293,10 +291,10 @@ DM_SINIESTROS {
     numeric RESERVA
     string UBICACION
     string ENTIDAD
-    string ID_OFICINA FK
+    string ID_OFICINA
     string LEIDO_SAS
-    string ID_OFICINA_DE_ATENCION FK
-    string ID_AJUSTADOR FK
+    string ID_OFICINA_DE_ATENCION
+    string ID_AJUSTADOR
     string LATITUD
     string LONGITUD
     string CONDUCTOR
@@ -309,7 +307,7 @@ DM_SINIESTROS {
     datetime FECHA_FIN_VIGENCIA
     string OBSERVACIONES
     datetime FECHA_LOTE
-    string ID_USUARIO_SISTEMA FK
+    string ID_USUARIO_SISTEMA
 }
 
 agentes {
