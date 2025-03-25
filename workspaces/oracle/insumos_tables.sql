@@ -188,7 +188,6 @@ EXCEPTION
       END IF;
 END;
 
--- Se han removido los índices de claves foráneas
 CREATE TABLE INSUMOS.DM_PAGOS_POLIZAS (
     ID VARCHAR2(50) PRIMARY KEY,
     FECHA_VENCIMIENTO DATE,
