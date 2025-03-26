@@ -33,4 +33,4 @@ app.register_blueprint(main_routes.blueprint, url_prefix='/')
 
 # Solo ejecutar el servidor si se llama directamente
 if __name__ == "__main__":
-  app.run(debug=True)
+  app.run(debug=True,port=80)
