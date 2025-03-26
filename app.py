@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 
 import src.causas.routes as causas_routes
+import src.main.routes as main_routes
 
 # Cargar variables de entorno siempre
 load_dotenv()
@@ -27,6 +28,8 @@ container.wire(modules=[causas_routes])
 # Crear la aplicación
 app = Flask(__name__)
 app.register_blueprint(causas_routes.blueprint, url_prefix='/causas')
+app.register_blueprint(main_routes.blueprint, url_prefix='/')
+
 
 # Solo ejecutar el servidor si se llama directamente
 if __name__ == "__main__":

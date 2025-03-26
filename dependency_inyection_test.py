@@ -6,7 +6,7 @@ from dependency_injector.wiring import Provide, inject
 from src.lib.bigquery_to_oracle import BigQueryToOracle
 
 @inject
-def main(bigquery_to_oracle = Provide[DIContainer.bigquery_to_oracle]) -> None:
+def main(bigquery_to_oracle=Provide[DIContainer.bigquery_to_oracle]) -> None:
 
     bigquery_to_oracle.run(
         extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS` ORDER BY ID", 
