@@ -34,6 +34,7 @@ google-cloud-container==2.56.0
 google-cloud-datacatalog==3.25.0
 google-cloud-dataform==0.5.15
 google-cloud-translate==3.20.0
+google-api-python-client
 
 # Beam y procesamiento de datos
 apache-beam==2.62.0
