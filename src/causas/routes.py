@@ -9,11 +9,11 @@ blueprint = Blueprint('causas_routes', __name__)
 @inject
 def load_causas(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
   
-  bigquery_to_oracle.run(
+  response = bigquery_to_oracle.run(
     extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS` ORDER BY ID", 
     preload_query="TRUNCATE TABLE INSUMOS.DM_CAUSAS",
     schema="INSUMOS",
     table="DM_CAUSAS"
   )  
   
-  return "<p>DM_CAUSAS CARGADO EXITOSAMENTE</p>"
+  return response

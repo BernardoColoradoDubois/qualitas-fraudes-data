@@ -22,6 +22,12 @@ class BigQueryToOracle:
     cursor.executemany(insert_query, dt)
     self.oracle_client.commit()
     cursor.close()
+    
+    return {
+      "table": table,
+      "schema": schema,
+      "rows": len(dt)
+    }
 
 
 
