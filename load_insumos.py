@@ -73,6 +73,8 @@ def load_dm_siniestros(bigquery_to_oracle=Provide[DIContainer.bigquery_to_oracle
     )   
     print(response)
 
+
+# Cargamos las variables de entorno
 load_dotenv()
 
 # Accedemos a las variables de entorno de google
@@ -84,12 +86,14 @@ oracle_password = os.getenv("APPLICATION_ORACLE_PASSWORD")
 oracle_host = os.getenv("APPLICATION_ORACLE_HOST")
 oracle_port = os.getenv("APPLICATION_ORACLE_PORT")
 oracle_service = os.getenv("APPLICATION_ORACLE_SERVICE")
-        
+
+#instanciamos y configuramos contenedor de dependencias
 container = DIContainer()    
 container.config.key_file_path.override(key_file_path)
 container.config.connection_string.override(f'{oracle_user}/{oracle_password}@{oracle_host}:{oracle_port}/{oracle_service}')
 container.wire(modules=[__name__])
 
+#cargamos los insumos
 load_dm_causas()
 load_dm_etiqueta_siniestro()
 load_dm_oficinas()
