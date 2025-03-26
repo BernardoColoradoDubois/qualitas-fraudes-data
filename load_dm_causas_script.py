@@ -40,7 +40,6 @@ conn_string = f'{oracle_user}/{oracle_password}@{oracle_host}:{oracle_port}/{ora
 connection = cx_Oracle.connect(conn_string)
 cursor = connection.cursor()
 cursor.execute('TRUNCATE TABLE INSUMOS.DM_CAUSAS')
-sql='INSERT INTO INSUMOS.DM_CAUSAS VALUES(:1,:2,:3,:4,:5)'
 sql="INSERT INTO INSUMOS.DM_CAUSAS"+" VALUES("+",".join([f":{i+1}" for i in range(df.shape[1])])+")"
 cursor.executemany(sql, dt)
 connection.commit()

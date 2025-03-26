@@ -25,7 +25,7 @@ credentials = GoogleCloudCredentials.from_service_account_file(filename=key_file
 client = Client(credentials=credentials)
 
 # Realizamos una consulta a BigQuery y cargamos los resultados en un DataFrame`
-query = "SELECT * FROM `DM_FRAUDES.DM_SINIESTROS` WHERE CAST(FECHA_REGISTRO AS DATE) > '2025-01-01';"
+query = "SELECT * FROM `DM_FRAUDES.DM_SINIESTROS` WHERE CAST(FECHA_REGISTRO AS DATE) > '2025-01-01' LIMIT 10000;"
 query_job = client.query(query)
 result = query_job.result()
 

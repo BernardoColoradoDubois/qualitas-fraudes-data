@@ -65,3 +65,7 @@ prometheus_client==0.21.1
 # Autenticación y seguridad
 cryptography==44.0.1
 python-dotenv
+
+#flask
+flask
+dependency-injector
