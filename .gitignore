@@ -2,6 +2,4 @@
 venv
 __pycache__/
 logs/
-wsgi.py
-sample.py
-app.ini
+
