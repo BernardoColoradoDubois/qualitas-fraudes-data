@@ -30,6 +30,8 @@ container.wire(modules=[causas_routes, proveedores_routes, oficinas_routes])
 # Crear la aplicación
 app = Flask(__name__)
 app.register_blueprint(causas_routes.blueprint, url_prefix='/causas')
+app.register_blueprint(proveedores_routes.blueprint, url_prefix='/proveedores')
+app.register_blueprint(oficinas_routes.blueprint, url_prefix='/oficinas')
 app.register_blueprint(main_routes.blueprint, url_prefix='/')
 
 # Solo ejecutar el servidor si se llama directamente
