@@ -9,6 +9,8 @@ sqlalchemy-bigquery==1.12.1
 # dependencias pandas
 pandas==2.1.4
 numpy==1.26.4
+db-dtypes==1.4.1
+
 
 # Conectores de Google Cloud esenciales
 google-api-core==2.24.1
