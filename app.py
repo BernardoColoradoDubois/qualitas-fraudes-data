@@ -19,6 +19,7 @@ oracle_host = os.getenv("APPLICATION_ORACLE_HOST")
 oracle_port = os.getenv("APPLICATION_ORACLE_PORT")
 oracle_service = os.getenv("APPLICATION_ORACLE_SERVICE")
 
+# Acceder a las variables de entorno
 hashed_api_key = os.getenv("FLASK_HASHED_API_KEY")
 
 # Inicializar el contenedor
