@@ -1,5 +1,6 @@
 dependency-injector==4.46.0
 flask==2.2.5
+python-dotenv==1.0.1
 
 # SQLAlchemy y base de datos
 SQLAlchemy==1.4.54
