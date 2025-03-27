@@ -3,8 +3,10 @@ from src.main.container import DIContainer
 from dotenv import load_dotenv
 import os
 
-import src.causas.routes as causas_routes
 import src.main.routes as main_routes
+import src.causas.routes as causas_routes
+import src.proveedores.routes as proveedores_routes
+import src.oficinas.routes as oficinas_routes
 
 # Cargar variables de entorno siempre
 load_dotenv()
@@ -23,7 +25,7 @@ container.config.key_file_path.override(key_file_path)
 container.config.connection_string.override(f'{oracle_user}/{oracle_password}@{oracle_host}:{oracle_port}/{oracle_service}')
 
 # Wire ANTES de crear la app
-container.wire(modules=[causas_routes])
+container.wire(modules=[causas_routes, proveedores_routes, oficinas_routes])
 
 # Crear la aplicación
 app = Flask(__name__)
