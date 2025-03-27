@@ -29,7 +29,7 @@ container.config.connection_string.override(f'{oracle_user}/{oracle_password}@{o
 container.config.hashed_api_key.override(hashed_api_key)
 
 # Wire ANTES de crear la app
-container.wire(modules=[causas_routes, proveedores_routes, oficinas_routes])
+container.wire(modules=[causas_routes, proveedores_routes, oficinas_routes, main_routes])
 
 # Crear la aplicación
 app = Flask(__name__)

@@ -15,11 +15,9 @@ def root():
 @blueprint.route("/test", methods=["GET"])
 @inject
 def test(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validator]):
-
-  token = request.headers.get('Authorization').replace('Bearer ', '')
   
+  validation = api_key_validator.validate(request.headers.get('Authorization').replace('Bearer ', ''))
   
   return {
-    "token": token,
-    "hashed_api_key": 'hash',
+    "validation": validation,
   }

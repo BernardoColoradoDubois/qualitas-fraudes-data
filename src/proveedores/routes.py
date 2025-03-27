@@ -1,6 +1,7 @@
 from flask import Blueprint, jsonify
 from dependency_injector.wiring import inject, Provide
 from src.lib.bigquery_to_oracle import BigQueryToOracle
+from src.lib.password_encrypt import APIKeyValidator
 from src.main.container import DIContainer
 
 blueprint = Blueprint('proveedores_routes', __name__)
