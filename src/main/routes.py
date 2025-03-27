@@ -15,5 +15,5 @@ def root():
 @inject
 def test():
   return {
-    "message": "It works!"
+    "message": "test"
   }
