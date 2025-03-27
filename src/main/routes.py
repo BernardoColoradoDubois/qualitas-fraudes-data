@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify,request
 from dependency_injector.wiring import inject, Provide
+from src.main.container import DIContainer
 
 blueprint = Blueprint('main_routes', __name__)
 
@@ -13,10 +14,11 @@ def root():
 
 @blueprint.route("/test", methods=["GET"])
 @inject
-def test():
+def test(hashed_api_key:str = Provide[DIContainer.config.hashed_api_key]):
 
   token = request.headers.get('Authorization')
   
   return {
-    "message": token
+    "token": token,
+    "hashed_api_key": hashed_api_key
   }

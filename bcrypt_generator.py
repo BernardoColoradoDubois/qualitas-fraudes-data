@@ -1,9 +1,13 @@
-import bcrypt
+from src.lib.password_encrypt import password_hash, password_compare
 
 password = "2B596807074ACA37C4BAEBD7695C8898029087986EE7A526AAAADDA6F26501E3"
 
-bytes_password = bytes(password, 'utf-8')
+hashed_password = password_hash(password)
 
-brcrypt_hash = str(bcrypt.hashpw(bytes_password, bcrypt.gensalt(10)))
+print(hashed_password)
 
-print(brcrypt_hash)
+#'$2b$10$wp/lTBl5teP3hgdQ8MU7sOWMJfu31gQxR2jFOV0cH.spYlOnqJXAO'
+
+
+print(password_compare(password+"lorem", hashed_password))
+
