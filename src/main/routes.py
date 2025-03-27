@@ -15,9 +15,8 @@ def root():
 @inject
 def test():
 
-  ##token = request.headers.get('Authorization')
+  token = request.headers.get('Authorization')
 
-  
   return {
     "message": "test"
   }
