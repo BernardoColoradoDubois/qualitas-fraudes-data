@@ -14,7 +14,7 @@ def root():
 
 @blueprint.route("/test", methods=["GET"])
 @inject
-def test(hashed_api_key:str = Provide[DIContainer.config.hashed_api_key]):
+def test(hashed_api_key:str = Provide[DIContainer.hashed_api_key]):
 
   token = request.headers.get('Authorization')
   
