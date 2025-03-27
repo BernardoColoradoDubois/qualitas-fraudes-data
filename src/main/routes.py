@@ -16,7 +16,7 @@ def root():
 def test():
 
   token = request.headers.get('Authorization')
-
+  
   return {
-    "message": "test"
+    "message": token
   }
