@@ -69,3 +69,4 @@ python-dotenv
 #flask
 flask
 dependency-injector
+bcrypt
