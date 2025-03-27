@@ -28,5 +28,4 @@ sudo ldconfig
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_23_7:$LD_LIBRARY_PATH
 export PATH=/opt/oracle/instantclient_23_7:$PATH
 
-
-
+sudo apt install nginx
