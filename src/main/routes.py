@@ -16,7 +16,7 @@ def root():
 @inject
 def test(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validator]):
 
-  token = request.headers.get('Authorization')
+  token = request.headers.get('Authorization').replace('Bearer ', '')
   
   
   return {
