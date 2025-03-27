@@ -31,3 +31,5 @@ export PATH=/opt/oracle/instantclient_23_7:$PATH
 sudo apt install nginx
 
 sudo apt install build-essential libssl-dev libffi-dev python3-setuptools
+
+/home/bernardo_colorado/qualitas-fraudes-data/venv/bin/gunicorn

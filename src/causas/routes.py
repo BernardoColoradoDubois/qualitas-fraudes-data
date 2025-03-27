@@ -5,7 +5,7 @@ from src.main.container import DIContainer
 
 blueprint = Blueprint('causas_routes', __name__)
 
-@blueprint.route("/", methods=["POST"])
+@blueprint.route("/", methods=["GET"])
 @inject
 def load_causas(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
   
