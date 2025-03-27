@@ -11,6 +11,6 @@ class DIContainer(containers.DeclarativeContainer):
   client = providers.Singleton(Client, credentials=credentials)
   connection = providers.Singleton(cx_Oracle.connect, config.connection_string)
   bigquery_to_oracle = providers.Factory(BigQueryToOracle, bq_client=client, oracle_client=connection)
-  api_key_validator = providers.Factory(APIKeyValidator, hashed_api_key=config.hashed_api_key)
+  #api_key_validator = providers.Factory(APIKeyValidator, hashed_api_key=config.hashed_api_key)
 
 

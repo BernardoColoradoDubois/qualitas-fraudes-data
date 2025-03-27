@@ -20,13 +20,13 @@ oracle_port = os.getenv("APPLICATION_ORACLE_PORT")
 oracle_service = os.getenv("APPLICATION_ORACLE_SERVICE")
 
 # Acceder a las variables de entorno
-hashed_api_key = os.getenv("FLASK_HASHED_API_KEY")
+#hashed_api_key = os.getenv("FLASK_HASHED_API_KEY")
 
 # Inicializar el contenedor
 container = DIContainer()    
 container.config.key_file_path.override(key_file_path)
 container.config.connection_string.override(f'{oracle_user}/{oracle_password}@{oracle_host}:{oracle_port}/{oracle_service}')
-container.config.hashed_api_key.override(hashed_api_key)
+#container.config.hashed_api_key.override(hashed_api_key)
 
 # Wire ANTES de crear la app
 container.wire(modules=[causas_routes, proveedores_routes, oficinas_routes])
