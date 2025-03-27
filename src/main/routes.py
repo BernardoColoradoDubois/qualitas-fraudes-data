@@ -17,9 +17,9 @@ def root():
 def test(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validator]):
 
   token = request.headers.get('Authorization')
-  hash = api_key_validator.hashed_api_key
+  
   
   return {
     "token": token,
-    "hashed_api_key": hash,
+    "hashed_api_key": 'hash',
   }
