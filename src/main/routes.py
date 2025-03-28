@@ -13,5 +13,5 @@ def root(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validat
     return jsonify({'message':'Forbidden'}), 403, {'ContentType':'application/json'}
 
   return {
-    "msg": 'welcome',
+    "msg": 'welcome'
   }
