@@ -6,18 +6,12 @@ from src.lib.password_encrypt import APIKeyValidator
 blueprint = Blueprint('main_routes', __name__)
 
 @blueprint.route("/", methods=["GET"])
-def root():
-  return {
-    "message": "It works!"
-  }
-
-
-@blueprint.route("/test", methods=["GET"])
 @inject
-def test(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validator]):
+def root(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validator]):
   
-  validation = api_key_validator.validate(request.headers.get('Authorization').replace('Bearer ', ''))
-  
+  if api_key_validator.validate(request.headers.get('Authorization').replace('Bearer ', '')) == False:
+    return jsonify({'message':'Forbidden'}), 403, {'ContentType':'application/json'}
+
   return {
-    "validation": validation,
+    "msg": 'welcome',
   }
