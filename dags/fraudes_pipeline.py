@@ -167,6 +167,7 @@ dm_analistas = PythonOperator(
   dag=dag 
 )
 
+# dm_registro
 dm_registro = PythonOperator( 
   task_id='dm_registro', 
   python_callable=execute_query_workflow, 
