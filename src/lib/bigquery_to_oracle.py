@@ -1,4 +1,4 @@
-
+import pandas as pd
 
 class BigQueryToOracle:
   def __init__(self, bq_client, oracle_client):
@@ -10,6 +10,7 @@ class BigQueryToOracle:
     query_job = self.bq_client.query(extraction_query)
     result = query_job.result()
     df = result.to_dataframe()    
+    df = df.replace({pd.NA: None, float('nan'): None})
     dt = [tuple(x) for x in df.values]
     
     cursor = self.oracle_client.cursor()
