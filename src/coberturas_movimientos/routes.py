@@ -4,7 +4,7 @@ from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.lib.password_encrypt import APIKeyValidator
 from src.main.container import DIContainer
 
-blueprint = Blueprint('coberturas_movimientos', __name__)
+blueprint = Blueprint('coberturas_movimientos_routes', __name__)
 
 @blueprint.route("/", methods=["POST"])
 @inject
