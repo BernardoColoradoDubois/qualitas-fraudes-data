@@ -81,7 +81,7 @@
   },
   {
     "name": "IMPORTE",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -96,7 +96,7 @@
   },
   {
     "name": "IRVAINICIAL",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -106,7 +106,7 @@
   },
   {
     "name": "IAJMAS",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -116,7 +116,7 @@
   },
   {
     "name": "IAJMENOS",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -126,7 +126,7 @@
   },
   {
     "name": "IPAGOS",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -136,7 +136,7 @@
   },
   {
     "name": "IGASTO",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -146,7 +146,7 @@
   },
   {
     "name": "IDED",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -156,7 +156,7 @@
   },
   {
     "name": "IREC",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -166,7 +166,7 @@
   },
   {
     "name": "ISALV",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -196,7 +196,7 @@
   },
   {
     "name": "TIPO_CAMBIO",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -226,57 +226,57 @@
   },
   {
     "name": "MONTO_INDEM_RECUP",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "MONTO_INDEM_RECUP_DM",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "IMPORTEMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "IRVAINICIALMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "IAJMASMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "IAJMENOSMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "IPAGOSMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "IGASTOMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "IDEDMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "IRECMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
     "name": "ISALVMN",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
@@ -301,7 +301,7 @@
   },
   {
     "name": "COAS",
-    "type": "FLOAT",
+    "type": "NUMERIC",
     "mode": "NULLABLE"
   },
   {
