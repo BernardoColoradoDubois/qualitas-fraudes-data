@@ -15,7 +15,7 @@ def load_registro(api_key_validator:APIKeyValidator = Provide[DIContainer.api_ke
     return jsonify({'message':'Forbidden'}), 403, {'ContentType':'application/json'}
 
   response = bigquery_to_oracle.run(
-    extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_REGISTRO` ORDER BY ID LIMIT 10000;", 
+    extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_REGISTRO` ORDER BY ID_SINIESTRO;", 
     preload_query="TRUNCATE TABLE INSUMOS.DM_REGISTRO",
     schema="INSUMOS",
     table="DM_REGISTRO"
