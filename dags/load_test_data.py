@@ -128,6 +128,8 @@ load_analistas = PythonOperator(
   dag=dag
 )
 
+
+
 load_cat_causa = PythonOperator(
   task_id='load_cat_causa',
   python_callable=upload_storage_csv_to_bigquery,
@@ -193,6 +195,19 @@ load_etiqueta_siniestro = PythonOperator(
   dag=dag
 )
 
+load_registro = PythonOperator(
+  task_id='load_registro',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/REGISTRO.csv',
+    'dataset': 'sample_landing_siniestros',
+    'table': 'registro',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros.registro.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
 load_sas_sinies = PythonOperator(
   task_id='load_sas_sinies',
   python_callable=upload_storage_csv_to_bigquery,
@@ -243,6 +258,7 @@ init_load_siniestros_bsc >> load_prestadores >> end_load_siniestros_bsc
 init_load_siniestros_bsc >> load_reservas_bsc >> end_load_siniestros_bsc
 init_load_siniestros_bsc >> load_tsuc_bsc >> end_load_siniestros_bsc
 init_load_siniestros >> load_analistas >> end_load_siniestros
+init_load_siniestros >> load_registro >> end_load_siniestros
 init_load_siniestros >> load_cat_causa >> end_load_siniestros
 init_load_siniestros >> load_causa_cobertura >> end_load_siniestros
 init_load_siniestros >> load_cobranza_hist >> end_load_siniestros
