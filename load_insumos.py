@@ -95,7 +95,27 @@ def load_dm_coberturas_movimientos(bigquery_to_oracle=Provide[DIContainer.bigque
     )   
     print(response)
 
+@inject
+def load_dm_analistas(bigquery_to_oracle=Provide[DIContainer.bigquery_to_oracle]) -> None:
 
+    response = bigquery_to_oracle.run(
+        extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_ANALISTAS` ORDER BY ID;", 
+        preload_query="TRUNCATE TABLE INSUMOS.DM_ANALISTAS",
+        schema="INSUMOS",
+        table="DM_ANALISTAS"
+    )   
+    print(response)
+
+@inject
+def load_dm_registro(bigquery_to_oracle=Provide[DIContainer.bigquery_to_oracle]) -> None:
+
+    response = bigquery_to_oracle.run(
+        extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_REGISTRO` ORDER BY ID LIMIT 10000;", 
+        preload_query="TRUNCATE TABLE INSUMOS.DM_REGISTRO",
+        schema="INSUMOS",
+        table="DM_REGISTRO" 
+    )   
+    print(response)
 # Cargamos las variables de entorno
 load_dotenv()
 
@@ -124,3 +144,5 @@ container.wire(modules=[__name__])
 #load_dm_siniestros()
 #load_dm_pagos_proveedores()
 load_dm_coberturas_movimientos()
+load_dm_analistas()
+load_dm_registro()
