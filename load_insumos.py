@@ -116,6 +116,8 @@ def load_dm_registro(bigquery_to_oracle=Provide[DIContainer.bigquery_to_oracle])
         table="DM_REGISTRO" 
     )   
     print(response)
+    
+    
 # Cargamos las variables de entorno
 load_dotenv()
 
