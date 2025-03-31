@@ -57,6 +57,7 @@ sudo systemctl restart nginx
 sudo groupadd appusers
 sudo usermod -a -G appusers bernardo_colorado
 sudo usermod -a -G appusers ubuntu
+sudo usermod -a -G appusers gustavo_borges
 
 sudo rm -r /opt/keys
 sudo rm -r /opt/qualitas-fraudes-data
@@ -86,3 +87,12 @@ sudo nano /etc/systemd/system/miapp.service
 # agregar el archivo de configuración del servicio
 
 
+sudo rm /etc/nginx/sites-enabled/default
+
+sudo ln -s /etc/nginx/sites-available/miapp /etc/nginx/sites-enabled/
+
+sudo nginx -t
+
+sudo systemctl restart nginx
+
+sudo visudo -f /etc/sudoers.d/appusers
