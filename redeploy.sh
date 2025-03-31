@@ -7,7 +7,7 @@ git pull origin master
 
 # Actualizar dependencias
 source /opt/qualitas-fraudes-data/venv/bin/activate
-pip install -r /opt/qualitas-fraudes-data/requirements.txt
+pip install -r /opt/qualitas-fraudes-data/flask-requirements.txt
 deactivate
 
 # Reiniciar servicio
