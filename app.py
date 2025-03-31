@@ -11,6 +11,7 @@ import src.pagos_proveedores.routes as pagos_proveedores_routes
 import src.coberturas_movimientos.routes as coberturas_movimientos_routes
 import src.analistas.routes as analistas_routes
 import src.registro.routes as registro_routes
+import src.polizas_vigentes.routes as polizas_vigentes_routes
 
 # Cargar variables de entorno siempre
 load_dotenv()
@@ -33,7 +34,17 @@ container.config.connection_string.override(f'{oracle_user}/{oracle_password}@{o
 container.config.hashed_api_key.override(hashed_api_key)
 
 # Wire ANTES de crear la app
-container.wire(modules=[registro_routes, analistas_routes, causas_routes, proveedores_routes, oficinas_routes, pagos_proveedores_routes, coberturas_movimientos_routes, main_routes])
+container.wire(modules=[
+  registro_routes, 
+  analistas_routes, 
+  causas_routes, 
+  proveedores_routes, 
+  oficinas_routes, 
+  pagos_proveedores_routes, 
+  coberturas_movimientos_routes, 
+  main_routes,
+  polizas_vigentes_routes
+])
 
 # Crear la aplicación
 app = Flask(__name__)
@@ -44,6 +55,7 @@ app.register_blueprint(analistas_routes.blueprint, url_prefix='/analistas')
 app.register_blueprint(registro_routes.blueprint, url_prefix='/registro')
 app.register_blueprint(pagos_proveedores_routes.blueprint, url_prefix='/pagos-proveedores')
 app.register_blueprint(coberturas_movimientos_routes.blueprint, url_prefix='/coberturas-movimientos')
+app.register_blueprint(polizas_vigentes_routes.blueprint, url_prefix='/polizas-vigentes')
 app.register_blueprint(main_routes.blueprint, url_prefix='/')
 
 # Solo ejecutar el servidor si se llama directamente
