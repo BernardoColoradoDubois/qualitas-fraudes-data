@@ -58,9 +58,11 @@ sudo groupadd appusers
 sudo usermod -a -G appusers bernardo_colorado
 sudo usermod -a -G appusers ubuntu
 
+sudo rm -r /opt/keys
+sudo rm -r /opt/qualitas-fraudes-data
 sudo git clone https://github.com/BernardoColoradoDubois/qualitas-fraudes-data /opt/qualitas-fraudes-data
 
-nano /opt/qualitas-fraudes-data/.env
+sudo nano /opt/qualitas-fraudes-data/.env
 # agregar las variables de entorno
 sudo mkdir -p /opt/keys
 # agregar las credenciales json de google cloud
@@ -75,7 +77,7 @@ sudo chmod g+s /opt/qualitas-fraudes-data
 sudo chmod g+s /opt/keys
 
 source /opt/qualitas-fraudes-data/venv/bin/activate
-pip install -r /opt/qualitas-fraudes-data/requirements.txt
+pip install -r /opt/qualitas-fraudes-data/flask-requirements.txt
 
 sudo nano /etc/nginx/sites-available/miapp
 # agregar la configuración del servidor
