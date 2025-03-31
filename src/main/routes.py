@@ -15,3 +15,11 @@ def root(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validat
   return {
     "msg": 'welcome'
   }
+
+@blueprint.route("/test", methods=["GET"])
+@inject
+def test():
+  
+  return {
+    "msg": 'OK'
+  }
