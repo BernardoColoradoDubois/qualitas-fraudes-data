@@ -4,6 +4,7 @@ from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.lib.password_encrypt import APIKeyValidator
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
+from src.causas.application_service import LoadCausas
 
 blueprint = Blueprint('causas_routes', __name__)
 

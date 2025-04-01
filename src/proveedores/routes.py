@@ -3,6 +3,7 @@ from dependency_injector.wiring import inject, Provide
 from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
+from src.proveedores.application_service import LoadProveedores
 
 blueprint = Blueprint('proveedores_routes', __name__)
 

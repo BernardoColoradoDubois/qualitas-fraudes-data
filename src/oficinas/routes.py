@@ -3,6 +3,7 @@ from dependency_injector.wiring import inject, Provide
 from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
+from src.oficinas.application_service import LoadOficinas
 
 blueprint = Blueprint('ofcinas_routes', __name__)
 
