@@ -13,6 +13,7 @@ import src.analistas.routes as analistas_routes
 import src.registro.routes as registro_routes
 import src.polizas_vigentes.routes as polizas_vigentes_routes
 import src.siniestros.routes as siniestros_routes
+import src.etiqueta_siniestro.routes as etiqueta_siniestro_routes
 
 # Cargar variables de entorno siempre
 load_dotenv()
@@ -45,7 +46,8 @@ container.wire(modules=[
   coberturas_movimientos_routes, 
   main_routes,
   polizas_vigentes_routes,
-  siniestros_routes
+  siniestros_routes,
+  etiqueta_siniestro_routes
 ])
 
 # Crear la aplicación
@@ -59,6 +61,7 @@ app.register_blueprint(pagos_proveedores_routes.blueprint, url_prefix='/pagos-pr
 app.register_blueprint(coberturas_movimientos_routes.blueprint, url_prefix='/coberturas-movimientos')
 app.register_blueprint(polizas_vigentes_routes.blueprint, url_prefix='/polizas-vigentes')
 app.register_blueprint(siniestros_routes.blueprint, url_prefix='/siniestros')
+app.register_blueprint(siniestros_routes.blueprint, url_prefix='/etiqueta-siniestro')
 app.register_blueprint(main_routes.blueprint, url_prefix='/')
 
 # Solo ejecutar el servidor si se llama directamente
