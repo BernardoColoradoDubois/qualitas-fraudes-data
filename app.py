@@ -16,6 +16,9 @@ import src.siniestros.routes as siniestros_routes
 import src.etiqueta_siniestro.routes as etiqueta_siniestro_routes
 import src.pagos_polizas.routes as pagos_polizas_routes
 
+# Importar middleware
+import src.lib.middleware as middleware
+
 # Cargar variables de entorno siempre
 load_dotenv()
 
@@ -50,6 +53,7 @@ container.wire(modules=[
   ,polizas_vigentes_routes
   ,registro_routes
   ,siniestros_routes
+  ,middleware
 ])
 
 # Crear la aplicación

@@ -3,10 +3,13 @@ from dependency_injector.wiring import inject, Provide
 from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.lib.password_encrypt import APIKeyValidator
 from src.main.container import DIContainer
+from src.lib.middleware import token_required
+
 
 blueprint = Blueprint('causas_routes', __name__)
 
 @blueprint.route("/", methods=["POST"])
+@token_required
 @inject
 def load_causas(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validator],bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
   
