@@ -11,7 +11,7 @@ blueprint = Blueprint('coberturas_movimientos_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_coberturas_movimientos(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_coberturas_movimientos_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
 
   response = bigquery_to_oracle.run(
     extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_COBERTURAS_MOVIMIENTOS` ORDER BY ID LIMIT 10000;", 

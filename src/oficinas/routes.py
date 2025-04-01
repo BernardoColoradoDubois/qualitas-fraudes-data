@@ -10,7 +10,7 @@ blueprint = Blueprint('ofcinas_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_oficinas(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_oficinas_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
 
   response = bigquery_to_oracle.run(
     extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_OFICINAS` ORDER BY ID", 

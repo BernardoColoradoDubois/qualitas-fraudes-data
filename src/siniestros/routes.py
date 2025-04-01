@@ -10,7 +10,7 @@ blueprint = Blueprint('siniestros_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_siniestros(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_siniestros_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
 
   response = bigquery_to_oracle.run(
     extraction_query="SELECT * FROM `DM_FRAUDES.DM_SINIESTROS` WHERE CAST(FECHA_REGISTRO AS DATE) > '2025-01-01' LIMIT 10000;", 
