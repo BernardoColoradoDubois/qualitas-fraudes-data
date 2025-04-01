@@ -8,6 +8,5 @@ print(hashed_password)
 
 #'$2b$10$wp/lTBl5teP3hgdQ8MU7sOWMJfu31gQxR2jFOV0cH.spYlOnqJXAO'
 
-
 print(password_compare(password+"lorem", hashed_password))
 
