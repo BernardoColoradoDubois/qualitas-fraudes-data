@@ -5,7 +5,6 @@ from src.lib.middleware import token_required
 
 blueprint = Blueprint('main_routes', __name__)
 
-
 @blueprint.route("/", methods=["GET"])
 @inject
 def root():

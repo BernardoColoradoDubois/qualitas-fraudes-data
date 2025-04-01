@@ -6,7 +6,6 @@ from src.lib.middleware import token_required
 
 blueprint = Blueprint('siniestros_routes', __name__)
 
-# DM_REGISTRO
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject

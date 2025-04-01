@@ -5,7 +5,6 @@ from src.lib.password_encrypt import APIKeyValidator
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
 
-
 blueprint = Blueprint('coberturas_movimientos_routes', __name__)
 
 @blueprint.route("/", methods=["POST"])

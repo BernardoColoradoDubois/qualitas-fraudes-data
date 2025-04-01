@@ -4,7 +4,6 @@ from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
 
-
 blueprint = Blueprint('pagos_polizas_routes', __name__)
 
 @blueprint.route("/", methods=["POST"])
