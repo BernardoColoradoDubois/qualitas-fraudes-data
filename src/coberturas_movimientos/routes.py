@@ -11,13 +11,8 @@ blueprint = Blueprint('coberturas_movimientos_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_coberturas_movimientos_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_coberturas_movimientos_route(load_coberturas_movimientos: LoadCoberturasMovimientos = Provide[DIContainer.load_coberturas_movimientos]):
 
-  response = bigquery_to_oracle.run(
-    extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_COBERTURAS_MOVIMIENTOS` ORDER BY ID LIMIT 10000;", 
-    preload_query="TRUNCATE TABLE INSUMOS.DM_COBERTURAS_MOVIMIENTOS",
-    schema="INSUMOS",
-    table="DM_COBERTURAS_MOVIMIENTOS"
-  )    
+  response = load_coberturas_movimientos.invoque()    
   
   return jsonify(response), 201, {'ContentType':'application/json'}

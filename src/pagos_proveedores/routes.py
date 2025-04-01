@@ -10,13 +10,8 @@ blueprint = Blueprint('pagos_proveedores_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_pagos_proveedores_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_pagos_proveedores_route(load_pagos_proveedores: LoadPagosProveedores = Provide[DIContainer.load_pagos_proveedores]):
 
-  response = bigquery_to_oracle.run(
-    extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_PAGOS_PROVEEDORES` ORDER BY ID LIMIT 10000;", 
-    preload_query="TRUNCATE TABLE INSUMOS.DM_PAGOS_PROVEEDORES",
-    schema="INSUMOS",
-    table="DM_PAGOS_PROVEEDORES"
-  )    
+  response = load_pagos_proveedores.invoque()  
   
   return jsonify(response), 201, {'ContentType':'application/json'}

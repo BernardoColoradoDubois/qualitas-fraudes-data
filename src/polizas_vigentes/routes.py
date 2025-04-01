@@ -10,13 +10,8 @@ blueprint = Blueprint('polizas_vigentes_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_polizas_vigentes_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_polizas_vigentes_route(load_polizas_vigentes: LoadPolizasVigentes = Provide[DIContainer.load_polizas_vigentes]):
     
-  response = bigquery_to_oracle.run(
-    extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_POLIZAS_VIGENTES` ORDER BY ID", 
-    preload_query="TRUNCATE TABLE INSUMOS.DM_POLIZAS_VIGENTES",
-    schema="INSUMOS",
-    table="DM_POLIZAS_VIGENTES"
-  )  
+  response = load_polizas_vigentes.invoque()
   
   return jsonify(response), 201, {'ContentType':'application/json'}

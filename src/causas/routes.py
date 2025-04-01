@@ -11,13 +11,8 @@ blueprint = Blueprint('causas_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_causas_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_causas_route(load_causas: LoadCausas = Provide[DIContainer.load_causas]):
     
-  response = bigquery_to_oracle.run(
-    extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS` ORDER BY ID", 
-    preload_query="TRUNCATE TABLE INSUMOS.DM_CAUSAS",
-    schema="INSUMOS",
-    table="DM_CAUSAS"
-  )  
+  response = load_causas.invoque()  
   
   return jsonify(response), 201, {'ContentType':'application/json'}

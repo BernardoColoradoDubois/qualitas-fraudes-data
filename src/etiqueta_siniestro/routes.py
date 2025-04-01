@@ -10,13 +10,8 @@ blueprint = Blueprint('etiqueta_siniestro_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_etiqueta_siniestro_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_etiqueta_siniestro_route(load_etiqueta_siniestro: LoadEtiquetaSiniestro = Provide[DIContainer.load_etiqueta_siniestro]):
 
-  response = bigquery_to_oracle.run(
-    extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_ETIQUETA_SINIESTRO` ORDER BY ID", 
-    preload_query="TRUNCATE TABLE INSUMOS.DM_ETIQUETA_SINIESTRO",
-    schema="INSUMOS",
-    table="DM_ETIQUETA_SINIESTRO"
-  ) 
+  response = load_etiqueta_siniestro.invoque()
      
   return jsonify(response), 201, {'ContentType':'application/json'}

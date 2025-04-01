@@ -10,13 +10,8 @@ blueprint = Blueprint('registro_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_registro_route(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+def load_registro_route(load_registro: LoadRegistro = Provide[DIContainer.load_registro]):
 
-  response = bigquery_to_oracle.run(
-    extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_REGISTRO` ORDER BY ID_SINIESTRO;", 
-    preload_query="TRUNCATE TABLE INSUMOS.DM_REGISTRO",
-    schema="INSUMOS",
-    table="DM_REGISTRO"
-  )    
+  response = load_registro.invoque()    
   
   return jsonify(response), 201, {'ContentType':'application/json'}

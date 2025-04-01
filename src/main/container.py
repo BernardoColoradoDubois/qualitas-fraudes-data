@@ -7,6 +7,7 @@ from src.lib.password_encrypt import APIKeyValidator
 
 from src.analistas.application_service import LoadAnalistas
 from src.causas.application_service import LoadCausas
+from src.coberturas_movimientos.application_service import LoadCoberturasMovimientos
 from src.etiqueta_siniestro.application_service import LoadEtiquetaSiniestro
 from src.oficinas.application_service import LoadOficinas
 from src.pagos_polizas.application_service import LoadPagosPolizas
@@ -33,6 +34,7 @@ class DIContainer(containers.DeclarativeContainer):
   # servicios de aplicacion
   load_analistas = providers.Factory(LoadAnalistas, bigquery_to_oracle=bigquery_to_oracle)
   load_causas = providers.Factory(LoadCausas, bigquery_to_oracle=bigquery_to_oracle)
+  load_coberturas_movimientos = providers.Factory(LoadCoberturasMovimientos, bigquery_to_oracle=bigquery_to_oracle)
   load_etiqueta_siniestro = providers.Factory(LoadEtiquetaSiniestro, bigquery_to_oracle=bigquery_to_oracle)
   load_oficinas = providers.Factory(LoadOficinas, bigquery_to_oracle=bigquery_to_oracle)
   load_pagos_polizas = providers.Factory(LoadPagosPolizas, bigquery_to_oracle=bigquery_to_oracle)
