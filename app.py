@@ -38,18 +38,18 @@ container.config.hashed_api_key.override(hashed_api_key)
 
 # Wire ANTES de crear la app
 container.wire(modules=[
-  registro_routes
+  main_routes
   ,analistas_routes
   ,causas_routes
-  ,proveedores_routes
-  ,oficinas_routes
-  ,pagos_proveedores_routes
   ,coberturas_movimientos_routes
-  ,main_routes
-  ,polizas_vigentes_routes
-  ,siniestros_routes
   ,etiqueta_siniestro_routes
+  ,oficinas_routes
+  ,proveedores_routes
   ,pagos_polizas_routes
+  ,pagos_proveedores_routes
+  ,polizas_vigentes_routes
+  ,registro_routes
+  ,siniestros_routes
 ])
 
 # Crear la aplicación
