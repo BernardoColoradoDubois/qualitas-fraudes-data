@@ -10,6 +10,8 @@ blueprint = Blueprint('main_routes', __name__)
 @inject
 def root():
   
-  return {
+  response = {
     "msg": 'OK'
   }
+  
+  return jsonify(response), 200, {'ContentType':'application/json'}

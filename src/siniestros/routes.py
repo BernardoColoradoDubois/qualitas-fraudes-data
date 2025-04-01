@@ -20,4 +20,5 @@ def load_siniestros(api_key_validator:APIKeyValidator = Provide[DIContainer.api_
     schema="INSUMOS",
     table="DM_SINIESTROS"
   )   
-  return response
+
+  return jsonify(response), 200, {'ContentType':'application/json'}

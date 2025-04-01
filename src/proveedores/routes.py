@@ -20,4 +20,4 @@ def load_proveedores(api_key_validator:APIKeyValidator = Provide[DIContainer.api
     table="DM_PROVEEDORES"
   )   
   
-  return response
+  return jsonify(response), 200, {'ContentType':'application/json'}
