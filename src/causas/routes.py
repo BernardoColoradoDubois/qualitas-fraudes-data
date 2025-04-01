@@ -11,11 +11,8 @@ blueprint = Blueprint('causas_routes', __name__)
 @blueprint.route("/", methods=["POST"])
 @token_required
 @inject
-def load_causas(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validator],bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
-  
-  if api_key_validator.validate(request.headers.get('Authorization').replace('Bearer ', '')) == False:
-    return jsonify({'message':'Forbidden'}), 403, {'ContentType':'application/json'}
-  
+def load_causas(bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
+    
   response = bigquery_to_oracle.run(
     extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_CAUSAS` ORDER BY ID", 
     preload_query="TRUNCATE TABLE INSUMOS.DM_CAUSAS",
