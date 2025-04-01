@@ -20,4 +20,4 @@ def load_oficinas(api_key_validator:APIKeyValidator = Provide[DIContainer.api_ke
     table="DM_OFICINAS"
   )    
   
-  return jsonify(response), 200, {'ContentType':'application/json'}
+  return jsonify(response), 201, {'ContentType':'application/json'}

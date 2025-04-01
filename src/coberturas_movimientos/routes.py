@@ -20,4 +20,4 @@ def load_coberturas_movimientos(api_key_validator:APIKeyValidator = Provide[DICo
     table="DM_COBERTURAS_MOVIMIENTOS"
   )    
   
-  return jsonify(response), 200, {'ContentType':'application/json'}
+  return jsonify(response), 201, {'ContentType':'application/json'}

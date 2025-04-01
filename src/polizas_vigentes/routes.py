@@ -20,4 +20,4 @@ def load_polizas_vigentes(api_key_validator:APIKeyValidator = Provide[DIContaine
     table="DM_POLIZAS_VIGENTES"
   )  
   
-  return jsonify(response), 200, {'ContentType':'application/json'}
+  return jsonify(response), 201, {'ContentType':'application/json'}

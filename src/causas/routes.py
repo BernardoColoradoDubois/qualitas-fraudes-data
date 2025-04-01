@@ -20,4 +20,4 @@ def load_causas(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_
     table="DM_CAUSAS"
   )  
   
-  return jsonify(response), 200, {'ContentType':'application/json'}
+  return jsonify(response), 201, {'ContentType':'application/json'}

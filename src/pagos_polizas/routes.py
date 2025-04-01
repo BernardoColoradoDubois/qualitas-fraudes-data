@@ -20,4 +20,4 @@ def load_pagos_polizas(api_key_validator:APIKeyValidator = Provide[DIContainer.a
     table="DM_PAGOS_POLIZAS"
   )   
   
-  return jsonify(response), 200, {'ContentType':'application/json'}
+  return jsonify(response), 201, {'ContentType':'application/json'}
