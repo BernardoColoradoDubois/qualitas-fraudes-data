@@ -3,3 +3,4 @@ venv
 __pycache__/
 logs/
 redeploy.sh
+delete_python_cache.sh
