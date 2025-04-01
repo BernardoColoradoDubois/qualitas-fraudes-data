@@ -14,6 +14,7 @@ import src.registro.routes as registro_routes
 import src.polizas_vigentes.routes as polizas_vigentes_routes
 import src.siniestros.routes as siniestros_routes
 import src.etiqueta_siniestro.routes as etiqueta_siniestro_routes
+import src.pagos_polizas.routes as pagos_polizas_routes
 
 # Cargar variables de entorno siempre
 load_dotenv()
@@ -48,6 +49,7 @@ container.wire(modules=[
   ,polizas_vigentes_routes
   ,siniestros_routes
   ,etiqueta_siniestro_routes
+  ,pagos_polizas_routes
 ])
 
 # Crear la aplicación
@@ -58,6 +60,7 @@ app.register_blueprint(causas_routes.blueprint, url_prefix='/causas')
 app.register_blueprint(coberturas_movimientos_routes.blueprint, url_prefix='/coberturas-movimientos')
 app.register_blueprint(siniestros_routes.blueprint, url_prefix='/etiqueta-siniestro')
 app.register_blueprint(oficinas_routes.blueprint, url_prefix='/oficinas')
+app.register_blueprint(pagos_polizas_routes.blueprint, url_prefix='/pagos-polizas')
 app.register_blueprint(pagos_proveedores_routes.blueprint, url_prefix='/pagos-proveedores')
 app.register_blueprint(polizas_vigentes_routes.blueprint, url_prefix='/polizas-vigentes')
 app.register_blueprint(proveedores_routes.blueprint, url_prefix='/proveedores')
