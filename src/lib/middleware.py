@@ -16,10 +16,9 @@ def token_required(f):
    
    token = auth_header.replace('Bearer ', '')
    
-   if api_key_validator.validate(token) == False:
+   if not api_key_validator.validate(token):
       return jsonify({'message':'Token is invalid'}), 401, {'ContentType':'application/json'}
    
-   # Esta línea faltaba - retornar la función original cuando el token es válido
    return f(*args, **kwargs)
    
   return decorated
