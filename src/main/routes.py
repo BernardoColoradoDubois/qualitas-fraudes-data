@@ -15,14 +15,3 @@ def root():
   }
   
   return jsonify(response), 200, {'ContentType':'application/json'}
-
-
-@blueprint.route("/protected", methods=["GET"])
-@token_required
-def protected():
-  
-  response = {
-    "msg": 'allowed'
-  }
-  
-  return jsonify(response), 200, {'ContentType':'application/json'}
