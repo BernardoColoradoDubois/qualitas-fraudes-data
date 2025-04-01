@@ -6,7 +6,6 @@ from src.main.container import DIContainer
 
 blueprint = Blueprint('registro_routes', __name__)
 
-# DM_REGISTRO
 @blueprint.route("/", methods=["POST"])
 @inject
 def load_registro(api_key_validator:APIKeyValidator = Provide[DIContainer.api_key_validator],bigquery_to_oracle: BigQueryToOracle = Provide[DIContainer.bigquery_to_oracle]):
