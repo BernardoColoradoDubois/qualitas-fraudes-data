@@ -14,7 +14,13 @@ blueprint = Blueprint('coberturas_movimientos_routes', __name__)
 @inject
 def load_coberturas_movimientos_route(load_coberturas_movimientos: LoadCoberturasMovimientos = Provide[DIContainer.load_coberturas_movimientos]):
 
+  payload=request.get_json(force=True)
 
-  response = load_coberturas_movimientos.invoque()    
+  dto = CobeberturasMovimientosDateRange(
+    init_date=payload["init-date"],
+    final_date=payload["final-date"]
+  )
+
+  response = load_coberturas_movimientos.invoque(dto=dto)    
   
   return jsonify(response), 201, {'ContentType':'application/json'}
