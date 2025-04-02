@@ -13,6 +13,13 @@ blueprint = Blueprint('pagos_polizas_routes', __name__)
 @inject
 def load_pagos_polizas_route(load_pagos_polizas: LoadPagosPolizas = Provide[DIContainer.load_pagos_polizas]):
    
-  response = load_pagos_polizas.invoque()
+  payload=request.get_json(force=True)
+
+  dto = PagosPolizasDateRange(
+      init_date=payload["init-date"],
+      final_date=payload["final-date"]
+    )
+
+  response = load_pagos_polizas.invoque(dto=dto)
   
   return jsonify(response), 201, {'ContentType':'application/json'}

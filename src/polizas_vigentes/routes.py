@@ -12,7 +12,14 @@ blueprint = Blueprint('polizas_vigentes_routes', __name__)
 @token_required
 @inject
 def load_polizas_vigentes_route(load_polizas_vigentes: LoadPolizasVigentes = Provide[DIContainer.load_polizas_vigentes]):
-    
-  response = load_polizas_vigentes.invoque()
+  
+  payload=request.get_json(force=True)
+
+  dto = PolizasVigentesDateRange(
+      init_date=payload["init-date"],
+      final_date=payload["final-date"]
+    )
+  
+  response = load_polizas_vigentes.invoque(dto=dto)
   
   return jsonify(response), 201, {'ContentType':'application/json'}

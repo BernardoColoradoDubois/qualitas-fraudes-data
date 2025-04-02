@@ -12,7 +12,14 @@ blueprint = Blueprint('registro_routes', __name__)
 @token_required
 @inject
 def load_registro_route(load_registro: LoadRegistro = Provide[DIContainer.load_registro]):
+  
+  payload=request.get_json(force=True)
 
-  response = load_registro.invoque()    
+  dto = RegistroDateRange(
+      init_date=payload["init-date"],
+      final_date=payload["final-date"]
+    )
+  
+  response = load_registro.invoque(dto=dto)    
   
   return jsonify(response), 201, {'ContentType':'application/json'}

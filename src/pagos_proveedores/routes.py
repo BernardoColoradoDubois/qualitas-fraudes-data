@@ -12,7 +12,13 @@ blueprint = Blueprint('pagos_proveedores_routes', __name__)
 @token_required
 @inject
 def load_pagos_proveedores_route(load_pagos_proveedores: LoadPagosProveedores = Provide[DIContainer.load_pagos_proveedores]):
+  
+  payload=request.get_json(force=True)
 
-  response = load_pagos_proveedores.invoque()  
+  dto = PagosProveedoresDateRange(
+      init_date=payload["init-date"],
+      final_date=payload["final-date"]
+    )
+  response = load_pagos_proveedores.invoque(dto=dto)  
   
   return jsonify(response), 201, {'ContentType':'application/json'}

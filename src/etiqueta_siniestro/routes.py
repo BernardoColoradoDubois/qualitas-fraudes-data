@@ -13,6 +13,13 @@ blueprint = Blueprint('etiqueta_siniestro_routes', __name__)
 @inject
 def load_etiqueta_siniestro_route(load_etiqueta_siniestro: LoadEtiquetaSiniestro = Provide[DIContainer.load_etiqueta_siniestro]):
 
-  response = load_etiqueta_siniestro.invoque()
+  payload=request.get_json(force=True)
+
+  dto = EtiquetaSiniestroDateRange(
+      init_date=payload["init-date"],
+      final_date=payload["final-date"]
+    )
+
+  response = load_etiqueta_siniestro.invoque(dto=dto)
      
   return jsonify(response), 201, {'ContentType':'application/json'}
