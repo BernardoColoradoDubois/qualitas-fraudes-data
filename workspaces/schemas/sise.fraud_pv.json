@@ -998,5 +998,10 @@
     "name": "CONSEC",
     "type": "INTEGER",
     "mode": "NULLABLE"
+  },
+  {
+    "name": "CONSEC",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
   }
 ]

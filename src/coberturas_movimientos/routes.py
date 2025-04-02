@@ -14,6 +14,7 @@ blueprint = Blueprint('coberturas_movimientos_routes', __name__)
 @inject
 def load_coberturas_movimientos_route(load_coberturas_movimientos: LoadCoberturasMovimientos = Provide[DIContainer.load_coberturas_movimientos]):
 
+
   response = load_coberturas_movimientos.invoque()    
   
   return jsonify(response), 201, {'ContentType':'application/json'}
