@@ -4,6 +4,7 @@ from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
 from src.polizas_vigentes.application_service import LoadPolizasVigentes
+from src.polizas_vigentes.dto import PolizasVigentesDateRange
 
 blueprint = Blueprint('polizas_vigentes_routes', __name__)
 

@@ -247,6 +247,19 @@ load_fraud_rp = PythonOperator(
   dag=dag
 )
 
+load_fraud_di = PythonOperator(
+  task_id='load_fraud_di',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/FRAUD_DI.csv',
+    'dataset': 'sample_landing_sise',
+    'table': 'fraud_di',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/sise.fraud_di.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
 init >> init_load_siniestros_bsc
 init >> init_load_siniestros
 init >> init_load_sise
@@ -267,6 +280,7 @@ init_load_siniestros >> load_etiqueta_siniestro >> end_load_siniestros
 init_load_siniestros >> load_sas_sinies >> end_load_siniestros
 init_load_sise >> load_fraud_pv >> end_load_sise
 init_load_sise >> load_fraud_rp >> end_load_sise
+init_load_sise >> load_fraud_di >> end_load_sise
 
 end_load_siniestros_bsc >> end
 end_load_siniestros >> end

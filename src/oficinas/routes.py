@@ -5,6 +5,7 @@ from src.main.container import DIContainer
 from src.lib.middleware import token_required
 from src.oficinas.application_service import LoadOficinas
 
+
 blueprint = Blueprint('ofcinas_routes', __name__)
 
 @blueprint.route("/", methods=["POST"])

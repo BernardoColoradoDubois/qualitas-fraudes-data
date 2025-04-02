@@ -4,6 +4,7 @@ from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
 from src.registro.application_service import LoadRegistro
+from src.registro.dto import RegistroDateRange
 
 blueprint = Blueprint('registro_routes', __name__)
 

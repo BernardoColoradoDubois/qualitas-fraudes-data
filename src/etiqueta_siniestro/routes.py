@@ -4,6 +4,7 @@ from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
 from src.etiqueta_siniestro.application_service import LoadEtiquetaSiniestro
+from src.etiqueta_siniestro.dto import EtiquetaSiniestroDateRange
 
 blueprint = Blueprint('etiqueta_siniestro_routes', __name__)
 

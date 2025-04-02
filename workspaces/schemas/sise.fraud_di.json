@@ -1,0 +1,1042 @@
+[
+  {
+    "name": "DI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_COMP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_CORTA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AMIS",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "SUBRAMO",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "MODELO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ORIGEN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CARROCERIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERVICIO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "OCUPANTES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TONELADAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CARGA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TRAILES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "URBANO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PLACAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MOTOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERIE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COLOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TRANSMISION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CILINDROS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PUERTAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ANEXOS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ESTATUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_COBER",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CATEGORIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TARIF_AUT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VALOR_0KM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_RC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_GM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_EE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_EE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_ADAP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_ADAP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_PASAJEROS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_TOTAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_DM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_GM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_EE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_ADAP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RT_ADAP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CALC_PRORRATA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_DM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_RT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_RC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_EE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_DM_ADAP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_RT_ADAP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REC_RC_TRAILER",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REC_RC_X_DANO_CARGA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DM_X_USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_RT_X_USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_RC_X_USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_GM_X_USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NOMBRE_CONDUCTOR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_ACC_OCUP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_EXT_RC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_GL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RCP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_EXT_RC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_ACC_OCUP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_GT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_GL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_SPT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_EXE_DED",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PAQUETE_GL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_RP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_RP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_RP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_AJUSTE_INFL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_AV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TASA_AV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_EXT_TERRITORIAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RC_ECOLOGICA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_RC_ECOLOGICA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_RC_ECOLOGICA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RC_ECOLOGICA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RC_LEGAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_RC_LEGAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_RC_LEGAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RC_LEGAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_RCB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RCB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_RCB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_RCP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_RCP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_RCC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RCC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_RCC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RCB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RCP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RCC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PAQUETE_AV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_SERV_ASISTENCIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESCRIP_CARGA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_RC_PASAJERO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REPUVE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_DANO_X_CARGA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_ASISTENCIA_SATELITAL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "UNIDAD_DE_SALVAMENTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SERIE_ENCONTRACK",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_INST_ENCONTRACK",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_RC_EXT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_RC_EXT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_RC_EXT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_GM_EXT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_GM_EXT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_GM_EXT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_EXE_DED_X_VEH_IDENT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_AJUSTE_VALOR_COM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_GT_X_PP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_GT_X_PT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_GT_X_PP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_GT_PT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_GT_PP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_AJ_VAL_COM_X_PT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_EXTENSION_GARANTIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_EXTENSION_MTTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COD_ANIO_EXT_GARANTIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_ADAPT_SPT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_PROCESO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_EXE_DED_RT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PROV_ASIST_SAT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_GTP_DIARIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_RC_DANOS_AL_VEH_ARRASTRA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RC_DAN_VEH_ARRASTRA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_RC_DAN_VEH_ARRASTRA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RC_DAN_VEH_ARRASTRA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUTORIZA_SOBREPASAR_SA_RC_DVA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_RC_EN_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RC_EN_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_RC_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_RCP_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RCP_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_RCP_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_RCB_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RCB_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_RCB_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PAQUETE_RCB_EUA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "NUM_ECONOMICO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_AVERIA_MEC_ELEC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_AVERIA_MEC_ELEC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_AV_AVERIA_MEC_ELEC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_AV_AVERIA_MEC_ELEC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_AUTO_SUSTITUTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_AUTO_SUSTITUTO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_LLANTAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_LLANTAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_RINES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DED_LLANTAS_Y_RINES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RINES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GAP1",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_CB_FLEX",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DSCTO_COB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AMPARA_P2MIL_PREMIUM",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_VEH_ALTO_RGO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INSP_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DANIOS_PREEXISTENTES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DANOS_PREEXISTENTES",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FEC_INSP_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "COND_VIG_A_NIVEL_DI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AMPARA_AV_REM_ENGAN",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REGISTRO_CNSF",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_AV_REMOLQUE_ENGANC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "QUIEN_HIZO_INSP_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "INSP_VEH_X_OFIC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "VEH_BLINDADO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FACTOR_BLINDAJE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "GAP2",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_RCP_OBLIGATORIA",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RCP_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_RCP_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_RCB_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RCB_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DIAS_DED_RCB_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RC_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RCP_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PAQUETE_RC_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ADICIONALES_AV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AV_MANIOBRAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RECARGO_AV_MANIOBRAS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_ANUAL_RC",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_ANUAL_RC_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_TOT_RC_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_TOT_ANUAL_RC_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "BENEF_PREF_INCISO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_SINIESTRALIDAD_CADE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "TIPO_OFIC_INSP_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CUOTA_AUT_SUST_PT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_AS_PT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_AS_PT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUTORIZO_CAMBIO_USO",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "AUTORIZO_CVES_DIREC_SERIE",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "MARCA_UBER_CABIFY",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SA_VEH_AUTOS_INC_X_PT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CAUSA_INSP_VEH",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RGO_DESC_X_USO_SPT",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "SUMA_ASEG_AJINFL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PRIMA_AV",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "DESC_DED_RCB_OBLIG",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PMA_RCP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "PORC_DED_RP",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_CARGA",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
+  }
+]

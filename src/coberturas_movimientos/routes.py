@@ -5,6 +5,7 @@ from src.lib.password_encrypt import APIKeyValidator
 from src.main.container import DIContainer
 from src.lib.middleware import token_required
 from src.coberturas_movimientos.application_service import LoadCoberturasMovimientos
+from src.coberturas_movimientos.dto import CobeberturasMovimientosDateRange
 
 blueprint = Blueprint('coberturas_movimientos_routes', __name__)
 
