@@ -1000,7 +1000,7 @@
     "mode": "NULLABLE"
   },
   {
-    "name": "CONSEC",
+    "name": "FECHA_CARGA",
     "type": "DATETIME",
     "mode": "NULLABLE"
   }

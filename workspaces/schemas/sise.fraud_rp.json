@@ -113,5 +113,10 @@
     "name": "FECHA_PROCESO",
     "type": "STRING",
     "mode": "NULLABLE"
+  },
+  {
+    "name": "FECHA_CARGA",
+    "type": "DATETIME",
+    "mode": "NULLABLE"
   }
 ]
