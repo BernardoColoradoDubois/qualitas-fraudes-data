@@ -92,3 +92,4 @@ def execute_query_to_load_oracle_database(project_id,query,**kwargs):
   connection.commit()
   cursor.close()
 
+
