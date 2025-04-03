@@ -16,10 +16,10 @@ def load_siniestros_route(load_siniestros: LoadSiniestros = Provide[DIContainer.
   payload=request.get_json(force=True)
 
   dto = SiniestrosDateRange(
-      init_date=payload["init-date"],
-      final_date=payload["final-date"]
-    )
+    init_date=payload["init-date"],
+    final_date=payload["final-date"]
+  )
   
-  response = load_siniestros.invoque()
+  response = load_siniestros.invoque(dto=dto)
 
   return jsonify(response), 201, {'ContentType':'application/json'}

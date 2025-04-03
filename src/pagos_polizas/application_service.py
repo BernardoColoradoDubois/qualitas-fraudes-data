@@ -13,7 +13,7 @@ class LoadPagosPolizas:
     final_date = dto.final_date
 
     response = self.bigquery_to_oracle.run(
-      extraction_query=f"SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_PAGOS_POLIZAS` WHERE CAST(FECHA_PROCESO AS DATE) BETWEEN '{init_date}' AND '{final_date}';", 
+      extraction_query=f"SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_PAGOS_POLIZAS` WHERE CAST(FECHA_CARGA AS DATE) BETWEEN '{init_date}' AND '{final_date}';", 
       preload_query="TRUNCATE TABLE INSUMOS.DM_PAGOS_POLIZAS",
       schema="INSUMOS",
       table="DM_PAGOS_POLIZAS"
