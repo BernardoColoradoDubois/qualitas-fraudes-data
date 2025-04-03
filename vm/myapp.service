@@ -10,7 +10,25 @@ Group=appusers
 # Rutas actualizadas
 WorkingDirectory=/opt/qualitas-fraudes-data
 Environment="PATH=/opt/qualitas-fraudes-data/venv/bin"
-ExecStart=/opt/qualitas-fraudes-data/venv/bin/gunicorn -w 4 -b 127.0.0.1:8000 wsgi:app
+
+# Configuración optimizada de Gunicorn
+ExecStart=/opt/qualitas-fraudes-data/venv/bin/gunicorn \
+    --workers=8 \
+    --threads=2 \
+    --worker-class=gthread \
+    --worker-connections=1000 \
+    --timeout=120 \
+    --max-requests=1000 \
+    --max-requests-jitter=50 \
+    -b 127.0.0.1:8000 \
+    wsgi:app
+
+# Límites de recursos
+LimitNOFILE=65536
+TimeoutStopSec=20
+# Ajusta estos valores según la memoria y CPU disponibles en tu servidor
+MemoryLimit=4G
+CPUQuota=400%
 
 # Reinicio automático
 Restart=always
