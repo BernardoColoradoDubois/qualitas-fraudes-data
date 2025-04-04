@@ -8,6 +8,7 @@ class LoadPolizasVigentes:
     self.bigquery_to_oracle = bigquery_to_oracle
 
   def invoque(self, dto: PolizasVigentesDateRange):
+    
     init_date = dto.init_date
     final_date = dto.final_date
 
