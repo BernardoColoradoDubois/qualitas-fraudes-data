@@ -4,12 +4,11 @@ from airflow.decorators import task
 from airflow.operators.bash import BashOperator
 from datetime import timedelta
 from airflow.operators.python import PythonOperator
-from lib.qualitas_fraudes import date_interval_generator, load_api_data_by_date_range
+from lib.qualitas_fraudes import date_interval_generator, load_api_data_by_date_range, load_api_data
 import json
 import os
 
 api_key = os.getenv("FLASK_API_KEY")
-
 
 default_args = {
     'start_date': airflow.utils.dates.days_ago(0),
@@ -41,6 +40,18 @@ date_generator = PythonOperator(
   dag=dag 
 )
 
+load_causas = PythonOperator(
+  task_id='load_causas',
+  python_callable=load_api_data,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/causas',
+    'api_key': api_key
+  },
+  dag=dag
+)
+
 load_coberturas_movimientos = PythonOperator(
   task_id='load_coberturas_movimientos',
   python_callable=load_api_data_by_date_range,
@@ -54,4 +65,6 @@ load_coberturas_movimientos = PythonOperator(
   dag=dag
 )
 
-init >> date_generator >> load_coberturas_movimientos
+
+
+init >> date_generator >> load_causas >> load_coberturas_movimientos
