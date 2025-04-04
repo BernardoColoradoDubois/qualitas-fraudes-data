@@ -185,4 +185,4 @@ end = BashOperator(task_id='end',bash_command='echo end',dag=dag)
 init >> date_generator >> load_analistas >> load_causas >> load_coberturas_movimientos
 load_coberturas_movimientos >> load_etiqueta_siniestro >> load_oficinas >> load_pagos_polizas
 load_pagos_polizas >> load_pagos_proveedores >> load_polizas_vigentes >> load_proveedores
-load_proveedores >> load_registro >> load_siniestros
+load_proveedores >> load_registro >> load_siniestros >> end
