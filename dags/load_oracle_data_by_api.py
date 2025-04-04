@@ -65,6 +65,4 @@ load_coberturas_movimientos = PythonOperator(
   dag=dag
 )
 
-
-
 init >> date_generator >> load_causas >> load_coberturas_movimientos
