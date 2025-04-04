@@ -6,6 +6,10 @@ from datetime import timedelta
 from airflow.operators.python import PythonOperator
 from lib.qualitas_fraudes import date_interval_generator, load_api_data_by_date_range
 import json
+import os
+
+api_key = os.getenv("FLASK_API_KEY")
+
 
 default_args = {
     'start_date': airflow.utils.dates.days_ago(0),
@@ -44,7 +48,7 @@ load_coberturas_movimientos = PythonOperator(
   provide_context=True,  
   op_kwargs={
     'url': 'http://34.60.197.162/coberturas-movimientos',
-    'api_key':'none',
+    'api_key': api_key,
     'date_generator_task_id': 'date_generator',
   },
   dag=dag
