@@ -116,4 +116,17 @@ load_pagos_polizas = PythonOperator(
   dag=dag
 )
 
-init >> date_generator >> load_analistas >> load_causas >> load_coberturas_movimientos >> load_etiqueta_siniestro >> load_oficinas >> load_pagos_polizas
+load_pagos_proveedores = PythonOperator(
+  task_id='load_pagos_proveedores',
+  python_callable=load_api_data_by_date_range,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/pagos-proveedores',
+    'api_key': api_key,
+    'date_generator_task_id': 'date_generator',
+  },
+  dag=dag
+)
+
+init >> date_generator >> load_analistas >> load_causas >> load_coberturas_movimientos >> load_etiqueta_siniestro >> load_oficinas >> load_pagos_polizas >> load_pagos_proveedores
