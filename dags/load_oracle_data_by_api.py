@@ -129,4 +129,60 @@ load_pagos_proveedores = PythonOperator(
   dag=dag
 )
 
-init >> date_generator >> load_analistas >> load_causas >> load_coberturas_movimientos >> load_etiqueta_siniestro >> load_oficinas >> load_pagos_polizas >> load_pagos_proveedores
+load_polizas_vigentes = PythonOperator(
+  task_id='load_polizas_vigentes',
+  python_callable=load_api_data_by_date_range,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/polizas-vigentes',
+    'api_key': api_key,
+    'date_generator_task_id': 'date_generator',
+  },
+  dag=dag
+)
+
+load_proveedores = PythonOperator(
+  task_id='load_proveedores',
+  python_callable=load_api_data,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/proveedores',
+    'api_key': api_key,
+  },
+  dag=dag
+)
+
+load_registro = PythonOperator(
+  task_id='load_registro',
+  python_callable=load_api_data_by_date_range,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/registro',
+    'api_key': api_key,
+    'date_generator_task_id': 'date_generator',
+  },
+  dag=dag
+)
+
+load_siniestros = PythonOperator(
+  task_id='load_siniestros',
+  python_callable=load_api_data_by_date_range,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/siniestros',
+    'api_key': api_key,
+    'date_generator_task_id': 'date_generator',
+  },
+  dag=dag
+)
+
+end = BashOperator(task_id='end',bash_command='echo end',dag=dag)
+
+init >> date_generator >> load_analistas >> load_causas >> load_coberturas_movimientos
+load_coberturas_movimientos >> load_etiqueta_siniestro >> load_oficinas >> load_pagos_polizas
+load_pagos_polizas >> load_pagos_proveedores >> load_polizas_vigentes >> load_proveedores
+load_proveedores >> load_registro >> load_siniestros
