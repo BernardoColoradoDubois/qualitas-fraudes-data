@@ -9,6 +9,7 @@ import json
 import os
 
 api_key = os.getenv("FLASK_API_KEY")
+base_url = os.getenv("FLASK_BASE_URL")
 
 default_args = {
     'start_date': airflow.utils.dates.days_ago(0),
