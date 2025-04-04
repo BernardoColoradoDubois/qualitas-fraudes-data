@@ -41,6 +41,18 @@ date_generator = PythonOperator(
   dag=dag 
 )
 
+load_analistas = PythonOperator(
+  task_id='load_analistas',
+  python_callable=load_api_data,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/analistas',
+    'api_key': api_key
+  },
+  dag=dag
+)
+
 load_causas = PythonOperator(
   task_id='load_causas',
   python_callable=load_api_data,
@@ -66,4 +78,42 @@ load_coberturas_movimientos = PythonOperator(
   dag=dag
 )
 
-init >> date_generator >> load_causas >> load_coberturas_movimientos
+load_etiqueta_siniestro = PythonOperator(
+  task_id='load_etiqueta_siniestro',
+  python_callable=load_api_data_by_date_range,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/etiqueta-siniestro',
+    'api_key': api_key,
+    'date_generator_task_id': 'date_generator',
+  },
+  dag=dag
+)
+
+load_oficinas = PythonOperator(
+  task_id='load_oficinas',
+  python_callable=load_api_data,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/oficinas',
+    'api_key': api_key
+  },
+  dag=dag
+)
+
+load_pagos_polizas = PythonOperator(
+  task_id='load_pagos_polizas',
+  python_callable=load_api_data_by_date_range,
+  do_xcom_push=True,
+  provide_context=True,  
+  op_kwargs={
+    'url': 'http://34.60.197.162/pagos-polizas',
+    'api_key': api_key,
+    'date_generator_task_id': 'date_generator',
+  },
+  dag=dag
+)
+
+init >> date_generator >> load_analistas >> load_causas >> load_coberturas_movimientos >> load_etiqueta_siniestro >> load_oficinas >> load_pagos_polizas
