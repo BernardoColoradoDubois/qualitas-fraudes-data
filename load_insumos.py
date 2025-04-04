@@ -4,6 +4,17 @@ from dotenv import load_dotenv
 import os
 from dependency_injector.wiring import Provide, inject
 from src.lib.bigquery_to_oracle import BigQueryToOracle
+from src.analistas.application_service import LoadAnalistas
+from src.causas.application_service import LoadCausas
+from src.coberturas_movimientos.application_service import LoadCoberturasMovimientos
+from src.etiqueta_siniestro.application_service import LoadEtiquetaSiniestro
+from src.oficinas.application_service import LoadOficinas
+from src.pagos_polizas.application_service import LoadPagosPolizas
+from src.pagos_proveedores.application_service import LoadPagosProveedores
+from src.polizas_vigentes.application_service import LoadPolizasVigentes
+from src.proveedores.application_service import LoadProveedores
+from src.registro.application_service import LoadRegistro
+from src.siniestros.application_service import LoadSiniestros
 
 @inject
 def load_dm_causas(bigquery_to_oracle=Provide[DIContainer.bigquery_to_oracle]) -> None:
