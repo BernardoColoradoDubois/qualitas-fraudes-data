@@ -42,9 +42,10 @@ load_coberturas_movimientos = PythonOperator(
   python_callable=load_api_data_by_date_range,
   do_xcom_push=True,
   provide_context=True,  
-  op_args={
+  op_kwargs={
     'url': 'http://34.60.197.162/coberturas-movimientos',
-    'origin_task_id': 'date_generator'
+    'api_key':'none',
+    'date_generator_task_id': 'date_generator',
   },
   dag=dag
 )
