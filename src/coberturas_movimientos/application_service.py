@@ -11,7 +11,7 @@ class LoadCoberturasMovimientos:
     final_date = dto.final_date
     
     response = self.bigquery_to_oracle.run(
-      extraction_query=f"SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_COBERTURAS_MOVIMIENTOS` WHERE CAST(FECHA_REGISTRO AS DATE) BETWEEN '{init_date}' AND '{final_date}';", 
+      extraction_query=f"SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_COBERTURAS_MOVIMIENTOS` WHERE CAST(FECHA_MOVIMIENTO AS DATE) BETWEEN '{init_date}' AND '{final_date}';", 
       preload_query="TRUNCATE TABLE INSUMOS.DM_COBERTURAS_MOVIMIENTOS",
       schema="INSUMOS",
       table="DM_COBERTURAS_MOVIMIENTOS"
