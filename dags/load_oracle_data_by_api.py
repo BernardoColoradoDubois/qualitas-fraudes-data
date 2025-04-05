@@ -47,7 +47,7 @@ load_analistas = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/analistas',
+    'url': f'{base_url}/analistas',
     'api_key': api_key
   },
   dag=dag
@@ -59,7 +59,7 @@ load_causas = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/causas',
+    'url': f'{base_url}/causas',
     'api_key': api_key
   },
   dag=dag
@@ -71,7 +71,7 @@ load_coberturas_movimientos = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/coberturas-movimientos',
+    'url': f'{base_url}/coberturas-movimientos',
     'api_key': api_key,
     'date_generator_task_id': 'date_generator',
   },
@@ -84,7 +84,7 @@ load_etiqueta_siniestro = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/etiqueta-siniestro',
+    'url': f'{base_url}/etiqueta-siniestro',
     'api_key': api_key,
     'date_generator_task_id': 'date_generator',
   },
@@ -97,7 +97,7 @@ load_oficinas = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/oficinas',
+    'url': f'{base_url}/oficinas',
     'api_key': api_key
   },
   dag=dag
@@ -109,7 +109,7 @@ load_pagos_polizas = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/pagos-polizas',
+    'url': f'{base_url}/pagos-polizas',
     'api_key': api_key,
     'date_generator_task_id': 'date_generator',
   },
@@ -122,7 +122,7 @@ load_pagos_proveedores = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/pagos-proveedores',
+    'url': f'{base_url}/pagos-proveedores',
     'api_key': api_key,
     'date_generator_task_id': 'date_generator',
   },
@@ -135,7 +135,7 @@ load_polizas_vigentes = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/polizas-vigentes',
+    'url': f'{base_url}/polizas-vigentes',
     'api_key': api_key,
     'date_generator_task_id': 'date_generator',
   },
@@ -148,7 +148,7 @@ load_proveedores = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/proveedores',
+    'url': f'{base_url}/proveedores',
     'api_key': api_key,
   },
   dag=dag
@@ -160,7 +160,7 @@ load_registro = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/registro',
+    'url': f'{base_url}/registro',
     'api_key': api_key,
     'date_generator_task_id': 'date_generator',
   },
@@ -173,7 +173,7 @@ load_siniestros = PythonOperator(
   do_xcom_push=True,
   provide_context=True,  
   op_kwargs={
-    'url': 'http://34.60.197.162/siniestros',
+    'url': f'{base_url}/siniestros',
     'api_key': api_key,
     'date_generator_task_id': 'date_generator',
   },
