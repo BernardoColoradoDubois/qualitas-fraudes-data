@@ -7,6 +7,7 @@ class LoadOficinas:
     self.bigquery_to_oracle = bigquery_to_oracle
 
   def invoque(self):
+    
     response = self.bigquery_to_oracle.run(
       extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_OFICINAS` ORDER BY ID", 
       preload_query="TRUNCATE TABLE INSUMOS.DM_OFICINAS",

@@ -8,6 +8,7 @@ class LoadRegistro:
     self.bigquery_to_oracle = bigquery_to_oracle
 
   def invoque(self, dto: RegistroDateRange):
+    
     init_date = dto.init_date
     final_date = dto.final_date
 
