@@ -3,6 +3,7 @@ from src.main.container import DIContainer
 from dotenv import load_dotenv
 import os
 
+# Importar rutas
 import src.main.routes as main_routes
 import src.causas.routes as causas_routes
 import src.proveedores.routes as proveedores_routes
