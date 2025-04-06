@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 import os
 from dependency_injector.wiring import Provide, inject
 from src.lib.bigquery_to_oracle import BigQueryToOracle
+
 from src.analistas.application_service import LoadAnalistas
 from src.causas.application_service import LoadCausas
 from src.coberturas_movimientos.application_service import LoadCoberturasMovimientos
