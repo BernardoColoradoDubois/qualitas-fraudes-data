@@ -13,8 +13,8 @@ base_url = os.getenv("FLASK_BASE_URL")
 
 default_args = {
     'start_date': airflow.utils.dates.days_ago(0),
-    'retries': 1,
-    'retry_delay': timedelta(minutes=1)
+    'retries': 2,
+    'retry_delay': timedelta(minutes=3)
 }
 
 dag = DAG(
