@@ -1,3 +1,4 @@
+-- siniestros
 SELECT
   REPLACE(REPLACE(REPLACE(Z_ID, CHR(10), ''), CHR(13), ''), CHR(9), '') AS Z_ID,
   REPLACE(REPLACE(REPLACE(REPORTE, CHR(10), ''), CHR(13), ''), CHR(9), '') AS REPORTE,
