@@ -167,8 +167,6 @@ load_analistas = PythonOperator(
   dag=dag
 )
 
-
-
 load_cat_causa = PythonOperator(
   task_id='load_cat_causa',
   python_callable=upload_storage_csv_to_bigquery,
