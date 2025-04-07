@@ -8,4 +8,4 @@ SELECT
     REPLACE(REPLACE(REPLACE(CP, CHAR(10), ''), CHAR(13), ''), CHAR(9), '') AS CP,
     REPLACE(REPLACE(REPLACE(ZONA, CHAR(10), ''), CHAR(13), ''), CHAR(9), '') AS ZONA
 FROM
-    BSCSiniestros.dbo.TSUC_BSC
+    BSCSiniestros.dbo.TSUC_BSC;
