@@ -115,6 +115,45 @@ load_tsuc_bsc = PythonOperator(
   dag=dag
 )
 
+load_maseg_bsc = PythonOperator(
+  task_id='load_maseg_bsc',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/MASEG_BSC.csv',
+    'dataset': 'sample_landing_siniestros_bsc',
+    'table': 'maseg_bsc',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.maseg_bsc.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
+load_testado_bsc = PythonOperator(
+  task_id='load_testado_bsc',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/TESTADO_BSC.csv',
+    'dataset': 'sample_landing_siniestros_bsc',
+    'table': 'testado_bsc',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.testado_bsc.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
+load_tipoproveedor_bsc = PythonOperator(
+  task_id='load_tipoproveedor_bsc',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://quafraudestorage/tipoProveedor.csv',
+    'dataset': 'sample_landing_siniestros_bsc',
+    'table': 'tipoproveedor',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/schemas/siniestros_bsc.tipoproveedor.json')),
+    'project_id': 'qualitasfraude',
+  },
+  dag=dag
+)
+
 load_analistas = PythonOperator(
   task_id='load_analistas',
   python_callable=upload_storage_csv_to_bigquery,
@@ -270,6 +309,10 @@ init_load_siniestros_bsc >> load_pagos_proveedores >> end_load_siniestros_bsc
 init_load_siniestros_bsc >> load_prestadores >> end_load_siniestros_bsc
 init_load_siniestros_bsc >> load_reservas_bsc >> end_load_siniestros_bsc
 init_load_siniestros_bsc >> load_tsuc_bsc >> end_load_siniestros_bsc
+init_load_siniestros_bsc >> load_maseg_bsc >> end_load_siniestros_bsc
+init_load_siniestros_bsc >> load_testado_bsc >> end_load_siniestros_bsc
+init_load_siniestros_bsc >> load_tipoproveedor_bsc >> end_load_siniestros_bsc
+
 init_load_siniestros >> load_analistas >> end_load_siniestros
 init_load_siniestros >> load_registro >> end_load_siniestros
 init_load_siniestros >> load_cat_causa >> end_load_siniestros
@@ -278,6 +321,7 @@ init_load_siniestros >> load_cobranza_hist >> end_load_siniestros
 init_load_siniestros >> load_cobranza >> end_load_siniestros
 init_load_siniestros >> load_etiqueta_siniestro >> end_load_siniestros
 init_load_siniestros >> load_sas_sinies >> end_load_siniestros
+
 init_load_sise >> load_fraud_pv >> end_load_sise
 init_load_sise >> load_fraud_rp >> end_load_sise
 init_load_sise >> load_fraud_di >> end_load_sise
