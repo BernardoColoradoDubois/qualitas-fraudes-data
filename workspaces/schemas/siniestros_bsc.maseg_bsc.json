@@ -1,0 +1,82 @@
+[
+    {
+      "name": "ZID",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "NOMBRE",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "GIRO",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "NACIONALIDAD",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "FOLIO",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "APODERADO",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "NAC_APODERADO",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "RFC",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "ART_140",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "FEC_NACE",
+      "type": "DATETIME",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "FEC_ALTA",
+      "type": "DATETIME",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "TIP_ASEG",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "CORREO",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "CURP",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "OFICINA",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    },
+    {
+      "name": "NOM_OFICINA",
+      "type": "STRING",
+      "mode": "NULLABLE"
+    }
+  ]
