@@ -6,8 +6,10 @@ from src.lib.bigquery_to_oracle import BigQueryToOracle
 from src.lib.password_encrypt import APIKeyValidator
 
 from src.analistas.application_service import LoadAnalistas
+from src.asegurados.application_service import LoadAsegurados
 from src.causas.application_service import LoadCausas
 from src.coberturas_movimientos.application_service import LoadCoberturasMovimientos
+from src.estados.application_service import LoadEstados
 from src.etiqueta_siniestro.application_service import LoadEtiquetaSiniestro
 from src.oficinas.application_service import LoadOficinas
 from src.pagos_polizas.application_service import LoadPagosPolizas
@@ -15,7 +17,9 @@ from src.pagos_proveedores.application_service import LoadPagosProveedores
 from src.polizas_vigentes.application_service import LoadPolizasVigentes
 from src.proveedores.application_service import LoadProveedores
 from src.registro.application_service import LoadRegistro
+from src.tipos_proveedores.application_service import LoadTiposProveedores
 from src.siniestros.application_service import LoadSiniestros
+
 
 class DIContainer(containers.DeclarativeContainer):
   
