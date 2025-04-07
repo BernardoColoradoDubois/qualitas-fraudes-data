@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Z_ID",
+    "type": "STRING",
+    "mode": "REQUIRED"
+  },
+  {
+    "name": "EDOPOB",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "ESTATUS",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "CVEMPIO_INEGI",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "REGION",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "RADIOPERFIL",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "EDO_ESTANDAR",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  },
+  {
+    "name": "EDOPOB2",
+    "type": "STRING",
+    "mode": "NULLABLE"
+  }
+]
