@@ -1,18 +1,18 @@
+from flask import Blueprint, jsonify, request
+from dependency_injector.wiring import inject, Provide
 from src.lib.bigquery_to_oracle import BigQueryToOracle
+from src.lib.password_encrypt import APIKeyValidator
+from src.main.container import DIContainer
+from src.lib.middleware import token_required
+from src.asegurados.application_service import LoadAsegurados
 
-class LoadAsegurados:
+blueprint = Blueprint('asegurados_routes', __name__)
+
+@blueprint.route("/", methods=["POST"])
+@token_required
+@inject
+def load_asegurados_route(load_asegurados: LoadAsegurados = Provide[DIContainer.load_asegurados]):
+    
+  response = load_asegurados.invoque()  
   
-  def __init__(self,bigquery_to_oracle: BigQueryToOracle):
-    
-    self.bigquery_to_oracle = bigquery_to_oracle
-
-  def invoque(self):
-    
-    response = self.bigquery_to_oracle.run(
-      extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_ASEGURADOS`;", 
-      preload_query="TRUNCATE TABLE INSUMOS.DM_ASEGURADOS;",
-      schema="INSUMOS",
-      table="DM_ASEGURADOS"
-    )    
-    
-    return response
+  return jsonify(response), 201, {'ContentType':'application/json'}  
