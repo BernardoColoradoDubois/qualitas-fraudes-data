@@ -37,15 +37,18 @@ class DIContainer(containers.DeclarativeContainer):
   
   # servicios de aplicacion
   load_analistas = providers.Factory(LoadAnalistas, bigquery_to_oracle=bigquery_to_oracle)
+  load_asegurados = providers.Factory(LoadAsegurados, bigquery_to_oracle=bigquery_to_oracle)
   load_causas = providers.Factory(LoadCausas, bigquery_to_oracle=bigquery_to_oracle)
   load_coberturas_movimientos = providers.Factory(LoadCoberturasMovimientos, bigquery_to_oracle=bigquery_to_oracle)
   load_etiqueta_siniestro = providers.Factory(LoadEtiquetaSiniestro, bigquery_to_oracle=bigquery_to_oracle)
+  load_estados = providers.Factory(LoadEstados, bigquery_to_oracle=bigquery_to_oracle)
   load_oficinas = providers.Factory(LoadOficinas, bigquery_to_oracle=bigquery_to_oracle)
   load_pagos_polizas = providers.Factory(LoadPagosPolizas, bigquery_to_oracle=bigquery_to_oracle)
   load_pagos_proveedores = providers.Factory(LoadPagosProveedores, bigquery_to_oracle=bigquery_to_oracle)
   load_polizas_vigentes = providers.Factory(LoadPolizasVigentes, bigquery_to_oracle=bigquery_to_oracle)
   load_proveedores = providers.Factory(LoadProveedores, bigquery_to_oracle=bigquery_to_oracle)
   load_registro = providers.Factory(LoadRegistro, bigquery_to_oracle=bigquery_to_oracle)
+  load_tipos_proveedores = providers.Factory(LoadTiposProveedores, bigquery_to_oracle=bigquery_to_oracle)
   load_siniestros = providers.Factory(LoadSiniestros, bigquery_to_oracle=bigquery_to_oracle)
 
 
