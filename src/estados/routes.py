@@ -8,10 +8,10 @@ from src.estados.application_service import LoadEstados
 
 blueprint = Blueprint('estados_routes', __name__)
 
-@blueprint.route("/", methods=["POST"])
+@blueprint.route("/", methods=["POST"])  
 @token_required
 @inject
-def load_estados_route(load_estados: LoadEstados = Provide[DIContainer.load_estados]):
+def load_estados_route(load_estados: LoadEstados = Provide[DIContainer.load_estados]):  
     
   response = load_estados.invoque()  
   
