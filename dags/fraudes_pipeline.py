@@ -208,6 +208,35 @@ dm_polizas_vigentes = PythonOperator(
   dag=dag 
 )
 
+dm_estados = PythonOperator( 
+  task_id='dm_estados', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude',
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ESTADOS/DM_ESTADOS.sql')
+  }, 
+  dag=dag 
+)
+
+dm_asegurados = PythonOperator( 
+  task_id='dm_asegurados', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude',
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ASEGURADOS/DM_ASEGURADOS.sql')
+  }, 
+  dag=dag 
+)
+
+dm_tipos_proveedores = PythonOperator( 
+  task_id='dm_tipos_proveedores', 
+  python_callable=execute_query_workflow, 
+  op_kwargs={ 
+    'project_id': 'qualitasfraude',
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/TIPOS_PROVEEDORES/DM_TIPOS_PROVEEDORES.sql')
+  }, 
+  dag=dag 
+)
 
 init >> dm_causa_cobertura 
 init >> dm_causas 
@@ -219,5 +248,8 @@ init >> dm_coberturas_movimiento
 init >> dm_pagos_proveedores 
 init >> dm_analistas
 init >> dm_registro
+init >> dm_estados
+init >> dm_asegurados
+init >> dm_tipos_proveedores
 init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> dm_etiqueta_siniestro 
 init >> stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> dm_polizas_vigentes
