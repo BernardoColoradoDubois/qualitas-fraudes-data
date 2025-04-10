@@ -18,6 +18,8 @@ import json
 # Retrieve variables from Airflow instance env variables
 #===========================================================
 ENV_VARS = json.loads(Variable.get("load_oracle_to_bq"));
+
+QUERY_CONDITIONS= ENV_VARS["QUERY_CONDITIONS"]
 PROJECT_ID = ENV_VARS["PROJECT_ID"]
 LOCATION = ENV_VARS["LOCATION"]
 INSTANCE_NAME = ENV_VARS["DATAFUSION_INSTANCE"]
@@ -62,7 +64,6 @@ dag = DAG(
 )
 
 
-
 # Task 1: Get Data Fusion instance details
 get_instance = CloudDataFusionGetInstanceOperator(
     task_id="get_datafusion_instance",
@@ -82,7 +83,7 @@ start_pipeline = CloudDataFusionStartPipelineOperator(
     project_id=PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     asynchronous= True,
-    # runtime_args=RUNTIME_ARGS,
+    runtime_args=QUERY_CONDITIONS,
     dag=dag,
 )
 
@@ -102,7 +103,5 @@ monitor_pipeline = CloudDataFusionPipelineStateSensor(
     timeout=SENSOR_TIME_OUT_,  
     dag=dag,
 )
-
-
 
 get_instance >> start_pipeline >> monitor_pipeline
