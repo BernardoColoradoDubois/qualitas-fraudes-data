@@ -1,9 +1,9 @@
 import airflow
 from airflow import DAG
 from airflow.decorators import task
-from airflow.operators.bash import BashOperator
 from datetime import timedelta
 from airflow.operators.python import PythonOperator
+from airflow.operators.bash import BashOperator
 
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionStartPipelineOperator
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionGetInstanceOperator
@@ -37,6 +37,19 @@ get_datafusion_instance = CloudDataFusionGetInstanceOperator(
   location='LOCATION',
   instance_name='INSTANCE_NAME',
   project_id='PROJECT_ID',
+  dag=dag,
+)
+
+load_apercab_bsc = CloudDataFusionStartPipelineOperator(
+  task_id="start_pipeline",
+  location='LOCATION',
+  instance_name='INSTANCE_NAME',
+  namespace='NAMESPACE',
+  pipeline_name='PIPELINE_NAME',
+  project_id='PROJECT_ID',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  asynchronous= True,
+  runtime_args='QUERY_CONDITIONS',
   dag=dag,
 )
 
