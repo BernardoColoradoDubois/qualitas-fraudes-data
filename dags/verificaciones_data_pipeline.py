@@ -53,10 +53,26 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   dag=dag,
 )
 
+load_apercab_bsc_monitor = CloudDataFusionPipelineStateSensor(
+  task_id="monitor_pipeline",
+  location='LOCATION',
+  instance_name='INSTANCE_NAME',
+  namespace='NAMESPACE',
+  pipeline_name='PIPELINE_NAME',
+  pipeline_id=load_apercab_bsc.output,
+  project_id='PROJECT_ID',
+  expected_statuses=["COMPLETED"],
+  failure_statuses=["FAILED", "KILLED", "REJECTED"],
+  mode='POKE_MODE_', 
+  poke_interval='POKE_INTERVAL_',
+  timeout='SENSOR_TIME_OUT_',  
+  dag=dag,
+)
+
 end_landing = BashOperator(
   task_id='end_landing',
   bash_command='echo end landing',
   dag=dag,
 )
 
-init_landing >> get_datafusion_instance
+init_landing >> get_datafusion_instance >> load_apercab_bsc >> load_apercab_bsc_monitor >> end_landing
