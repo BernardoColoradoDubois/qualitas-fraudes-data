@@ -49,7 +49,7 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   project_id='PROJECT_ID',
   pipeline_type = DataFusionPipelineType.BATCH,
   asynchronous= True,
-  runtime_args='QUERY_CONDITIONS',
+  runtime_args={'init_date':'2023-01-01', 'final_date':'2023-01-31'},
   dag=dag,
 )
 
@@ -75,4 +75,5 @@ end_landing = BashOperator(
   dag=dag,
 )
 
-init_landing >> get_datafusion_instance >> load_apercab_bsc >> load_apercab_bsc_monitor >> end_landing
+init_landing >> get_datafusion_instance
+get_datafusion_instance >> load_apercab_bsc >> load_apercab_bsc_monitor >> end_landing
