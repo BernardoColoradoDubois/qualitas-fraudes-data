@@ -243,7 +243,7 @@ stg_incisos_polizas_1 = PythonOperator(
   python_callable=execute_query_workflow, 
   op_kwargs={ 
     'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/INCISOS_POLIZAS/DM_INCISOS_POLIZAS_1.sql')
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_1.sql')
   }, 
   dag=dag 
 )
@@ -253,7 +253,7 @@ stg_incisos_polizas_2 = PythonOperator(
   python_callable=execute_query_workflow, 
   op_kwargs={ 
     'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/INCISOS_POLIZAS/DM_INCISOS_POLIZAS_2.sql')
+    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_2.sql')
   }, 
   dag=dag 
 )
