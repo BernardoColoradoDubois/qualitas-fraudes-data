@@ -25,7 +25,7 @@ credentials = GoogleCloudCredentials.from_service_account_file(filename=key_file
 client = Client(credentials=credentials)
 
 # Realizamos una consulta a BigQuery y cargamos los resultados en un DataFrame`
-query = "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_TIPOS_PROVEEDORES`;"
+query = "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_INCISOS_POLIZAS`;"
 query_job = client.query(query)
 result = query_job.result()
 
