@@ -37,6 +37,7 @@ get_datafusion_instance = CloudDataFusionGetInstanceOperator(
 
 init_landing_bsc_siniestros = BashOperator(task_id='init_landing_bsc_siniestros',bash_command='echo init landing BSCSiniestros',dag=dag)
 
+
 # apercab pipeline
 load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   task_id="load_apercab_bsc",
