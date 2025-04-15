@@ -22,7 +22,7 @@ dag = DAG(
   schedule_interval='0 0 1 1 *',
   max_active_runs=2,
   catchup=False,
-  dagrun_timeout=timedelta(minutes=7),
+  dagrun_timeout=timedelta(minutes=20),
 )
 
 init_landing = BashOperator(task_id='init_landing',bash_command='echo init landing',dag=dag)
@@ -49,6 +49,8 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   success_states=["COMPLETED"],
   asynchronous=False,
   pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
   runtime_args={
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
@@ -71,6 +73,8 @@ load_maseg_bsc = CloudDataFusionStartPipelineOperator(
   success_states=["COMPLETED"],
   asynchronous=False,
   pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
   runtime_args={
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
@@ -91,6 +95,8 @@ load_pagoprove = CloudDataFusionStartPipelineOperator(
   success_states=["COMPLETED"],
   asynchronous=False,
   pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
   runtime_args={
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
@@ -113,6 +119,8 @@ load_pagosproveedores = CloudDataFusionStartPipelineOperator(
   success_states=["COMPLETED"],
   asynchronous=False,
   pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
   runtime_args={
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
@@ -135,6 +143,8 @@ load_prestadores = CloudDataFusionStartPipelineOperator(
   success_states=["COMPLETED"],
   asynchronous=False,
   pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
   runtime_args={
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
@@ -154,6 +164,8 @@ load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
   pipeline_type = DataFusionPipelineType.BATCH,
   asynchronous=False,
   pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
   runtime_args={
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
