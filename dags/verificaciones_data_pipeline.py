@@ -22,7 +22,7 @@ dag = DAG(
   schedule_interval='0 0 1 1 *',
   max_active_runs=2,
   catchup=False,
-  dagrun_timeout=timedelta(minutes=20),
+  dagrun_timeout=timedelta(minutes=40),
 )
 
 init_landing = BashOperator(task_id='init_landing',bash_command='echo init landing',dag=dag)
@@ -163,6 +163,7 @@ load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
   pipeline_name='carga_qlts_dev_verificaciones_tsuc',
   project_id='qlts-nonprod-data-tools',
   pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
   asynchronous=False,
   pipeline_timeout=3600,
   deferrable=True,
