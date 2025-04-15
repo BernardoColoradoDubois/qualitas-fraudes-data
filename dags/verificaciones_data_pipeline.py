@@ -323,7 +323,6 @@ dm_proveedores = BigQueryInsertJobOperator(
   dag=dag 
 )
 
-
 end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
 init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
