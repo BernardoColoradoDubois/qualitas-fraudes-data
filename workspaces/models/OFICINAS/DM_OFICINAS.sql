@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `DM_FRAUDES.DM_OFICINAS`  AS
+CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}`  AS
 SELECT 
 Z_ID AS ID,
 OFICINA,
@@ -8,6 +8,6 @@ POBLACION,
 EDOPOB AS CODIGO_POBLACION,
 CP AS CODIGO_POSTAL,
 ZONA
-FROM `qualitasfraude.sample_landing_siniestros_bsc.tsuc_bsc`
+FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`
 WHERE Z_ID <> '990'
 ORDER BY Z_ID

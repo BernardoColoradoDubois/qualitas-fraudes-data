@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `DM_FRAUDES.DM_PROVEEDORES` AS
+CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}` AS
 SELECT 
   ID, 
   NOMBRE,
@@ -38,5 +38,5 @@ SELECT
   CEXP, -----------------
   TBODY, ----------------
   NUM_EMPL AS NUMERO_EMPLEADO
-FROM `sample_landing_siniestros_bsc.prestadores`
+FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`
 WHERE ID <> 'ED MP'
