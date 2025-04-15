@@ -17,6 +17,6 @@ class LoadIncisoPolizas:
       preload_query="TRUNCATE TABLE INSUMOS.DM_INCISOS_POLIZAS",
       schema="INSUMOS",
       table="DM_INCISOS_POLIZAS"
-    ) 
+    )
       
     return response

@@ -7,13 +7,12 @@ from airflow.operators.bash import BashOperator
 
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionStartPipelineOperator
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionGetInstanceOperator
-from airflow.providers.google.cloud.sensors.datafusion import CloudDataFusionPipelineStateSensor
 from airflow.providers.google.cloud.operators.datafusion import DataFusionPipelineType 
 
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
   'retries': 1,
-  'retry_delay': timedelta(minutes=1)
+  'retry_delay': timedelta(minutes=5)
 }
 
 dag = DAG(
@@ -23,57 +22,156 @@ dag = DAG(
   schedule_interval='0 0 1 1 *',
   max_active_runs=2,
   catchup=False,
-  dagrun_timeout=timedelta(minutes=10),
+  dagrun_timeout=timedelta(minutes=7),
 )
 
-init_landing = BashOperator(
-  task_id='init_landing',
-  bash_command='echo init landing',
-  dag=dag,
-)
+init_landing = BashOperator(task_id='init_landing',bash_command='echo init landing',dag=dag)
 
 get_datafusion_instance = CloudDataFusionGetInstanceOperator(
   task_id="get_datafusion_instance",
-  location='LOCATION',
-  instance_name='INSTANCE_NAME',
-  project_id='PROJECT_ID',
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  project_id='qlts-nonprod-data-tools',
   dag=dag,
 )
 
+init_landing_bsc_siniestros = BashOperator(task_id='init_landing_bsc_siniestros',bash_command='echo init landing BSCSiniestros',dag=dag)
+
+# apercab pipeline
 load_apercab_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="start_pipeline",
-  location='LOCATION',
-  instance_name='INSTANCE_NAME',
-  namespace='NAMESPACE',
-  pipeline_name='PIPELINE_NAME',
-  project_id='PROJECT_ID',
+  task_id="load_apercab_bsc",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_apercab_bsc',
+  project_id='qlts-nonprod-data-tools',
   pipeline_type = DataFusionPipelineType.BATCH,
-  asynchronous= True,
-  runtime_args={'init_date':'2023-01-01', 'final_date':'2023-01-31'},
-  dag=dag,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  runtime_args={
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'APERCAB_BSC',
+    'init_date':'2023-01-01', 
+    'final_date':'2023-01-31'
+  },
+  dag=dag
 )
 
-load_apercab_bsc_monitor = CloudDataFusionPipelineStateSensor(
-  task_id="monitor_pipeline",
-  location='LOCATION',
-  instance_name='INSTANCE_NAME',
-  namespace='NAMESPACE',
-  pipeline_name='PIPELINE_NAME',
-  pipeline_id=load_apercab_bsc.output,
-  project_id='PROJECT_ID',
-  expected_statuses=["COMPLETED"],
-  failure_statuses=["FAILED", "KILLED", "REJECTED"],
-  mode='POKE_MODE_', 
-  poke_interval='POKE_INTERVAL_',
-  timeout='SENSOR_TIME_OUT_',  
-  dag=dag,
+# maseg pipeline
+load_maseg_bsc = CloudDataFusionStartPipelineOperator(
+  task_id="load_maseg_bsc",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_maseg',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  runtime_args={
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'MASEG_BSC'
+  },
+  dag=dag
 )
 
-end_landing = BashOperator(
-  task_id='end_landing',
-  bash_command='echo end landing',
-  dag=dag,
+# pagoprove pipeline
+load_pagoprove = CloudDataFusionStartPipelineOperator(
+  task_id="load_pagoprove",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_pagoprove',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  runtime_args={
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'PAGOPROVE',
+    'init_date':'2023-01-01', 
+    'final_date':'2023-01-31'
+  },
+  dag=dag
 )
 
-init_landing >> get_datafusion_instance
-get_datafusion_instance >> load_apercab_bsc >> load_apercab_bsc_monitor >> end_landing
+# pagosproveedores pipeline
+load_pagosproveedores = CloudDataFusionStartPipelineOperator(
+  task_id="load_pagosproveedores",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_pagosproveedores',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  runtime_args={
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'PAGOSPROVEEDORES',
+    'init_date':'2023-01-01', 
+    'final_date':'2023-01-31'
+  },
+  dag=dag
+)
+
+# prestadores pipeline
+load_prestadores = CloudDataFusionStartPipelineOperator(
+  task_id="load_prestadores",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_prestadores',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  runtime_args={
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'PRESTADORES'
+  },
+  dag=dag
+)
+
+# tsuc pipeline
+load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
+  task_id="load_tsuc_bsc",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='carga_qlts_dev_verificaciones_tsuc',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  asynchronous=False,
+  pipeline_timeout=3600,
+  runtime_args={
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'TSUC_BSC',
+    'init_date':'2023-01-01', 
+    'final_date':'2023-01-31'
+  },
+  dag=dag
+)
+
+end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing BSCSiniestros',dag=dag)
+end_landing = BashOperator(task_id='end_landing',bash_command='echo end landing',dag=dag)
+
+init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_apercab_bsc >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_maseg_bsc >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_pagoprove >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_pagosproveedores >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_prestadores >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_tsuc_bsc >> end_landing_bsc_siniestros
+end_landing_bsc_siniestros >> end_landing
