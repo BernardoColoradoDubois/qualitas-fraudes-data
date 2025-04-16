@@ -1,0 +1,810 @@
+[
+  {
+    "name": "FIRMA_CON_A",
+    "type": "STRING"
+  },
+  {
+    "name": "FIRMA_CON_B",
+    "type": "STRING"
+  },
+  {
+    "name": "FIRMA_RESPONSABLE",
+    "type": "STRING"
+  },
+  {
+    "name": "FIRMA_AJUS_A",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CALCA_B",
+    "type": "STRING"
+  },
+  {
+    "name": "FIRMA_AJUS_QUALITAS",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CROQUIS",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CALCA_A",
+    "type": "STRING"
+  },
+  {
+    "name": "FIRMA_AJUS_B",
+    "type": "STRING"
+  },
+  {
+    "name": "PROCESO",
+    "type": "INTEGER"
+  },
+  {
+    "name": "ENVIADO_EMAIL",
+    "type": "INTEGER"
+  },
+  {
+    "name": "CHECK_2",
+    "type": "INTEGER"
+  },
+  {
+    "name": "CHECK_3",
+    "type": "INTEGER"
+  },
+  {
+    "name": "CHECK_4",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_ID",
+    "type": "INTEGER"
+  },
+  {
+    "name": "CHECK_5",
+    "type": "INTEGER"
+  },
+  {
+    "name": "CHECK_6",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_RESPONSABLE_A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_SIPAC",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_EN_ESPERA",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_VOLANTE_ADMISON",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_VEHICUO_CORRALON",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_TRADICIONAL_ENT",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_TRADICIONAL_REC",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_SIPAC_ENT",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_SIPAC_REC",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_OTROS_REC",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_OTROS_ENT",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_ESTADO_AJUSTE",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_INFORME_ADICIONAL",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_1A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_2A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_3A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_4A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_5A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_6A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_7A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_8A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_9A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_10A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_11A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_12A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_13A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_14A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_15A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_16A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_17A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_18A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_19A",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_1B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_2B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_3B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_4B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_5B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_6B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_7B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_8B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_9B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_10B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_11B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_12B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_13B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_14B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_15B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_16B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_17B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_18B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_19B",
+    "type": "INTEGER"
+  },
+  {
+    "name": "ENVIADO_FTP",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_A_BOOL",
+    "type": "INTEGER"
+  },
+  {
+    "name": "DU_PREGUNTA_B_BOOL",
+    "type": "INTEGER"
+  },
+  {
+    "name": "CHECK_1",
+    "type": "INTEGER"
+  },
+  {
+    "name": "HORA_ENVIO_EMAIL",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_HORA_ABOGADO",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_FECHA_OCURRIDO",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_FECHA_ATENCION",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_VIGENCIA_DE",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_VIGENCIA_AL",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_CADUCIDAD_LICENCIA",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_ARRIBO_AJUSTADOR",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_TERMINO_AJUSTADOR",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_FECHA_OCURRIDO_B",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_FECHA_ATENCION_B",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_VIGENCIA_DE_B",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_VIGENCIA_AL_B",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_CADUCIDAD_LICENCIA_B",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_ARRIBO_AJUSTADOR_B",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_TERMINO_AJUSTADOR_B",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_HORA_GRUA",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_HORA_AMBULANCIA",
+    "type": "DATETIME"
+  },
+  {
+    "name": "HORA_ENVIO_SFTP",
+    "type": "DATETIME"
+  },
+  {
+    "name": "DU_COBERTURA",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_USO_AUTO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_TEL_ASEGURADO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_TEL_CONDUCTOR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_LICENCIA_NUM",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_LICENCIA_ESTADO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_COBRANZA",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_USO_AUTO_A",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_PREGUNTA_A",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CONDICIONADO_A",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OTROS",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_COLOR_AUTO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_PLACAS_AUTO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_SERIE",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_COBERTURA_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_COBRANZA_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_TEL_CONDUCTOR_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_LICENCIA_NUM_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_LICENCIA_ESTADO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_COLOR_AUTO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_PLACAS_AUTO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_SERIE_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_TEL_ASEGURADO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_TIPO_LICENCIA_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_TIPO_LICENCIA",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_AUTORIDAD",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CONCLUSIONES",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_APLICO_DEDUCIBLE",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_CIA",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_MARCA_AUTO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_TIPO_AUTO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_CIA_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_MARCA_AUTO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_TIPO_AUTO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_AJUSTADOR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_AJUSTADOR_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_ABOGADO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_SUPERVISOR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_AJUSTADOR_GRAL",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_MODELO_AUTO_A",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_MODELO_AUTO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_CONDUCTOR_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_ASEGURADO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_CONDUCTOR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NOM_ASEGURADO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_DESCRIPCION_CROQUIS",
+    "type": "STRING"
+  },
+  {
+    "name": "FTP_RESPUESTA",
+    "type": "STRING"
+  },
+  {
+    "name": "CORREO_OCULTO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_FOLIO_INFORME",
+    "type": "STRING"
+  },
+  {
+    "name": "NODO_ENVIO",
+    "type": "STRING"
+  },
+  {
+    "name": "MENSAJES_EMAIL",
+    "type": "STRING"
+  },
+  {
+    "name": "FUENTE_WS",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_EDAD_CONDUCTOR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_PERSONAS",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_OCUPANTES",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_EDAD_CONDUCTOR_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_RC",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_PERSONALES",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_SINIESTRO_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_REPORTE_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CLAVE_AJUSTADOR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CLAVE_AJUSTADOR_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_RECUPERACION",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_ACTA",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_REPORTE_AUT",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_DANIOS_MATERIALES",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_EQUIPO_ESPECIAL",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_ROBO_TOTAL",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_RES_BIENES",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_RES_PERSONAS",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_GASTOS_MEDICOS",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_INC_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_POLIZA_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_REPORTE",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_SINIESTRO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_INC",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CLAVE_AJUSTADOR_GRAL",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_POLIZA",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_ENDOSO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NUM_INCISO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_GASTOS_LEGALES",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_ACCI_PERSONALES",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_RC_VIAJERO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CRISTALES",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OTRO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_FOLIO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_CODIGO_RESPONSABILIDAD",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_EMAIL_CONDUCTOR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_EMAIL_CONDUCTOR_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_LUGAR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_DIR_CONDUCTOR_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_LUGAR_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_DIR_CONDUCTOR",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_ASEGURADO",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_DANIOS_PRE",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NARRACION_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_DANIOS_APRE_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_DANIOS_PRE_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_1",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_2",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_3",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_4",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_5",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_1_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_2_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_3_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_4_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OCUPANTE_5_B",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_NARRACION",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_DANIOS_APRE",
+    "type": "STRING"
+  },
+  {
+    "name": "DU_OTRO_ESPECIFICAR",
+    "type": "STRING"
+  }
+]
