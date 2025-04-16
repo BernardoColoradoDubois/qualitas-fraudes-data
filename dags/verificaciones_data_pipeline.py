@@ -11,6 +11,8 @@ from airflow.providers.google.cloud.operators.datafusion import DataFusionPipeli
 
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
+from lib.utils import get_bucket_file_contents
+
 init_date = '2025-03-01'
 final_date = '2025-03-31'
 
@@ -263,7 +265,7 @@ dm_asegurados = BigQueryInsertJobOperator(
   task_id="dm_asegurados",
   configuration={
     "query": {
-      "query": "SELECT CURRENT_DATE()",
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql'),
       "useLegacySql": False,
     }
   },
@@ -387,7 +389,7 @@ dm_estados = BigQueryInsertJobOperator(
 )
 
 dm_oficinas = BigQueryInsertJobOperator(
-  task_id="dm_estados",
+  task_id="dm_oficinas",
   configuration={
     "query": {
       "query": "SELECT CURRENT_DATE()",
