@@ -3,7 +3,6 @@ import re
 import os
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
-import cx_Oracle
 
 #from airflow.providers.oracle.hooks.oracle import OracleHook
 from sqlalchemy import create_engine
