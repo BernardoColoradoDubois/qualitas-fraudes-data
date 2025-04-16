@@ -1,6 +1,6 @@
 -- Crea la tabla STG_ETIQUETA_SINIESTRO_1 en el esquema STG_FRAUDES 
 --y crea una columna Z_ID con un valor por defecto si es nulo y una columna REPORTE con un valor por defecto si es nulo
-CREATE OR REPLACE TABLE `STG_FRAUDES.STG_ETIQUETA_SINIESTRO_1` AS 
+CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}` AS 
 SELECT
   Z_ID
   ,CASE 
@@ -17,5 +17,5 @@ SELECT
   ,CAST(CONCAT(SUBSTRING(CAST(FEC_CARGA AS STRING),1,10),SUBSTRING(CAST(HORA_PROCESO AS STRING),11,9),'.000') AS DATETIME) AS FEC_CARGA
   ,BATCHDATE
   ,SYSUSERID
-FROM `sample_landing_siniestros.etiqueta_siniestro`
+FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`
 WHERE SINIESTRO <> '0424' AND Z_ID IS NOT NULL

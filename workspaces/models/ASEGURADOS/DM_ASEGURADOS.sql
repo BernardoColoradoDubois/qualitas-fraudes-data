@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `DM_FRAUDES.DM_ASEGURADOS`  AS
+CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}`
 SELECT
 ZID AS ID,
 NOMBRE,
@@ -16,4 +16,4 @@ CORREO,
 CURP,
 OFICINA as ID_OFICINA,
 NOM_OFICINA as NOMBRE_OFICINA
-FROM `qualitasfraude.sample_landing_siniestros_bsc.maseg_bsc`;
+FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`;
