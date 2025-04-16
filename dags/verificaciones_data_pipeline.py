@@ -277,7 +277,7 @@ dm_asegurados = BigQueryInsertJobOperator(
     'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
     'DEST_TABLE_NAME': 'DM_ASEGURADOS',
   },
-  location="US",
+  location='us-central1',
   gcp_conn_id="google_cloud_default",
   dag=dag 
 )
