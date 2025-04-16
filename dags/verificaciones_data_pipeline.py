@@ -323,6 +323,45 @@ dm_proveedores = BigQueryInsertJobOperator(
   dag=dag 
 )
 
+rtl_coberturas_movimientos = BigQueryInsertJobOperator(
+  task_id="rtl_coberturas_movimientos",
+  configuration={
+    "query": {
+      "query": "SELECT CURRENT_DATE()",
+      "useLegacySql": False,
+    }
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+delete_coberturas_movimientos = BigQueryInsertJobOperator(
+  task_id="delete_coberturas_movimientos",
+  configuration={
+    "query": {
+      "query": "SELECT CURRENT_DATE()",
+      "useLegacySql": False,
+    }
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+delete_coberturas_movimientos = BigQueryInsertJobOperator(
+  task_id="delete_coberturas_movimientos",
+  configuration={
+    "query": {
+      "query": "SELECT CURRENT_DATE()",
+      "useLegacySql": False,
+    }
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
 
 end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
@@ -342,4 +381,5 @@ end_landing >> init_elt
 init_elt >> dm_asegurados >> end_elt
 init_elt >> rtl_pagos_proveedores >> delete_pagos_proveedores >> dm_pagos_proveedores >> end_elt
 init_elt >> dm_proveedores >> end_elt
+init_elt >> rtl_coberturas_movimientos >> delete_coberturas_movimientos >> end_elt
 
