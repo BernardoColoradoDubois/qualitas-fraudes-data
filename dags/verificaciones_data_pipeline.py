@@ -11,6 +11,9 @@ from airflow.providers.google.cloud.operators.datafusion import DataFusionPipeli
 
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
+init_date = '2025-03-01'
+final_date = '2025-03-31'
+
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
   'retries': 1,
@@ -24,7 +27,7 @@ dag = DAG(
   schedule_interval='0 0 1 1 *',
   max_active_runs=2,
   catchup=False,
-  dagrun_timeout=timedelta(minutes=40),
+  dagrun_timeout=timedelta(minutes=120),
 )
 
 init_landing = BashOperator(task_id='init_landing',bash_command='echo init landing',dag=dag)
@@ -58,8 +61,8 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'APERCAB_BSC',
-    'init_date':'2023-01-01', 
-    'final_date':'2023-01-31'
+    'init_date':init_date, 
+    'final_date':final_date
   },
   dag=dag
 )
@@ -104,8 +107,8 @@ load_pagoprove = CloudDataFusionStartPipelineOperator(
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PAGOPROVE',
-    'init_date':'2023-01-01', 
-    'final_date':'2023-01-31'
+    'init_date':init_date, 
+    'final_date':final_date
   },
   dag=dag
 )
@@ -128,8 +131,8 @@ load_pagosproveedores = CloudDataFusionStartPipelineOperator(
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PAGOSPROVEEDORES',
-    'init_date':'2023-01-01', 
-    'final_date':'2023-01-31'
+    'init_date':init_date, 
+    'final_date':final_date
   },
   dag=dag
 )
@@ -174,8 +177,8 @@ load_reservas_bsc = CloudDataFusionStartPipelineOperator(
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'RESERVAS_BSC',
-    'init_date':'2023-01-01', 
-    'final_date':'2023-01-31'
+    'init_date':init_date, 
+    'final_date':final_date
   },
   dag=dag
 )
@@ -242,8 +245,8 @@ load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'TSUC_BSC',
-    'init_date':'2023-01-01', 
-    'final_date':'2023-01-31'
+    'init_date':init_date, 
+    'final_date':final_date
   },
   dag=dag
 )
@@ -263,6 +266,14 @@ dm_asegurados = BigQueryInsertJobOperator(
       "query": "SELECT CURRENT_DATE()",
       "useLegacySql": False,
     }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'MASEG_BSC',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_ASEGURADOS',
   },
   location="US",
   gcp_conn_id="google_cloud_default",
@@ -349,8 +360,8 @@ delete_coberturas_movimientos = BigQueryInsertJobOperator(
   dag=dag 
 )
 
-delete_coberturas_movimientos = BigQueryInsertJobOperator(
-  task_id="delete_coberturas_movimientos",
+dm_coberturas_movimientos = BigQueryInsertJobOperator(
+  task_id="dm_coberturas_movimientos",
   configuration={
     "query": {
       "query": "SELECT CURRENT_DATE()",
@@ -362,6 +373,31 @@ delete_coberturas_movimientos = BigQueryInsertJobOperator(
   dag=dag 
 )
 
+dm_estados = BigQueryInsertJobOperator(
+  task_id="dm_estados",
+  configuration={
+    "query": {
+      "query": "SELECT CURRENT_DATE()",
+      "useLegacySql": False,
+    }
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_oficinas = BigQueryInsertJobOperator(
+  task_id="dm_estados",
+  configuration={
+    "query": {
+      "query": "SELECT CURRENT_DATE()",
+      "useLegacySql": False,
+    }
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
 
 end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
@@ -381,5 +417,7 @@ end_landing >> init_elt
 init_elt >> dm_asegurados >> end_elt
 init_elt >> rtl_pagos_proveedores >> delete_pagos_proveedores >> dm_pagos_proveedores >> end_elt
 init_elt >> dm_proveedores >> end_elt
-init_elt >> rtl_coberturas_movimientos >> delete_coberturas_movimientos >> end_elt
+init_elt >> rtl_coberturas_movimientos >> delete_coberturas_movimientos >> dm_coberturas_movimientos >> end_elt
+init_elt >> dm_estados >> end_elt
+init_elt >> dm_oficinas >> end_elt
 
