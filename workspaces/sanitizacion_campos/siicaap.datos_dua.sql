@@ -1,14 +1,6 @@
--- Consulta de sanitización para SIICAAP.DATOS_DUA - Siguiendo el orden exacto de la definición de la vista
+-- Consulta de sanitización para SIICAAP.DATOS_DUA (sin campos CLOB) - Eliminando tabs, saltos de línea y retornos de carro
 SELECT
-    REGEXP_REPLACE(FIRMA_CON_A, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS FIRMA_CON_A,
-    REGEXP_REPLACE(FIRMA_CON_B, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS FIRMA_CON_B,
-    REGEXP_REPLACE(FIRMA_RESPONSABLE, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS FIRMA_RESPONSABLE,
-    REGEXP_REPLACE(FIRMA_AJUS_A, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS FIRMA_AJUS_A,
-    REGEXP_REPLACE(DU_CALCA_B, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS DU_CALCA_B,
-    REGEXP_REPLACE(FIRMA_AJUS_QUALITAS, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS FIRMA_AJUS_QUALITAS,
-    REGEXP_REPLACE(DU_CROQUIS, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS DU_CROQUIS,
-    REGEXP_REPLACE(DU_CALCA_A, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS DU_CALCA_A,
-    REGEXP_REPLACE(FIRMA_AJUS_B, '['||CHR(9)||CHR(10)||CHR(13)||']', '') AS FIRMA_AJUS_B,
+    -- Se omiten campos CLOB
     PROCESO,
     ENVIADO_EMAIL,
     CHECK_2,

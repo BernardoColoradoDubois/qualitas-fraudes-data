@@ -1,41 +1,5 @@
 [
   {
-    "name": "FIRMA_CON_A",
-    "type": "STRING"
-  },
-  {
-    "name": "FIRMA_CON_B",
-    "type": "STRING"
-  },
-  {
-    "name": "FIRMA_RESPONSABLE",
-    "type": "STRING"
-  },
-  {
-    "name": "FIRMA_AJUS_A",
-    "type": "STRING"
-  },
-  {
-    "name": "DU_CALCA_B",
-    "type": "STRING"
-  },
-  {
-    "name": "FIRMA_AJUS_QUALITAS",
-    "type": "STRING"
-  },
-  {
-    "name": "DU_CROQUIS",
-    "type": "STRING"
-  },
-  {
-    "name": "DU_CALCA_A",
-    "type": "STRING"
-  },
-  {
-    "name": "FIRMA_AJUS_B",
-    "type": "STRING"
-  },
-  {
     "name": "PROCESO",
     "type": "INTEGER"
   },
