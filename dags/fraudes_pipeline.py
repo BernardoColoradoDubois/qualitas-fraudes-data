@@ -5,6 +5,8 @@ from airflow.operators.bash import BashOperator
 from datetime import timedelta
 from airflow.operators.python import PythonOperator
 from lib.utils import execute_query_workflow,get_bucket_file_contents
+from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
+
 import json
 
 default_args = {
@@ -25,252 +27,496 @@ dag = DAG(
 
 init = BashOperator(task_id='init',bash_command='echo init',dag=dag)
 
-dm_causa_cobertura = PythonOperator( 
-  task_id='dm_causa_cobertura', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAUSA_COBERTURA.sql')
-  }, 
-  dag=dag 
-)
 
-dm_causas = PythonOperator( 
-  task_id='dm_causas', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAUSAS.sql')
-  }, 
-  dag=dag 
-)
-
-dm_oficinas = PythonOperator( 
-  task_id='dm_oficinas', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql')
-  }, 
-  dag=dag 
-)
-
-dm_proveedores = PythonOperator( 
-  task_id='dm_proveedores', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/PROVEEDORES/DM_PROVEEDORES.sql')
-  }, 
-  dag=dag 
-)
-
-stg_siniestros = PythonOperator( 
-  task_id='stg_siniestros', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/SINIESTROS/STG_SINIESTROS.sql')
-  }, 
-  dag=dag 
-)
-
-dm_siniestros = PythonOperator( 
-  task_id='dm_siniestros', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/SINIESTROS/DM_SINIESTROS.sql')
-  }, 
-  dag=dag 
-)
-
-stg_etiqueta_siniestro_1 = PythonOperator( 
-  task_id='stg_etiqueta_siniestro_1', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_1.sql')
-  }, 
-  dag=dag 
-)
-
-stg_etiqueta_siniestro_2 = PythonOperator( 
-  task_id='stg_etiqueta_siniestro_2', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_2.sql')
-  }, 
-  dag=dag 
-)
-
-stg_etiqueta_siniestro_3 = PythonOperator( 
-  task_id='stg_etiqueta_siniestro_3', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql')
-  }, 
-  dag=dag 
-)
-
-dm_etiqueta_siniestro= PythonOperator( 
-  task_id='dm_etiqueta_siniestro', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/DM_ETIQUETA_SINIESTRO.sql')
-  }, 
-  dag=dag 
-)
-
-dm_pagos_polizas= PythonOperator( 
-  task_id='dm_pagos_polizas', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude', 
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/PAGOS_POLIZAS/DM_PAGOS_POLIZAS.sql')
-  }, 
-  dag=dag 
-)
-
-# dag coberturas movimientos
-dm_coberturas_movimiento = PythonOperator( 
-  task_id='dm_coberturas_movimiento', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/DM_COBERTURAS_MOVIMIENTOS.sql')
-  }, 
-  dag=dag 
-)
-
-# dag coberturas movimientos
-dm_pagos_proveedores = PythonOperator( 
-  task_id='dm_pagos_proveedores', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/PAGOS_PROVEEDORES/DM_PAGOS_PROVEEDORES.sql')
-  }, 
-  dag=dag 
-)
-
-dm_analistas = PythonOperator( 
-  task_id='dm_analistas', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ANALISTAS/DM_ANALISTAS.sql')
-  }, 
-  dag=dag 
-)
-
-# dm_registro
-dm_registro = PythonOperator( 
-  task_id='dm_registro', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/REGISTRO/DM_REGISTRO.sql')
-  }, 
-  dag=dag 
-)
-
-stg_polizas_vigentes_1 = PythonOperator( 
-  task_id='stg_polizas_vigentes_1', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_1.sql')
-  }, 
-  dag=dag 
-)
-
-stg_polizas_vigentes_2 = PythonOperator( 
-  task_id='stg_polizas_vigentes_2', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_2.sql')
-  }, 
-  dag=dag 
-)
-
-dm_polizas_vigentes = PythonOperator( 
-  task_id='dm_polizas_vigentes', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/POLIZAS_VIGENTES/DM_POLIZAS_VIGENTES.sql')
-  }, 
-  dag=dag 
-)
-
-dm_estados = PythonOperator( 
-  task_id='dm_estados', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ESTADOS/DM_ESTADOS.sql')
-  }, 
-  dag=dag 
-)
-
-dm_asegurados = PythonOperator( 
-  task_id='dm_asegurados', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ASEGURADOS/DM_ASEGURADOS.sql')
-  }, 
-  dag=dag 
-)
-
-dm_tipos_proveedores = PythonOperator( 
-  task_id='dm_tipos_proveedores', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/TIPOS_PROVEEDORES/DM_TIPOS_PROVEEDORES.sql')
-  }, 
-  dag=dag 
-)
-
-stg_incisos_polizas_1 = PythonOperator( 
-  task_id='stg_incisos_polizas_1', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_1.sql')
-  }, 
-  dag=dag 
-)
-
-stg_incisos_polizas_2 = PythonOperator( 
-  task_id='stg_incisos_polizas_2', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_2.sql')
-  }, 
-  dag=dag 
-)
-
-dm_incisos_polizas = PythonOperator( 
-  task_id='dm_incisos_polizas', 
-  python_callable=execute_query_workflow, 
-  op_kwargs={ 
-    'project_id': 'qualitasfraude',
-    'query': get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/INCISOS_POLIZAS/DM_INCISOS_POLIZAS.sql')
-  }, 
+dm_asegurados = BigQueryInsertJobOperator(
+  task_id="dm_asegurados",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ASEGURADOS/DM_ASEGURADOS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros',
+    'SOURCE_TABLE_NAME': 'cat_causa',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_ASEGURADOS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
   dag=dag 
 )
 
 
+dm_causas = BigQueryInsertJobOperator(
+  task_id="dm_causas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/CAUSAS/DM_CAUSAS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros',
+    'SOURCE_TABLE_NAME': 'cat_causa',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_CAUSAS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
 
-init >> dm_causa_cobertura 
+
+dm_oficinas = BigQueryInsertJobOperator(
+  task_id="dm_oficinas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros_bsc',
+    'SOURCE_TABLE_NAME': 'tsuc_bsc',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_OFICINAS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_proveedores = BigQueryInsertJobOperator(
+  task_id="dm_proveedores",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/PROVEEDORES/DM_PROVEEDORES.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros_bsc',
+    'SOURCE_TABLE_NAME': 'prestadores',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_PROVEEDORES',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_siniestros = BigQueryInsertJobOperator(
+  task_id="stg_siniestros",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/SINIESTROS/STG_SINIESTROS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros',
+    'SOURCE_TABLE_NAME': 'sas_sinies',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'STG_FRAUDES',
+    'DEST_TABLE_NAME': 'STG_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_siniestros = BigQueryInsertJobOperator(
+  task_id="dm_siniestros",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/SINIESTROS/DM_SINIESTROS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_etiqueta_siniestro_1 = BigQueryInsertJobOperator(
+  task_id="stg_etiqueta_siniestro_1",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_1.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_etiqueta_siniestro_2 = BigQueryInsertJobOperator(
+  task_id="stg_etiqueta_siniestro_2",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_2.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_etiqueta_siniestro_3 = BigQueryInsertJobOperator(
+  task_id="stg_etiqueta_siniestro_3",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_etiqueta_siniestro = BigQueryInsertJobOperator(
+  task_id="dm_etiqueta_siniestro",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_pagos_polizas = BigQueryInsertJobOperator(
+  task_id="dm_pagos_polizas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_coberturas_movimiento = BigQueryInsertJobOperator(
+  task_id="dm_coberturas_movimiento",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_pagos_proveedores = BigQueryInsertJobOperator(
+  task_id="dm_pagos_proveedores",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_analistas = BigQueryInsertJobOperator(
+  task_id="dm_analistas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_registro = BigQueryInsertJobOperator(
+  task_id="dm_registro",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_polizas_vigentes_1 = BigQueryInsertJobOperator(
+  task_id="stg_polizas_vigentes_1",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_polizas_vigentes_2 = BigQueryInsertJobOperator(
+  task_id="stg_polizas_vigentes_2",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_polizas_vigentes = BigQueryInsertJobOperator(
+  task_id="dm_polizas_vigentes",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_estados = BigQueryInsertJobOperator(
+  task_id="dm_estados",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_tipos_proveedores = BigQueryInsertJobOperator(
+  task_id="dm_tipos_proveedores",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_incisos_polizas_1 = BigQueryInsertJobOperator(
+  task_id="stg_incisos_polizas_1",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_incisos_polizas_2 = BigQueryInsertJobOperator(
+  task_id="stg_incisos_polizas_2",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_incisos_polizas = BigQueryInsertJobOperator(
+  task_id="dm_incisos_polizas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
+    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_SINIESTROS',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+
+
+
+
 init >> dm_causas 
 init >> dm_oficinas 
 init >> dm_proveedores 

@@ -37,7 +37,6 @@ lanzar_query_bq = BigQueryInsertJobOperator(
   location="US",
   gcp_conn_id="google_cloud_default",
   dag=dag 
-
 )
 
 lanzar_query_bq
