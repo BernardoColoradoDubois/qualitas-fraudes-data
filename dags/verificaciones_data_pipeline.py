@@ -265,7 +265,7 @@ dm_asegurados = BigQueryInsertJobOperator(
   task_id="dm_asegurados",
   configuration={
     "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql'),
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ASEGURADOS/DM_ASEGURADOS.sql'),
       "useLegacySql": False,
     }
   },
@@ -315,7 +315,7 @@ dm_pagos_proveedores = BigQueryInsertJobOperator(
     "query": {
       "query": "SELECT CURRENT_DATE()",
       "useLegacySql": False,
-    }
+    },
   },
   location="US",
   gcp_conn_id="google_cloud_default",
@@ -327,11 +327,19 @@ dm_proveedores = BigQueryInsertJobOperator(
   task_id="dm_prestadores",
   configuration={
     "query": {
-      "query": "SELECT CURRENT_DATE()",
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PROVEEDORES/DM_PROVEEDORES.sql'),
       "useLegacySql": False,
     }
   },
-  location="US",
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'PRESTADORES',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_PROVEEDORES',
+  },
+  location='us-central1',
   gcp_conn_id="google_cloud_default",
   dag=dag 
 )
@@ -379,11 +387,19 @@ dm_estados = BigQueryInsertJobOperator(
   task_id="dm_estados",
   configuration={
     "query": {
-      "query": "SELECT CURRENT_DATE()",
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ESTADOS/DM_ESTADOS.sql'),
       "useLegacySql": False,
     }
   },
-  location="US",
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'TESTADO_BSC',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_ESTADOS',
+  },
+  location='us-central1',
   gcp_conn_id="google_cloud_default",
   dag=dag 
 )
@@ -392,11 +408,19 @@ dm_oficinas = BigQueryInsertJobOperator(
   task_id="dm_oficinas",
   configuration={
     "query": {
-      "query": "SELECT CURRENT_DATE()",
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql'),
       "useLegacySql": False,
     }
   },
-  location="US",
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'TSUC_BSC',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_OFICINAS',
+  },
+  location='us-central1',
   gcp_conn_id="google_cloud_default",
   dag=dag 
 )
