@@ -166,8 +166,8 @@ stg_etiqueta_siniestro_1 = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros',
+    'SOURCE_TABLE_NAME': 'etiqueta_siniestro',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'STG_FRAUDES',
     'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
@@ -188,7 +188,7 @@ stg_etiqueta_siniestro_2 = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
     'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'STG_FRAUDES',
     'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
@@ -209,7 +209,7 @@ stg_etiqueta_siniestro_3 = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
     'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'STG_FRAUDES',
     'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
@@ -230,7 +230,7 @@ dm_etiqueta_siniestro = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
     'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_ETIQUETA_SINIESTRO',
@@ -250,8 +250,8 @@ dm_pagos_polizas = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_sise',
+    'SOURCE_TABLE_NAME': 'fraud_rp',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_PAGOS_POLIZAS',
@@ -292,8 +292,9 @@ dm_pagos_proveedores = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros_bsc',
+    'SOURCE_TABLE_NAME': 'pagprove',
+    'SOURCE_SECOND_TABLE_NAME': 'pagosproveedores',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_PAGOS_PROVEEDORES',
@@ -334,8 +335,8 @@ dm_registro = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros',
+    'SOURCE_TABLE_NAME': 'registro',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_REGISTRO',
@@ -355,8 +356,8 @@ stg_polizas_vigentes_1 = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_sise',
+    'SOURCE_TABLE_NAME': 'fraud_pv',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'STG_FRAUDES',
     'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
@@ -377,7 +378,7 @@ stg_polizas_vigentes_2 = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
     'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
+    'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'STG_FRAUDES',
     'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
@@ -439,8 +440,8 @@ dm_tipos_proveedores = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros_bsc',
+    'SOURCE_TABLE_NAME': 'tipoproveedor',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_TIPOS_PROVEEDORES',
@@ -460,8 +461,8 @@ stg_incisos_polizas_1 = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_sise',
+    'SOURCE_TABLE_NAME': 'fraud_di',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'STG_FRAUDES',
     'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
@@ -513,6 +514,27 @@ dm_incisos_polizas = BigQueryInsertJobOperator(
   dag=dag 
 )
 
+dm_dua = BigQueryInsertJobOperator(
+  task_id="dm_dua",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-ccompquafrau-38b343aa-bucket/workspaces/models/DUA/DM_DUA.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qualitasfraude',
+    'SOURCE_DATASET_NAME': 'sample_landing_siicaap',
+    'SOURCE_TABLE_NAME': 'datos_dua',
+    'DEST_PROJECT_ID': 'qualitasfraude',
+    'DEST_DATASET_NAME': 'DM_FRAUDES',
+    'DEST_TABLE_NAME': 'DM_DUA',
+  },
+  location="US",
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
 
 init >> dm_causas 
 init >> dm_oficinas 
@@ -529,3 +551,4 @@ init >> dm_tipos_proveedores
 init >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> dm_etiqueta_siniestro 
 init >> stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> dm_polizas_vigentes
 init >> stg_incisos_polizas_1 >> stg_incisos_polizas_2 >> dm_incisos_polizas
+init >> dm_dua
