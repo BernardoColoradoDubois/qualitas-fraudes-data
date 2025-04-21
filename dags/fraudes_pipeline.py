@@ -482,7 +482,7 @@ stg_incisos_polizas_2 = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
     'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'STG_FRAUDES',
     'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
@@ -503,7 +503,7 @@ dm_incisos_polizas = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
     'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_INCISOS_POLIZAS',
