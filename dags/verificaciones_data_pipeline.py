@@ -287,11 +287,20 @@ rtl_pagos_proveedores = BigQueryInsertJobOperator(
   task_id="rtl_pagos_proveedores",
   configuration={
     "query": {
-      "query": "SELECT CURRENT_DATE()",
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_PROVEEDORES/RTL_PAGOS_PROVEEDORES.sql'),
       "useLegacySql": False,
     }
   },
-  location="US",
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'PRESTADORES',
+    'SOURCE_SECOND_TABLE_NAME': 'pagosproveedores',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_PAGOS_PROVEEDORES',
+  },
+  location='us-central1',
   gcp_conn_id="google_cloud_default",
   dag=dag 
 )
@@ -348,11 +357,19 @@ rtl_coberturas_movimientos = BigQueryInsertJobOperator(
   task_id="rtl_coberturas_movimientos",
   configuration={
     "query": {
-      "query": "SELECT CURRENT_DATE()",
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/RTL_COBERTURAS_MOVIMIENTOS.sql'),
       "useLegacySql": False,
     }
   },
-  location="US",
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'PRESTADORES',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS',
+  },
+  location='us-central1',
   gcp_conn_id="google_cloud_default",
   dag=dag 
 )
@@ -425,6 +442,27 @@ dm_oficinas = BigQueryInsertJobOperator(
   dag=dag 
 )
 
+dm_tipos_proveedores = BigQueryInsertJobOperator(
+  task_id="dm_oficinas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/TIPOS_PROVEEDORES/DM_TIPOS_PROVEEDORES.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'TIPOPROVEEDOR',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_TIPOS_PROVEEDORES',
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
 end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
 init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
@@ -446,4 +484,6 @@ init_elt >> dm_proveedores >> end_elt
 init_elt >> rtl_coberturas_movimientos >> delete_coberturas_movimientos >> dm_coberturas_movimientos >> end_elt
 init_elt >> dm_estados >> end_elt
 init_elt >> dm_oficinas >> end_elt
+init_elt >> dm_tipos_proveedores >> end_elt
+
 
