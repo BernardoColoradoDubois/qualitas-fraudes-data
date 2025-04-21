@@ -25,7 +25,7 @@ credentials = GoogleCloudCredentials.from_service_account_file(filename=key_file
 client = Client(credentials=credentials)
 
 # Realizamos una consulta a BigQuery y cargamos los resultados en un DataFrame`
-query = "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_INCISOS_POLIZAS`;"
+query = "SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_DUA` WHERE CAST(DU_FECHA_OCURRIDO AS DATE) BETWEEN '2025-03-01' AND '2025-03-31' LIMIT 50000;"
 query_job = client.query(query)
 result = query_job.result()
 
@@ -40,8 +40,8 @@ dt = [tuple(x) for x in df.values]
 conn_string = f'{oracle_user}/{oracle_password}@{oracle_host}:{oracle_port}/{oracle_service}'
 connection = cx_Oracle.connect(conn_string)
 cursor = connection.cursor()
-cursor.execute('TRUNCATE TABLE INSUMOS.DM_INCISOS_POLIZAS')
-sql="INSERT INTO INSUMOS.DM_INCISOS_POLIZAS"+" VALUES("+",".join([f":{i+1}" for i in range(df.shape[1])])+")"
+cursor.execute('TRUNCATE TABLE INSUMOS.DM_DUA')
+sql="INSERT INTO INSUMOS.DM_DUA"+" VALUES("+",".join([f":{i+1}" for i in range(df.shape[1])])+")"
 cursor.executemany(sql, dt)
 connection.commit()
 cursor.close()
