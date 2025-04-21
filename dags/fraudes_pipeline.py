@@ -271,8 +271,8 @@ dm_coberturas_movimientos = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros_bsc',
+    'SOURCE_TABLE_NAME': 'reservas_bsc',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_COBERTURAS_MOVIMIENTOS',
@@ -313,8 +313,8 @@ dm_analistas = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros',
+    'SOURCE_TABLE_NAME': 'analistas',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_ANALISTAS',
@@ -377,7 +377,7 @@ stg_polizas_vigentes_2 = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
     'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'STG_FRAUDES',
     'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
@@ -398,7 +398,7 @@ dm_polizas_vigentes = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
     'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_POLIZAS_VIGENTES',
@@ -418,8 +418,8 @@ dm_estados = BigQueryInsertJobOperator(
   },
   params={
     'SOURCE_PROJECT_ID': 'qualitasfraude',
-    'SOURCE_DATASET_NAME': 'STG_FRAUDES',
-    'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+    'SOURCE_DATASET_NAME': 'sample_landing_siniestros_bsc',
+    'SOURCE_TABLE_NAME': 'testado_bsc',
     'DEST_PROJECT_ID': 'qualitasfraude',
     'DEST_DATASET_NAME': 'DM_FRAUDES',
     'DEST_TABLE_NAME': 'DM_ESTADOS',
