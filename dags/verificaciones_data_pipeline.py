@@ -18,8 +18,8 @@ final_date = '2025-03-31'
 
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
-  'retries': 1,
-  'retry_delay': timedelta(minutes=5)
+  'retries': 3,
+  'retry_delay': timedelta(minutes=2)
 }
 
 dag = DAG(
