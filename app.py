@@ -45,7 +45,7 @@ container.config.key_file_path.override(key_file_path)
 container.config.connection_string.override(f'{oracle_user}/{oracle_password}@{oracle_host}:{oracle_port}/{oracle_service}')
 container.config.hashed_api_key.override(hashed_api_key)
 
-# Wire ANTES de crear la app
+# Wire antes de crear la app
 container.wire(modules=[
   main_routes
   ,analistas_routes
