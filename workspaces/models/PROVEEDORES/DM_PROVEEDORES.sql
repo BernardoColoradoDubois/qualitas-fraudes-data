@@ -1,4 +1,5 @@
-CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}` AS
+TRUNCATE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}`;
+INSERT INTO `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}`
 SELECT 
   ID, 
   NOMBRE,
@@ -39,4 +40,4 @@ SELECT
   TBODY, ----------------
   NUM_EMPL AS NUMERO_EMPLEADO
 FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`
-WHERE ID <> 'ED MP'
+WHERE ID <> 'ED MP';
