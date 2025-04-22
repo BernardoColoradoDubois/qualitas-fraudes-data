@@ -8,6 +8,7 @@ import src.main.routes as main_routes
 import src.analistas.routes as analistas_routes
 import src.asegurados.routes as asegurados_routes
 import src.causas.routes as causas_routes
+import src.dua.routes as dua_routes
 import src.estados.routes as estados_routes
 import src.etiqueta_siniestro.routes as etiqueta_siniestro_routes
 import src.incisos_polizas.routes as incisos_polizas_routes
@@ -51,6 +52,7 @@ container.wire(modules=[
   ,asegurados_routes
   ,causas_routes
   ,coberturas_movimientos_routes
+  ,dua_routes
   ,estados_routes
   ,etiqueta_siniestro_routes
   ,incisos_polizas_routes
@@ -72,6 +74,7 @@ app.register_blueprint(analistas_routes.blueprint, url_prefix='/analistas')
 app.register_blueprint(asegurados_routes.blueprint, url_prefix='/asegurados')
 app.register_blueprint(causas_routes.blueprint, url_prefix='/causas')
 app.register_blueprint(coberturas_movimientos_routes.blueprint, url_prefix='/coberturas-movimientos')
+app.register_blueprint(dua_routes.blueprint, url_prefix='/dua')
 app.register_blueprint(estados_routes.blueprint, url_prefix='/estados')
 app.register_blueprint(etiqueta_siniestro_routes.blueprint, url_prefix='/etiqueta-siniestro')
 app.register_blueprint(incisos_polizas_routes.blueprint, url_prefix='/incisos-polizas')

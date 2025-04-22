@@ -8,6 +8,7 @@ from src.lib.password_encrypt import APIKeyValidator
 from src.analistas.application_service import LoadAnalistas
 from src.asegurados.application_service import LoadAsegurados
 from src.causas.application_service import LoadCausas
+from src.dua.application_service import LoadDua
 from src.coberturas_movimientos.application_service import LoadCoberturasMovimientos
 from src.estados.application_service import LoadEstados
 from src.etiqueta_siniestro.application_service import LoadEtiquetaSiniestro
@@ -41,6 +42,7 @@ class DIContainer(containers.DeclarativeContainer):
   load_asegurados = providers.Factory(LoadAsegurados, bigquery_to_oracle=bigquery_to_oracle)
   load_causas = providers.Factory(LoadCausas, bigquery_to_oracle=bigquery_to_oracle)
   load_coberturas_movimientos = providers.Factory(LoadCoberturasMovimientos, bigquery_to_oracle=bigquery_to_oracle)
+  load_dua = providers.Factory(LoadDua, bigquery_to_oracle=bigquery_to_oracle)
   load_etiqueta_siniestro = providers.Factory(LoadEtiquetaSiniestro, bigquery_to_oracle=bigquery_to_oracle)
   load_estados = providers.Factory(LoadEstados, bigquery_to_oracle=bigquery_to_oracle)
   load_incisos_polizas = providers.Factory(LoadIncisoPolizas, bigquery_to_oracle=bigquery_to_oracle)
