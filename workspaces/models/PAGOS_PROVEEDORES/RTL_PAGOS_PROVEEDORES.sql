@@ -55,5 +55,5 @@ SELECT
   , PP.`USU RESERVA` AS ID_USUARIO_RESERVA
   , PP.VALUACION AS ID_VALUACION
   , PP.TMPO_PAGO_PT AS TIEMPO_PAGO
-FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`
-INNER JOIN sample_landing_siniestros_bsc.pagosproveedores PPS ON PP.Z_ID = PPS.Clave 
+FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}` PP 
+INNER JOIN `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_SECOND_TABLE_NAME}}` PPS ON PP.Z_ID = PPS.Clave 

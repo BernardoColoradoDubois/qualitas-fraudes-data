@@ -294,8 +294,8 @@ rtl_pagos_proveedores = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
     'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'PRESTADORES',
-    'SOURCE_SECOND_TABLE_NAME': 'pagosproveedores',
+    'SOURCE_TABLE_NAME': 'PAGOPROVE',
+    'SOURCE_SECOND_TABLE_NAME': 'PAGOSPROVEEDORES',
     'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
     'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
     'DEST_TABLE_NAME': 'DM_PAGOS_PROVEEDORES',
@@ -364,10 +364,10 @@ rtl_coberturas_movimientos = BigQueryInsertJobOperator(
   params={
     'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
     'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'PRESTADORES',
+    'SOURCE_TABLE_NAME': 'RESERVAS_BSC',
     'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS',
+    'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS'
   },
   location='us-central1',
   gcp_conn_id="google_cloud_default",
@@ -378,11 +378,18 @@ delete_coberturas_movimientos = BigQueryInsertJobOperator(
   task_id="delete_coberturas_movimientos",
   configuration={
     "query": {
-      "query": "SELECT CURRENT_DATE()",
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/DELETE_COBERTURAS_MOVIMIENTOS.sql'),
       "useLegacySql": False,
     }
   },
-  location="US",
+  params={
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_COBERTURAS_MOVIMIENTOS',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
   gcp_conn_id="google_cloud_default",
   dag=dag 
 )
@@ -391,11 +398,21 @@ dm_coberturas_movimientos = BigQueryInsertJobOperator(
   task_id="dm_coberturas_movimientos",
   configuration={
     "query": {
-      "query": "SELECT CURRENT_DATE()",
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/DM_COBERTURAS_MOVIMIENTOS.sql'),
       "useLegacySql": False,
     }
   },
-  location="US",
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_COBERTURAS_MOVIMIENTOS',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
   gcp_conn_id="google_cloud_default",
   dag=dag 
 )
@@ -443,7 +460,7 @@ dm_oficinas = BigQueryInsertJobOperator(
 )
 
 dm_tipos_proveedores = BigQueryInsertJobOperator(
-  task_id="dm_oficinas",
+  task_id="dm_tipos_proveedores",
   configuration={
     "query": {
       "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/TIPOS_PROVEEDORES/DM_TIPOS_PROVEEDORES.sql'),
