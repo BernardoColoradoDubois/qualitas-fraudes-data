@@ -459,6 +459,9 @@ dm_tipos_proveedores = BigQueryInsertJobOperator(
 
 end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
+init_injection = BashOperator(task_id='init_injection',bash_command='echo init inyection',dag=dag)
+
+
 init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
 init_landing_bsc_siniestros >> load_apercab_bsc >> end_landing_bsc_siniestros
 init_landing_bsc_siniestros >> load_maseg_bsc >> end_landing_bsc_siniestros
@@ -479,5 +482,7 @@ init_elt >> rtl_coberturas_movimientos >> dm_coberturas_movimientos >> end_elt
 init_elt >> dm_estados >> end_elt
 init_elt >> dm_oficinas >> end_elt
 init_elt >> dm_tipos_proveedores >> end_elt
+
+end_elt>> init_injection
 
 
