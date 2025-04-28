@@ -470,6 +470,56 @@ end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
 init_injection = BashOperator(task_id='init_injection',bash_command='echo init inyection',dag=dag)
 
+# maseg pipeline
+inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
+  task_id="inject_dm_asegurados",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inyect_dm_asegurados',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_ASEGURADOS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'DM_ASEGURADOS',
+  },
+  dag=dag
+)
+
+# maseg pipeline
+inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
+  task_id="inject_dm_oficinas",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inject_dm_oficinas',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_OFICINAS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'DM_OFICINAS',
+  },
+  dag=dag
+)
+
 
 init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
 init_landing_bsc_siniestros >> load_apercab_bsc >> end_landing_bsc_siniestros
@@ -493,5 +543,8 @@ init_elt >> dm_oficinas >> end_elt
 init_elt >> dm_tipos_proveedores >> end_elt
 
 end_elt>> init_injection
+
+init_injection >> inject_dm_asegurados
+init_injection >> inject_dm_oficinas
 
 
