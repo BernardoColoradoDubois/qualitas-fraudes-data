@@ -1,0 +1,57 @@
+MERGE INTO INSUMOS.DM_ASEGURADOS tgt
+USING RAW_INSUMOS.STG_ASEGURADOS stg
+ON (tgt.ID = stg.ID)
+WHEN MATCHED THEN
+  UPDATE SET
+    tgt.NOMBRE = stg.NOMBRE,
+    tgt.GIRO = stg.GIRO,
+    tgt.NACIONALIDAD = stg.NACIONALIDAD,
+    tgt.FOLIO = stg.FOLIO,
+    tgt.APODERADO = stg.APODERADO,
+    tgt.NACIMIENTO_APODERADO = stg.NACIMIENTO_APODERADO,
+    tgt.RFC = stg.RFC,
+    tgt.ART_140 = stg.ART_140,
+    tgt.FECHA_NACIMIENTO = stg.FECHA_NACIMIENTO,
+    tgt.FECHA_ALTA = stg.FECHA_ALTA,
+    tgt.TIPO_ASEGURADOS = stg.TIPO_ASEGURADOS,
+    tgt.CORREO = stg.CORREO,
+    tgt.CURP = stg.CURP,
+    tgt.ID_OFICINA = stg.ID_OFICINA,
+    tgt.NOMBRE_OFICINA = stg.NOMBRE_OFICINA
+WHEN NOT MATCHED THEN
+  INSERT (
+    ID,
+    NOMBRE,
+    GIRO,
+    NACIONALIDAD,
+    FOLIO,
+    APODERADO,
+    NACIMIENTO_APODERADO,
+    RFC,
+    ART_140,
+    FECHA_NACIMIENTO,
+    FECHA_ALTA,
+    TIPO_ASEGURADOS,
+    CORREO,
+    CURP,
+    ID_OFICINA,
+    NOMBRE_OFICINA
+  )
+  VALUES (
+    stg.ID,
+    stg.NOMBRE,
+    stg.GIRO,
+    stg.NACIONALIDAD,
+    stg.FOLIO,
+    stg.APODERADO,
+    stg.NACIMIENTO_APODERADO,
+    stg.RFC,
+    stg.ART_140,
+    stg.FECHA_NACIMIENTO,
+    stg.FECHA_ALTA,
+    stg.TIPO_ASEGURADOS,
+    stg.CORREO,
+    stg.CURP,
+    stg.ID_OFICINA,
+    stg.NOMBRE_OFICINA
+  )
