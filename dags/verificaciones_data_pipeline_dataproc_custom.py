@@ -22,26 +22,22 @@ CLUSTER_CONFIG = {
         "internal_ip_only": True,
         "subnetwork_uri": "projects/shared-nonprod-eba6/regions/us-central1/subnetworks/qlts-svpc-non-prd-sn",
         "service_account": "dataproc-dev-operaciones@qlts-nonprod-data-tools.iam.gserviceaccount.com",
+        "shielded_instance_config": {
+          "enable_secure_boot": False,
+          "enable_vtpm": False,
+          "enable_integrity_monitoring": False,
+        },
     },
     "master_config": {
         "num_instances": 1,
-        "machine_type_uri": "n1-standard-4",
+        "machine_type_uri": "e2-custom-2-8192",
         "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 32},
     },
     "worker_config": {
-        "num_instances": 2,
-        "machine_type_uri": "n1-standard-4",
+        "num_instances": 8,
+        "machine_type_uri": "e2-custom-2-8192",
         "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 32},
-    },
-    "secondary_worker_config": {
-        "num_instances": 1,
-        "machine_type_uri": "n1-standard-4",
-        "disk_config": {
-            "boot_disk_type": "pd-standard",
-            "boot_disk_size_gb": 32,
-        },
-        "is_preemptible": False,
-        "preemptibility": "PREEMPTIBLE",
+
     }
 }
 
@@ -97,10 +93,8 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   project_id='qlts-nonprod-data-tools',
   pipeline_type = DataFusionPipelineType.BATCH,
   success_states=["COMPLETED"],
-  asynchronous=False,
   pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
+  asynchronous=False,
   runtime_args={
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",

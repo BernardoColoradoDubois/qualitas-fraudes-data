@@ -60,6 +60,7 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'APERCAB_BSC',
@@ -84,6 +85,7 @@ load_maseg_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'MASEG_BSC'
@@ -106,6 +108,7 @@ load_pagoprove = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PAGOPROVE',
@@ -130,6 +133,7 @@ load_pagosproveedores = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PAGOSPROVEEDORES',
@@ -154,6 +158,7 @@ load_prestadores = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PRESTADORES'
@@ -176,6 +181,7 @@ load_reservas_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'RESERVAS_BSC',
@@ -200,6 +206,7 @@ load_testado_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'TESTADO_BSC'
@@ -222,6 +229,7 @@ load_tipoproveedor = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'TIPOPROVEEDOR',
@@ -244,6 +252,7 @@ load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'TSUC_BSC',
