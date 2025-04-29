@@ -490,12 +490,61 @@ inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
     'DATASET_NAME':'DM_VERIFICACIONES',
     'TABLE_NAME':'DM_ASEGURADOS',
     'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'DM_ASEGURADOS',
+    'INJECT_TABLE_NAME':'STG_ASEGURADOS',
   },
   dag=dag
 )
 
-# maseg pipeline
+inject_coberturas_movimientos = CloudDataFusionStartPipelineOperator(
+  task_id="inject_coberturas_movimientos",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inyect_dm_coberturas_movimientos',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_COBERTURAS_MOVIMIENTOS',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+inject_dm_estados = CloudDataFusionStartPipelineOperator(
+  task_id="inject_dm_estados",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inyect_dm_estados',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_ESTADOS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_ESTADOS',
+  },
+  dag=dag
+)
+
 inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
   task_id="inject_dm_oficinas",
   location='us-central1',
@@ -515,10 +564,86 @@ inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
     'DATASET_NAME':'DM_VERIFICACIONES',
     'TABLE_NAME':'DM_OFICINAS',
     'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'DM_OFICINAS',
+    'INJECT_TABLE_NAME':'STG_OFICINAS',
   },
   dag=dag
 )
+
+inject_pagos_proveedores = CloudDataFusionStartPipelineOperator(
+  task_id="inject_pagos_proveedores",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inyect_dm_pagos_proveedores',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_PAGOS_PROVEEDORES',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_PAGOS_PROVEEDORES',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+inject_proveedores = CloudDataFusionStartPipelineOperator(
+  task_id="inject_proveedores",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inyect_dm_proveedores',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_PROVEEDORES',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_PROVEEDORES',
+  },
+  dag=dag
+)
+
+inject_tipos_proveedores = CloudDataFusionStartPipelineOperator(
+  task_id="inject_tipos_proveedores",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inyect_dm_tipos_proveedores',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.profile.name':'SYSTEM:autoscaling-dataproc',
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_TIPOS_PROVEEDORES',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_TIPOS_PROVEEDORES',
+  },
+  dag=dag
+)
+
+end_injection = BashOperator(task_id='end_injection',bash_command='echo end injection',dag=dag)
 
 
 init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
@@ -544,7 +669,14 @@ init_elt >> dm_tipos_proveedores >> end_elt
 
 end_elt>> init_injection
 
-init_injection >> inject_dm_asegurados
-init_injection >> inject_dm_oficinas
+init_injection >> inject_dm_asegurados >> end_injection
+init_injection >> inject_coberturas_movimientos >> end_injection
+init_injection >> inject_dm_estados >> end_injection
+init_injection >> inject_dm_oficinas >> end_injection
+init_injection >> inject_pagos_proveedores >> end_injection
+init_injection >> inject_proveedores >> end_injection
+init_injection >> inject_tipos_proveedores >> end_injection
+
+
 
 
