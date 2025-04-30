@@ -39,10 +39,10 @@ CLUSTER_CONFIG = {
     "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 32},
   },
   "software_config": {
-    "image_version": "2.1.85-debian11",
-    "properties":{
+    "image_version":"2.1.85-debian11",
+    "properties": {
       "dataproc:dataproc.conscrypt.provider.enable": "false",
-      "capacity-scheduler:yarn.scheduler.capacity.resource-calculator" : "org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator"
+      "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator"
     }
   }
 }
@@ -112,6 +112,30 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   dag=dag
 )
 
+# maseg pipeline
+load_maseg_bsc = CloudDataFusionStartPipelineOperator(
+  task_id="load_maseg_bsc",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_maseg',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'MASEG_BSC'
+  },
+  dag=dag
+)
+
 end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing BSCSiniestros',dag=dag)
 end_landing = BashOperator(task_id='end_landing',bash_command='echo end landing',dag=dag)
 
@@ -125,6 +149,7 @@ delete_cluster = DataprocDeleteClusterOperator(
 
 create_cluster >> init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
 init_landing_bsc_siniestros >> load_apercab_bsc >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_maseg_bsc >> end_landing_bsc_siniestros
 end_landing_bsc_siniestros >> end_landing
 end_landing >> delete_cluster
 
