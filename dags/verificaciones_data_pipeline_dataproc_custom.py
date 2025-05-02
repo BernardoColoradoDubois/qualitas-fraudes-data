@@ -34,7 +34,7 @@ CLUSTER_CONFIG = {
     "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 32},
   },
   "worker_config": {
-    "num_instances": 8,
+    "num_instances": 30,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {"boot_disk_type": "pd-standard", "boot_disk_size_gb": 32},
   },
@@ -42,7 +42,8 @@ CLUSTER_CONFIG = {
     "image_version":"2.1.85-debian11",
     "properties": {
       "dataproc:dataproc.conscrypt.provider.enable": "false",
-      "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator"
+      #"capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
+      "spark:spark.executor.cores": "10"
     }
   }
 }
@@ -100,6 +101,8 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   success_states=["COMPLETED"],
   pipeline_timeout=3600,
   asynchronous=False,
+  deferrable=True,
+  poll_interval=30,
   runtime_args={
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",
@@ -136,6 +139,180 @@ load_maseg_bsc = CloudDataFusionStartPipelineOperator(
   dag=dag
 )
 
+# pagoprove pipeline
+load_pagoprove = CloudDataFusionStartPipelineOperator(
+  task_id="load_pagoprove",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_pagoprove',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'PAGOPROVE',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+load_pagosproveedores = CloudDataFusionStartPipelineOperator(
+  task_id="load_pagosproveedores",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_pagosproveedores',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",    
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'PAGOSPROVEEDORES',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+load_prestadores = CloudDataFusionStartPipelineOperator(
+  task_id="load_prestadores",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_prestadores',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",        
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'PRESTADORES'
+  },
+  dag=dag
+)
+
+load_reservas_bsc = CloudDataFusionStartPipelineOperator(
+  task_id="load_reservas_bsc",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_reservas',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",        
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'RESERVAS_BSC',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+# testado_bsc pipeline
+load_testado_bsc = CloudDataFusionStartPipelineOperator(
+  task_id="load_testado_bsc",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_testados_bsc',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'TESTADO_BSC'
+  },
+  dag=dag
+)
+
+# tipoproveedor pipeline
+load_tipoproveedor = CloudDataFusionStartPipelineOperator(
+  task_id="load_tipoproveedor",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='qlts_dev_verificaciones_tipoproveedor',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'TIPOPROVEEDOR',
+  },
+  dag=dag
+)
+
+# tsuc pipeline
+load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
+  task_id="load_tsuc_bsc",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='carga_qlts_dev_verificaciones_tsuc',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'TSUC_BSC',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+
 end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing BSCSiniestros',dag=dag)
 end_landing = BashOperator(task_id='end_landing',bash_command='echo end landing',dag=dag)
 
@@ -150,6 +327,13 @@ delete_cluster = DataprocDeleteClusterOperator(
 create_cluster >> init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
 init_landing_bsc_siniestros >> load_apercab_bsc >> end_landing_bsc_siniestros
 init_landing_bsc_siniestros >> load_maseg_bsc >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_pagoprove >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_pagosproveedores >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_prestadores >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_reservas_bsc >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_testado_bsc >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_tipoproveedor >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros >> load_tsuc_bsc >> end_landing_bsc_siniestros
 end_landing_bsc_siniestros >> end_landing
 end_landing >> delete_cluster
 

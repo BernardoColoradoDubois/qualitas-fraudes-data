@@ -10,7 +10,7 @@ class LoadAsegurados:
     
     response = self.bigquery_to_oracle.run(
       extraction_query="SELECT * FROM `qualitasfraude.DM_FRAUDES.DM_ASEGURADOS` LIMIT 50000;", 
-      preload_query="TRUNCATE TABLE INSUMOS.DM_ASEGURADOS;",
+      preload_query="TRUNCATE TABLE INSUMOS.DM_ASEGURADOS",
       schema="INSUMOS",
       table="DM_ASEGURADOS"
     )    

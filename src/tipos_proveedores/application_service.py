@@ -10,7 +10,7 @@ class LoadTiposProveedores:
     
     response = self.bigquery_to_oracle.run(
       extraction_query="SELECT * FROM `DM_FRAUDES.DM_TIPOS_PROVEEDORES`;", 
-      preload_query="TRUNCATE TABLE INSUMOS.DM_TIPOS_PROVEEDORES;",
+      preload_query="TRUNCATE TABLE INSUMOS.DM_TIPOS_PROVEEDORES",
       schema="INSUMOS",
       table="DM_TIPOS_PROVEEDORES"
     )    
