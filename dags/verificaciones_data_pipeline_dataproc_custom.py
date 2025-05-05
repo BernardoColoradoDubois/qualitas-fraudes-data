@@ -17,6 +17,8 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 from lib.utils import get_bucket_file_contents
 
 
+
+
 CLUSTER_CONFIG = {
   "gce_cluster_config": {
     "internal_ip_only": True,
@@ -36,14 +38,14 @@ CLUSTER_CONFIG = {
     }
   },
   "worker_config": {
-    "num_instances": 36,
+    "num_instances": 12,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
     }
   },
   "secondary_worker_config": {
-    "num_instances": 12,
+    "num_instances": 4,
     "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard",
@@ -53,13 +55,25 @@ CLUSTER_CONFIG = {
     "preemptibility": "PREEMPTIBLE",
   },
   "software_config": {
-    "image_version":"2.1.85-debian11",
-    "properties": {
-      "dataproc:dataproc.conscrypt.provider.enable": "false",
-      "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
-      "spark:spark.executor.cores": "10"
-    }
+  "image_version":"2.1.85-debian11",
+  "properties": {
+    "dataproc:dataproc.conscrypt.provider.enable": "false",
+    "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
+    "spark:spark.executor.cores": "2",                     # Reducir de 10 a 2
+    "spark:spark.executor.memory": "3g",                   # Añadir configuración de memoria
+    "spark:spark.driver.memory": "4g",                     # Añadir memoria para el driver
+    "spark:spark.executor.instances": "4",                 # Controlar número de executors
+    "spark:spark.yarn.am.memory": "1g",                    # Memoria para YARN Application Master
+    "spark:spark.dynamicAllocation.enabled": "true",       # Habilitar asignación dinámica
+    "spark:spark.dynamicAllocation.minExecutors": "2",     # Mínimo de executors
+    "spark:spark.dynamicAllocation.maxExecutors": "8",     # Máximo de executors
+    "spark:spark.scheduler.mode": "FAIR"                   # Programador justo
   }
+},
+  "endpoint_config": {
+      "enable_http_port_access": True
+    }
+
 }
 
 
@@ -101,7 +115,7 @@ get_datafusion_instance = CloudDataFusionGetInstanceOperator(
   dag=dag,
 )
 
-init_landing_bsc_siniestros = BashOperator(task_id='init_landing_bsc_siniestros',bash_command='echo init landing BSCSiniestros',dag=dag)
+init_landing_bsc_siniestros_1 = BashOperator(task_id='init_landing_bsc_siniestros_1',bash_command='echo init landing BSCSiniestros',dag=dag)
 
 # apercab pipeline
 load_apercab_bsc = CloudDataFusionStartPipelineOperator(
@@ -124,7 +138,14 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'APERCAB_BSC',
     'init_date':init_date, 
-    'final_date':final_date
+    'final_date':final_date,
+    'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
+
   },
   dag=dag
 )
@@ -148,7 +169,13 @@ load_maseg_bsc = CloudDataFusionStartPipelineOperator(
     "system.profile.name" : "USER:verificaciones-dataproc",
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'MASEG_BSC'
+    'TABLE_NAME':'MASEG_BSC',
+    'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -174,7 +201,13 @@ load_pagoprove = CloudDataFusionStartPipelineOperator(
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PAGOPROVE',
     'init_date':init_date, 
-    'final_date':final_date
+    'final_date':final_date,
+        'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -199,7 +232,13 @@ load_pagosproveedores = CloudDataFusionStartPipelineOperator(
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PAGOSPROVEEDORES',
     'init_date':init_date, 
-    'final_date':final_date
+    'final_date':final_date,
+        'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -222,7 +261,13 @@ load_prestadores = CloudDataFusionStartPipelineOperator(
     "system.profile.name" : "USER:verificaciones-dataproc",        
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'PRESTADORES'
+    'TABLE_NAME':'PRESTADORES',
+        'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -247,7 +292,13 @@ load_reservas_bsc = CloudDataFusionStartPipelineOperator(
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'RESERVAS_BSC',
     'init_date':init_date, 
-    'final_date':final_date
+    'final_date':final_date,
+        'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -271,7 +322,13 @@ load_testado_bsc = CloudDataFusionStartPipelineOperator(
     "system.profile.name" : "USER:verificaciones-dataproc",  
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'TESTADO_BSC'
+    'TABLE_NAME':'TESTADO_BSC',
+        'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -296,6 +353,12 @@ load_tipoproveedor = CloudDataFusionStartPipelineOperator(
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'TIPOPROVEEDOR',
+        'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -321,14 +384,22 @@ load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'TSUC_BSC',
     'init_date':init_date, 
-    'final_date':final_date
+    'final_date':final_date,
+        'spark.driver.memory': '2g',
+    'spark.executor.memory': '3g',
+    'spark.executor.cores': '2',
+    'spark.executor.instances': '4',
+    'system.spark.driver.memory': '2g',
+    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
 
 
-end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing BSCSiniestros',dag=dag)
-end_landing = BashOperator(task_id='end_landing',bash_command='echo end landing',dag=dag)
+init_landing_bsc_siniestros_2 = BashOperator(task_id='init_landing_bsc_siniestros_2',bash_command='echo end landing BSCSiniestros',dag=dag)
+init_landing_bsc_siniestros_3 = BashOperator(task_id='init_landing_bsc_siniestros_3',bash_command='echo end landing BSCSiniestros',dag=dag)
+
+end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing',dag=dag)
 
 
 delete_cluster = DataprocDeleteClusterOperator(
@@ -338,18 +409,21 @@ delete_cluster = DataprocDeleteClusterOperator(
   region="us-central1",
 )
 
-create_cluster >> init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_apercab_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_maseg_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_pagoprove >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_pagosproveedores >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_prestadores >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_reservas_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_testado_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_tipoproveedor >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_tsuc_bsc >> end_landing_bsc_siniestros
-end_landing_bsc_siniestros >> end_landing
-end_landing >> delete_cluster
+create_cluster >> init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros_1
+init_landing_bsc_siniestros_1 >> load_apercab_bsc >> init_landing_bsc_siniestros_2
+init_landing_bsc_siniestros_1 >> load_maseg_bsc >> init_landing_bsc_siniestros_2
+init_landing_bsc_siniestros_1 >> load_pagoprove >> init_landing_bsc_siniestros_2
+
+init_landing_bsc_siniestros_2 >> load_pagosproveedores >> init_landing_bsc_siniestros_3
+init_landing_bsc_siniestros_2 >> load_prestadores >> init_landing_bsc_siniestros_3
+init_landing_bsc_siniestros_2 >> load_reservas_bsc >> init_landing_bsc_siniestros_3
+
+init_landing_bsc_siniestros_3 >> load_testado_bsc >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros_3 >> load_tipoproveedor >> end_landing_bsc_siniestros
+init_landing_bsc_siniestros_3 >> load_tsuc_bsc >> end_landing_bsc_siniestros
+
+# init_landing_bsc_siniestros_2 >> end_landing_bsc_siniestros
+end_landing_bsc_siniestros >> delete_cluster
 
 
 
