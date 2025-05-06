@@ -16,7 +16,6 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 
 from lib.utils import get_bucket_file_contents
 
-
 CLUSTER_CONFIG = {
   "gce_cluster_config": {
     "internal_ip_only": True,
@@ -36,7 +35,7 @@ CLUSTER_CONFIG = {
     }
   },
   "worker_config": {
-    "num_instances": 24,
+    "num_instances": 16,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
@@ -77,18 +76,17 @@ CLUSTER_CONFIG = {
   }
 }
 
-
 init_date = '2025-03-01'
 final_date = '2025-03-31'
 
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
-  'retries': 4,
-  'retry_delay': timedelta(minutes=5)
+  'retries': 3,
+  'retry_delay': timedelta(minutes=10)
 }
 
 dag = DAG(
-  'verificaciones_data_pipeline_dataproc_custom_parallel',
+  'verificaciones_inject',
   default_args=default_args,
   description='liveness monitoring dag',
   schedule_interval='0 0 1 1 *',
@@ -106,7 +104,6 @@ create_cluster = DataprocCreateClusterOperator(
   num_retries_if_resource_is_not_ready=3,
 )
 
-init_landing = BashOperator(task_id='init_landing',bash_command='echo init landing',dag=dag)
 
 get_datafusion_instance = CloudDataFusionGetInstanceOperator(
   task_id="get_datafusion_instance",
@@ -116,114 +113,15 @@ get_datafusion_instance = CloudDataFusionGetInstanceOperator(
   dag=dag,
 )
 
-init_landing_bsc_siniestros = BashOperator(task_id='init_landing_bsc_siniestros',bash_command='echo init landing BSCSiniestros',dag=dag)
-
-# apercab pipeline
-load_apercab_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_apercab_bsc",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_apercab_bsc',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  pipeline_timeout=3600,
-  asynchronous=False,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
-    'dataproc.cluster.name':'verificaciones-dataproc',
-    "system.profile.name" : "USER:verificaciones-dataproc",
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'APERCAB_BSC',
-    'init_date':init_date, 
-    'final_date':final_date
-  },
-  dag=dag
-)
+init_injection = BashOperator(task_id='init_injection',bash_command='echo init inyection',dag=dag)
 
 # maseg pipeline
-load_maseg_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_maseg_bsc",
+inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
+  task_id="inject_dm_asegurados",
   location='us-central1',
   instance_name='qlts-data-fusion-dev',
   namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_maseg',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
-    'dataproc.cluster.name':'verificaciones-dataproc',
-    "system.profile.name" : "USER:verificaciones-dataproc",
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'MASEG_BSC'
-  },
-  dag=dag
-)
-
-# pagoprove pipeline
-load_pagoprove = CloudDataFusionStartPipelineOperator(
-  task_id="load_pagoprove",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_pagoprove',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
-    'dataproc.cluster.name':'verificaciones-dataproc',
-    "system.profile.name" : "USER:verificaciones-dataproc",
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'PAGOPROVE',
-    'init_date':init_date, 
-    'final_date':final_date
-  },
-  dag=dag
-)
-
-load_pagosproveedores = CloudDataFusionStartPipelineOperator(
-  task_id="load_pagosproveedores",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_pagosproveedores',
+  pipeline_name='inyect_dm_asegurados',
   project_id='qlts-nonprod-data-tools',
   pipeline_type = DataFusionPipelineType.BATCH,
   success_states=["COMPLETED"],
@@ -243,20 +141,55 @@ load_pagosproveedores = CloudDataFusionStartPipelineOperator(
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",    
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'PAGOSPROVEEDORES',
-    'init_date':init_date, 
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_ASEGURADOS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_ASEGURADOS',
+  },
+  dag=dag
+)
+
+inject_coberturas_movimientos = CloudDataFusionStartPipelineOperator(
+  task_id="inject_coberturas_movimientos",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inyect_dm_coberturas_movimientos',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
+    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
+    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
+    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
+    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
+    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
+    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",    
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_COBERTURAS_MOVIMIENTOS',
+    'init_date':init_date,
     'final_date':final_date
   },
   dag=dag
 )
 
-load_prestadores = CloudDataFusionStartPipelineOperator(
-  task_id="load_prestadores",
+inject_dm_estados = CloudDataFusionStartPipelineOperator(
+  task_id="inject_dm_estados",
   location='us-central1',
   instance_name='qlts-data-fusion-dev',
   namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_prestadores',
+  pipeline_name='inyect_dm_estados',
   project_id='qlts-nonprod-data-tools',
   pipeline_type = DataFusionPipelineType.BATCH,
   success_states=["COMPLETED"],
@@ -274,20 +207,22 @@ load_prestadores = CloudDataFusionStartPipelineOperator(
     'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
     'system.runtime.args.spark.yarn.am.memory': '1g',
     'dataproc.cluster.name':'verificaciones-dataproc',
-    "system.profile.name" : "USER:verificaciones-dataproc",        
+    "system.profile.name" : "USER:verificaciones-dataproc",    
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'PRESTADORES'
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_ESTADOS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_ESTADOS',
   },
   dag=dag
 )
 
-load_reservas_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_reservas_bsc",
+inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
+  task_id="inject_dm_oficinas",
   location='us-central1',
   instance_name='qlts-data-fusion-dev',
   namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_reservas',
+  pipeline_name='inject_dm_oficinas',
   project_id='qlts-nonprod-data-tools',
   pipeline_type = DataFusionPipelineType.BATCH,
   success_states=["COMPLETED"],
@@ -305,23 +240,57 @@ load_reservas_bsc = CloudDataFusionStartPipelineOperator(
     'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
     'system.runtime.args.spark.yarn.am.memory': '1g',
     'dataproc.cluster.name':'verificaciones-dataproc',
-    "system.profile.name" : "USER:verificaciones-dataproc",        
+    "system.profile.name" : "USER:verificaciones-dataproc",    
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'RESERVAS_BSC',
-    'init_date':init_date, 
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_OFICINAS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_OFICINAS',
+  },
+  dag=dag
+)
+
+inject_pagos_proveedores = CloudDataFusionStartPipelineOperator(
+  task_id="inject_pagos_proveedores",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inyect_dm_pagos_proveedores',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
+    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
+    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
+    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
+    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
+    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
+    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",    
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_PAGOS_PROVEEDORES',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_PAGOS_PROVEEDORES',
+    'init_date':init_date,
     'final_date':final_date
   },
   dag=dag
 )
 
-# testado_bsc pipeline
-load_testado_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_testado_bsc",
+inject_proveedores = CloudDataFusionStartPipelineOperator(
+  task_id="inject_proveedores",
   location='us-central1',
   instance_name='qlts-data-fusion-dev',
   namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_testados_bsc',
+  pipeline_name='inject_dm_proveedores',
   project_id='qlts-nonprod-data-tools',
   pipeline_type = DataFusionPipelineType.BATCH,
   success_states=["COMPLETED"],
@@ -339,21 +308,22 @@ load_testado_bsc = CloudDataFusionStartPipelineOperator(
     'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
     'system.runtime.args.spark.yarn.am.memory': '1g',
     'dataproc.cluster.name':'verificaciones-dataproc',
-    "system.profile.name" : "USER:verificaciones-dataproc",  
+    "system.profile.name" : "USER:verificaciones-dataproc",    
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'TESTADO_BSC'
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_PROVEEDORES',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_PROVEEDORES',
   },
   dag=dag
 )
 
-# tipoproveedor pipeline
-load_tipoproveedor = CloudDataFusionStartPipelineOperator(
-  task_id="load_tipoproveedor",
+inject_tipos_proveedores = CloudDataFusionStartPipelineOperator(
+  task_id="inject_tipos_proveedores",
   location='us-central1',
   instance_name='qlts-data-fusion-dev',
   namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_tipoproveedor',
+  pipeline_name='inyect_dm_tipos_proveedores',
   project_id='qlts-nonprod-data-tools',
   pipeline_type = DataFusionPipelineType.BATCH,
   success_states=["COMPLETED"],
@@ -371,50 +341,18 @@ load_tipoproveedor = CloudDataFusionStartPipelineOperator(
     'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
     'system.runtime.args.spark.yarn.am.memory': '1g',
     'dataproc.cluster.name':'verificaciones-dataproc',
-    "system.profile.name" : "USER:verificaciones-dataproc",  
+    "system.profile.name" : "USER:verificaciones-dataproc",    
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'TIPOPROVEEDOR',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_TIPOS_PROVEEDORES',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_TIPOS_PROVEEDORES',
   },
   dag=dag
 )
 
-# tsuc pipeline
-load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_tsuc_bsc",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='carga_qlts_dev_verificaciones_tsuc',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
-    'dataproc.cluster.name':'verificaciones-dataproc',
-    "system.profile.name" : "USER:verificaciones-dataproc",  
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'TSUC_BSC',
-    'init_date':init_date, 
-    'final_date':final_date
-  },
-  dag=dag
-)
+end_injection = BashOperator(task_id='end_injection',bash_command='echo end injection',dag=dag)
 
-end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing BSCSiniestros',dag=dag)
-end_landing = BashOperator(task_id='end_landing',bash_command='echo end landing',dag=dag)
 
 delete_cluster = DataprocDeleteClusterOperator(
   task_id="delete_cluster",
@@ -423,18 +361,16 @@ delete_cluster = DataprocDeleteClusterOperator(
   region="us-central1",
 )
 
-create_cluster >> init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_apercab_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_maseg_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_pagoprove >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_pagosproveedores >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_prestadores >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_reservas_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_testado_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_tipoproveedor >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_tsuc_bsc >> end_landing_bsc_siniestros
-end_landing_bsc_siniestros >> end_landing
-end_landing >> delete_cluster
+create_cluster >> get_datafusion_instance >> init_injection
+init_injection >> inject_dm_asegurados >> end_injection
+init_injection >> inject_coberturas_movimientos >> end_injection
+init_injection >> inject_dm_estados >> end_injection
+init_injection >> inject_dm_oficinas >> end_injection
+init_injection >> inject_pagos_proveedores >> end_injection
+init_injection >> inject_proveedores >> end_injection
+init_injection >> inject_tipos_proveedores >> end_injection
+end_injection >> delete_cluster
+
 
 
 

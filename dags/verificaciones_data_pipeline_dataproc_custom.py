@@ -52,7 +52,6 @@ CLUSTER_CONFIG = {
       "boot_disk_size_gb": 32,
     },
     "is_preemptible": False,
-    "preemptibility": "PREEMPTIBLE",
   },
   "software_config": {
   "image_version":"2.1.85-debian11",

@@ -262,7 +262,7 @@ load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
   dag=dag
 )
 
-end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing BSCSiniestros',dag=dag)
+end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing BSC Siniestros',dag=dag)
 
 end_landing = BashOperator(task_id='end_landing',bash_command='echo end landing',dag=dag)
 
@@ -657,6 +657,7 @@ init_landing_bsc_siniestros >> load_testado_bsc >> end_landing_bsc_siniestros
 init_landing_bsc_siniestros >> load_tipoproveedor >> end_landing_bsc_siniestros
 init_landing_bsc_siniestros >> load_tsuc_bsc >> end_landing_bsc_siniestros
 end_landing_bsc_siniestros >> end_landing
+
 end_landing >> init_elt
 
 init_elt >> dm_asegurados >> end_elt
