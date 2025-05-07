@@ -36,14 +36,14 @@ CLUSTER_CONFIG = {
     }
   },
   "worker_config": {
-    "num_instances": 24,
+    "num_instances": 18,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
     }
   },
   "secondary_worker_config": {
-    "num_instances": 4,
+    "num_instances": 6,
     "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard",
@@ -56,20 +56,49 @@ CLUSTER_CONFIG = {
     "properties": {
       "dataproc:dataproc.conscrypt.provider.enable": "false",
       "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
-      "spark:spark.executor.cores": "1",                     # Reducir para tener más executors
-      "spark:spark.executor.memory": "2g",                   # Ajustar memoria
-      "spark:spark.driver.memory": "4g",                     # Mantener
-      "spark:spark.executor.instances": "6",                 # Aumentar
-      "spark:spark.yarn.am.memory": "1g",                   
-      "spark:spark.dynamicAllocation.enabled": "true",      
-      "spark:spark.dynamicAllocation.minExecutors": "2",    
-      "spark:spark.dynamicAllocation.maxExecutors": "20",    # Aumentar
-      "spark:spark.scheduler.mode": "FAIR",                  
-      "spark:spark.task.maxFailures": "8",
-      "spark:spark.stage.maxConsecutiveAttempts": "4",
-      "spark:spark.locality.wait": "10s",                   # Nuevo
-      "spark:spark.shuffle.service.enabled": "true" ,         # Nuevo
-      "spark:spark.yarn.executor.memoryOverhead": "512m",  # Ajustar overhead memory
+      
+      # Configuración optimizada para Spark
+      "spark:spark.executor.cores": "1",                    # 1 core por executor para maximizar paralelismo
+      "spark:spark.executor.memory": "2g",                  # Memoria por executor
+      "spark:spark.driver.memory": "4g",                    # Memoria para el driver
+      "spark:spark.executor.instances": "42",               # Incrementado significativamente (7 pipelines * 6)
+      "spark:spark.yarn.am.memory": "1g",                   # Memoria para YARN Application Master
+      
+      # Configuraciones de asignación dinámica
+      "spark:spark.dynamicAllocation.enabled": "true",      # Habilitado
+      "spark:spark.dynamicAllocation.minExecutors": "2",    # Mínimo
+      "spark:spark.dynamicAllocation.maxExecutors": "48",   # Máximo (aumentado significativamente)
+      "spark:spark.dynamicAllocation.initialExecutors": "21", # Inicial (7 pipelines * 3)
+      
+      # Configuraciones de programación y rendimiento
+      "spark:spark.scheduler.mode": "FAIR",                 # Modo justo
+      "spark:spark.task.maxFailures": "8",                  # Tolerancia a fallos
+      "spark:spark.stage.maxConsecutiveAttempts": "4",      # Reintentos
+      "spark:spark.locality.wait": "0s",                    # No esperar por localidad para maximizar paralelismo
+      
+      # Configuraciones de memoria y rendimiento
+      "spark:spark.yarn.executor.memoryOverhead": "512m",   # Overhead de memoria
+      "spark:spark.shuffle.service.enabled": "true",        # Habilitar servicio de shuffle
+      "spark:spark.network.timeout": "800s",                # Aumentar timeout de red
+      "spark:spark.speculation": "true",                    # Habilitar especulación
+      "spark:spark.speculation.quantile": "0.75",           # Umbral para especulación
+      
+      # Optimizaciones de SQL y particionamiento
+      "spark:spark.sql.shuffle.partitions": "32",           # Particiones para shuffle (ajustar según necesidad)
+      "spark:spark.default.parallelism": "32",              # Paralelismo predeterminado
+      
+      # Optimizaciones de GC
+      "spark:spark.executor.extraJavaOptions": "-XX:+UseG1GC -XX:+UnlockDiagnosticVMOptions -XX:+G1SummarizeConcMark -XX:InitiatingHeapOccupancyPercent=35",
+      
+      # Optimizaciones YARN
+      "yarn:yarn.scheduler.capacity.maximum-am-resource-percent": "0.5", # Aumentar recursos para AMs
+      "yarn:yarn.nodemanager.resource.memory-mb": "7168",   # Memoria por nodo worker
+      "yarn:yarn.scheduler.maximum-allocation-mb": "6144",  # Asignación máxima
+      "yarn:yarn.nodemanager.vmem-check-enabled": "false",  # Desactivar verificación de memoria virtual
+      
+      # Optimizaciones de MapReduce (backend)
+      "mapred:mapreduce.map.speculative": "true",          # Especulación para MapReduce
+      "mapred:mapreduce.reduce.speculative": "true"  
     }
   },
   "endpoint_config": {
@@ -84,7 +113,7 @@ final_date = '2025-03-31'
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
   'retries': 4,
-  'retry_delay': timedelta(minutes=5)
+  'retry_delay': timedelta(minutes=10)
 }
 
 dag = DAG(
@@ -133,14 +162,9 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '7',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '12',
+    'system.runtime.args.spark.sql.shuffle.partitions': '24',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -167,14 +191,9 @@ load_maseg_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '6',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '10',
+    'system.runtime.args.spark.sql.shuffle.partitions': '16',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -199,14 +218,9 @@ load_pagoprove = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '7',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '12',
+    'system.runtime.args.spark.sql.shuffle.partitions': '24',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -232,14 +246,9 @@ load_pagosproveedores = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '7',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '12',
+    'system.runtime.args.spark.sql.shuffle.partitions': '24',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",    
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -265,14 +274,9 @@ load_prestadores = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '6',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '10',
+    'system.runtime.args.spark.sql.shuffle.partitions': '16',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",        
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -296,14 +300,9 @@ load_reservas_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '7',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '12',
+    'system.runtime.args.spark.sql.shuffle.partitions': '24',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",        
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -330,14 +329,9 @@ load_testado_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '4',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '8',
+    'system.runtime.args.spark.sql.shuffle.partitions': '8',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",  
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -362,14 +356,9 @@ load_tipoproveedor = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '4',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '8',
+    'system.runtime.args.spark.sql.shuffle.partitions': '8',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",  
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -394,14 +383,9 @@ load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
-    'system.runtime.args.executor.memory': '3g',         # Formato correcto para Data Fusion
-    'system.runtime.args.driver.memory': '2g',           # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.cores': '1',     # Formato correcto para Data Fusion
-    'system.runtime.args.spark.executor.instances': '4',  # Formato correcto para Data Fusion
-    'system.runtime.args.spark.dynamicAllocation.enabled': 'true',
-    'system.runtime.args.spark.dynamicAllocation.minExecutors': '2',
-    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '20',
-    'system.runtime.args.spark.yarn.am.memory': '1g',
+    'system.runtime.args.spark.executor.instances': '4',
+    'system.runtime.args.spark.dynamicAllocation.maxExecutors': '8',
+    'system.runtime.args.spark.sql.shuffle.partitions': '8',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",  
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
