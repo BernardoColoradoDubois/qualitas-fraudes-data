@@ -4,6 +4,8 @@ from airflow.decorators import task
 from datetime import timedelta
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
+from airflow.decorators import task_group
+
 
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionStartPipelineOperator
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionGetInstanceOperator
@@ -11,7 +13,67 @@ from airflow.providers.google.cloud.operators.datafusion import DataFusionPipeli
 
 from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
 
+from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator
+from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
+
 from lib.utils import get_bucket_file_contents
+
+
+CLUSTER_CONFIG = {
+  "gce_cluster_config": {
+    "internal_ip_only": True,
+    "subnetwork_uri": "projects/shared-nonprod-eba6/regions/us-central1/subnetworks/qlts-svpc-non-prd-sn",
+    "service_account": "dataproc-dev-operaciones@qlts-nonprod-data-tools.iam.gserviceaccount.com",
+    "shielded_instance_config": {
+      "enable_secure_boot": False,
+      "enable_vtpm": False,
+      "enable_integrity_monitoring": False,
+    }
+  },
+  "master_config": {
+    "num_instances": 1,
+    "machine_type_uri": "e2-custom-2-8192",
+    "disk_config": {
+      "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
+    }
+  },
+  "worker_config": {
+    "num_instances": 12,
+     "machine_type_uri": "e2-custom-2-8192",
+    "disk_config": {
+      "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
+    }
+  },
+  "secondary_worker_config": {
+    "num_instances": 4,
+    "machine_type_uri": "e2-custom-2-8192",
+    "disk_config": {
+      "boot_disk_type": "pd-standard",
+      "boot_disk_size_gb": 32,
+    },
+    "is_preemptible": False,
+  },
+  "software_config": {
+    "image_version":"2.1.85-debian11",
+    "properties": {
+      "dataproc:dataproc.conscrypt.provider.enable": "false",
+      "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
+      "spark:spark.executor.cores": "2",                     # Reducir de 10 a 2
+      "spark:spark.executor.memory": "3g",                   # Añadir configuración de memoria
+      "spark:spark.driver.memory": "4g",                     # Añadir memoria para el driver
+      "spark:spark.executor.instances": "4",                 # Controlar número de executors
+      "spark:spark.yarn.am.memory": "1g",                    # Memoria para YARN Application Master
+      "spark:spark.dynamicAllocation.enabled": "true",       # Habilitar asignación dinámica
+      "spark:spark.dynamicAllocation.minExecutors": "2",     # Mínimo de executors
+      "spark:spark.dynamicAllocation.maxExecutors": "8",     # Máximo de executors
+      "spark:spark.scheduler.mode": "FAIR"                   # Programador justo
+    }
+  },
+  "endpoint_config": {
+    "enable_http_port_access": True
+  }
+}
+
 
 init_date = '2025-03-01'
 final_date = '2025-03-31'
@@ -32,652 +94,624 @@ dag = DAG(
   dagrun_timeout=timedelta(minutes=120),
 )
 
-init_landing = BashOperator(task_id='init_landing',bash_command='echo init landing',dag=dag)
-
-get_datafusion_instance = CloudDataFusionGetInstanceOperator(
-  task_id="get_datafusion_instance",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  project_id='qlts-nonprod-data-tools',
-  dag=dag,
-)
-
-init_landing_bsc_siniestros = BashOperator(task_id='init_landing_bsc_siniestros',bash_command='echo init landing BSCSiniestros',dag=dag)
+init = BashOperator(task_id='init',bash_command='echo init landing',dag=dag)
 
 
-# apercab pipeline
-load_apercab_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_apercab_bsc",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_apercab_bsc',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'APERCAB_BSC',
-    'init_date':init_date, 
-    'final_date':final_date
-  },
-  dag=dag
-)
-
-# maseg pipeline
-load_maseg_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_maseg_bsc",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_maseg',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'MASEG_BSC'
-  },
-  dag=dag
-)
-
-# pagoprove pipeline
-load_pagoprove = CloudDataFusionStartPipelineOperator(
-  task_id="load_pagoprove",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_pagoprove',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'PAGOPROVE',
-    'init_date':init_date, 
-    'final_date':final_date
-  },
-  dag=dag
-)
-
-# pagosproveedores pipeline
-load_pagosproveedores = CloudDataFusionStartPipelineOperator(
-  task_id="load_pagosproveedores",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_pagosproveedores',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'PAGOSPROVEEDORES',
-    'init_date':init_date, 
-    'final_date':final_date
-  },
-  dag=dag
-)
-
-# prestadores pipeline
-load_prestadores = CloudDataFusionStartPipelineOperator(
-  task_id="load_prestadores",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_prestadores',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'PRESTADORES'
-  },
-  dag=dag
-)
-
-# reservas_bsc pipeline
-load_reservas_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_reservas_bsc",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_reservas',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'RESERVAS_BSC',
-    'init_date':init_date, 
-    'final_date':final_date
-  },
-  dag=dag
-)
-
-# testado_bsc pipeline
-load_testado_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_testado_bsc",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_testados_bsc',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'TESTADO_BSC'
-  },
-  dag=dag
-)
-
-# tipoproveedor pipeline
-load_tipoproveedor = CloudDataFusionStartPipelineOperator(
-  task_id="load_tipoproveedor",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='qlts_dev_verificaciones_tipoproveedor',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'TIPOPROVEEDOR',
-  },
-  dag=dag
-)
-
-# tsuc pipeline
-load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
-  task_id="load_tsuc_bsc",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='carga_qlts_dev_verificaciones_tsuc',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'TSUC_BSC',
-    'init_date':init_date, 
-    'final_date':final_date
-  },
-  dag=dag
-)
-
-end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing BSC Siniestros',dag=dag)
-
-end_landing = BashOperator(task_id='end_landing',bash_command='echo end landing',dag=dag)
-
-init_elt = BashOperator(task_id='init_elt',bash_command='echo init ELT',dag=dag)
-
-
-# ASEGURADO
-dm_asegurados = BigQueryInsertJobOperator(
-  task_id="dm_asegurados",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ASEGURADOS/DM_ASEGURADOS.sql'),
-      "useLegacySql": False,
-    }
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'MASEG_BSC',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'DM_ASEGURADOS',
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
-
-# PAGOS_PROVEEDORES
-rtl_pagos_proveedores = BigQueryInsertJobOperator(
-  task_id="rtl_pagos_proveedores",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_PROVEEDORES/RTL_PAGOS_PROVEEDORES.sql'),
-      "useLegacySql": False,
-    }
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'PAGOPROVE',
-    'SOURCE_SECOND_TABLE_NAME': 'PAGOSPROVEEDORES',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
-
-dm_pagos_proveedores = BigQueryInsertJobOperator(
-  task_id="dm_pagos_proveedores",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_PROVEEDORES/DM_PAGOS_PROVEEDORES.sql'),
-      "useLegacySql": False,
+@task_group(group_id='init_landing',dag=dag)
+def init_landing():
+  
+  create_cluster = DataprocCreateClusterOperator(
+    task_id="create_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+  )
+  
+  get_datafusion_instance = CloudDataFusionGetInstanceOperator(
+    task_id="get_datafusion_instance",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    project_id='qlts-nonprod-data-tools',
+    dag=dag,
+  )
+  
+  create_cluster >> get_datafusion_instance
+  
+@task_group(group_id='landing_bsc_siniestros_1',dag=dag)
+def landing_bsc_siniestros_1():
+  
+  load_apercab_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_apercab_bsc",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='qlts_dev_verificaciones_apercab_bsc',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    pipeline_timeout=3600,
+    asynchronous=False,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'APERCAB_BSC',
+      'init_date':init_date, 
+      'final_date':final_date
     },
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'DM_PAGOS_PROVEEDORES',
-    'init_date':init_date,
-    'final_date':final_date
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
+    dag=dag
+  )
 
-# PROVEEDORES
-dm_proveedores = BigQueryInsertJobOperator(
-  task_id="dm_proveedores",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PROVEEDORES/DM_PROVEEDORES.sql'),
-      "useLegacySql": False,
-    }
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'PRESTADORES',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'DM_PROVEEDORES',
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
+  # maseg pipeline
+  load_maseg_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_maseg_bsc",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='qlts_dev_verificaciones_maseg',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'MASEG_BSC'
+    },
+    dag=dag
+  )
 
-rtl_coberturas_movimientos = BigQueryInsertJobOperator(
-  task_id="rtl_coberturas_movimientos",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/RTL_COBERTURAS_MOVIMIENTOS.sql'),
-      "useLegacySql": False,
-    }
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'RESERVAS_BSC',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS'
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
+  # pagoprove pipeline
+  load_pagoprove = CloudDataFusionStartPipelineOperator(
+    task_id="load_pagoprove",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='qlts_dev_verificaciones_pagoprove',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'PAGOPROVE',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+@task_group(group_id='landing_bsc_siniestros_2',dag=dag)
+def landing_bsc_siniestros_2():
 
-dm_coberturas_movimientos = BigQueryInsertJobOperator(
-  task_id="dm_coberturas_movimientos",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/DM_COBERTURAS_MOVIMIENTOS.sql'),
-      "useLegacySql": False,
-    }
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'DM_COBERTURAS_MOVIMIENTOS',
-    'init_date':init_date,
-    'final_date':final_date
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
+  load_pagosproveedores = CloudDataFusionStartPipelineOperator(
+    task_id="load_pagosproveedores",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='qlts_dev_verificaciones_pagosproveedores',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'PAGOSPROVEEDORES',
+      'init_date':init_date, 
+      'final_date':final_date,
+    },
+    dag=dag
+  )
 
-dm_estados = BigQueryInsertJobOperator(
-  task_id="dm_estados",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ESTADOS/DM_ESTADOS.sql'),
-      "useLegacySql": False,
-    }
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'TESTADO_BSC',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'DM_ESTADOS',
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
+  load_prestadores = CloudDataFusionStartPipelineOperator(
+    task_id="load_prestadores",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='qlts_dev_verificaciones_prestadores',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",        
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'PRESTADORES'
+    },
+    dag=dag
+  )
 
-dm_oficinas = BigQueryInsertJobOperator(
-  task_id="dm_oficinas",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql'),
-      "useLegacySql": False,
-    }
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'TSUC_BSC',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'DM_OFICINAS',
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
+  load_reservas_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_reservas_bsc",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='qlts_dev_verificaciones_reservas',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",        
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'RESERVAS_BSC',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
 
-dm_tipos_proveedores = BigQueryInsertJobOperator(
-  task_id="dm_tipos_proveedores",
-  configuration={
-    "query": {
-      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/TIPOS_PROVEEDORES/DM_TIPOS_PROVEEDORES.sql'),
-      "useLegacySql": False,
-    }
-  },
-  params={
-    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-    'SOURCE_TABLE_NAME': 'TIPOPROVEEDOR',
-    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-    'DEST_TABLE_NAME': 'DM_TIPOS_PROVEEDORES',
-  },
-  location='us-central1',
-  gcp_conn_id="google_cloud_default",
-  dag=dag 
-)
+@task_group(group_id='landing_bsc_siniestros_3',dag=dag)
+def landing_bsc_siniestros_3():
 
-end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
+  load_testado_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_testado_bsc",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='qlts_dev_verificaciones_testados_bsc',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'TESTADO_BSC'
+    },
+    dag=dag
+  )
 
-init_injection = BashOperator(task_id='init_injection',bash_command='echo init inyection',dag=dag)
+  # tipoproveedor pipeline
+  load_tipoproveedor = CloudDataFusionStartPipelineOperator(
+    task_id="load_tipoproveedor",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='qlts_dev_verificaciones_tipoproveedor',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'TIPOPROVEEDOR',
+    },
+    dag=dag
+  )
 
-# maseg pipeline
-inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
-  task_id="inject_dm_asegurados",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='inyect_dm_asegurados',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'DM_VERIFICACIONES',
-    'TABLE_NAME':'DM_ASEGURADOS',
-    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'STG_ASEGURADOS',
-  },
-  dag=dag
-)
+  # tsuc pipeline
+  load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_tsuc_bsc",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='carga_qlts_dev_verificaciones_tsuc',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'TSUC_BSC',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
 
-inject_coberturas_movimientos = CloudDataFusionStartPipelineOperator(
-  task_id="inject_coberturas_movimientos",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='inyect_dm_coberturas_movimientos',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'DM_VERIFICACIONES',
-    'TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
-    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'STG_COBERTURAS_MOVIMIENTOS',
-    'init_date':init_date,
-    'final_date':final_date
-  },
-  dag=dag
-)
+@task_group(group_id='landing_siniestros_1',dag=dag)
+def landing_siniestros_1():
 
-inject_dm_estados = CloudDataFusionStartPipelineOperator(
-  task_id="inject_dm_estados",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='inyect_dm_estados',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'DM_VERIFICACIONES',
-    'TABLE_NAME':'DM_ESTADOS',
-    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'STG_ESTADOS',
-  },
-  dag=dag
-)
+  load_analistas = CloudDataFusionStartPipelineOperator(
+    task_id="load_analistas",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_analistas',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'ANALISTAS',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
 
-inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
-  task_id="inject_dm_oficinas",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='inject_dm_oficinas',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'DM_VERIFICACIONES',
-    'TABLE_NAME':'DM_OFICINAS',
-    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'STG_OFICINAS',
-  },
-  dag=dag
-)
+  load_cat_causa = CloudDataFusionStartPipelineOperator(
+    task_id="load_cat_causa",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_cat_causa',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'CAT_CAUSA'
+    },
+    dag=dag
+  )
 
-inject_pagos_proveedores = CloudDataFusionStartPipelineOperator(
-  task_id="inject_pagos_proveedores",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='inyect_dm_pagos_proveedores',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'DM_VERIFICACIONES',
-    'TABLE_NAME':'DM_PAGOS_PROVEEDORES',
-    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'STG_PAGOS_PROVEEDORES',
-    'init_date':init_date,
-    'final_date':final_date
-  },
-  dag=dag
-)
-
-inject_proveedores = CloudDataFusionStartPipelineOperator(
-  task_id="inject_proveedores",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='inject_dm_proveedores',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'DM_VERIFICACIONES',
-    'TABLE_NAME':'DM_PROVEEDORES',
-    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'STG_PROVEEDORES',
-  },
-  dag=dag
-)
-
-inject_tipos_proveedores = CloudDataFusionStartPipelineOperator(
-  task_id="inject_tipos_proveedores",
-  location='us-central1',
-  instance_name='qlts-data-fusion-dev',
-  namespace='verificaciones',
-  pipeline_name='inyect_dm_tipos_proveedores',
-  project_id='qlts-nonprod-data-tools',
-  pipeline_type = DataFusionPipelineType.BATCH,
-  success_states=["COMPLETED"],
-  asynchronous=False,
-  pipeline_timeout=3600,
-  deferrable=True,
-  poll_interval=30,
-  runtime_args={
-    'system.profile.name':'SYSTEM:autoscaling-dataproc',
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'DM_VERIFICACIONES',
-    'TABLE_NAME':'DM_TIPOS_PROVEEDORES',
-    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-    'INJECT_TABLE_NAME':'STG_TIPOS_PROVEEDORES',
-  },
-  dag=dag
-)
-
-end_injection = BashOperator(task_id='end_injection',bash_command='echo end injection',dag=dag)
+  load_cobranza = CloudDataFusionStartPipelineOperator(
+    task_id="load_cobranza",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_cobranza',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'COBRANZA',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
 
 
-init_landing >> get_datafusion_instance >> init_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_apercab_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_maseg_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_pagoprove >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_pagosproveedores >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_prestadores >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_reservas_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_testado_bsc >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_tipoproveedor >> end_landing_bsc_siniestros
-init_landing_bsc_siniestros >> load_tsuc_bsc >> end_landing_bsc_siniestros
-end_landing_bsc_siniestros >> end_landing
+@task_group(group_id='landing_siniestros_2',dag=dag)
+def landing_siniestros_2():
 
-end_landing >> init_elt
+  load_cobranza_hist = CloudDataFusionStartPipelineOperator(
+    task_id="load_cobranza_hist",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_cobranza_hist',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'COBRANZA_HIST',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
 
-init_elt >> dm_asegurados >> end_elt
-init_elt >> rtl_pagos_proveedores  >> dm_pagos_proveedores >> end_elt
-init_elt >> dm_proveedores >> end_elt
-init_elt >> rtl_coberturas_movimientos >> dm_coberturas_movimientos >> end_elt
-init_elt >> dm_estados >> end_elt
-init_elt >> dm_oficinas >> end_elt
-init_elt >> dm_tipos_proveedores >> end_elt
+  load_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
+    task_id="load_etiqueta_siniestro",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_etiqueta_siniestro',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'ETIQUETA_SINIESTRO',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
 
-end_elt>> init_injection
+  load_registro = CloudDataFusionStartPipelineOperator(
+    task_id="load_registro",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_registro',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'REGISTRO',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
 
-init_injection >> inject_dm_asegurados >> end_injection
-init_injection >> inject_coberturas_movimientos >> end_injection
-init_injection >> inject_dm_estados >> end_injection
-init_injection >> inject_dm_oficinas >> end_injection
-init_injection >> inject_pagos_proveedores >> end_injection
-init_injection >> inject_proveedores >> end_injection
-init_injection >> inject_tipos_proveedores >> end_injection
+  load_sas_sinies = CloudDataFusionStartPipelineOperator(
+    task_id="load_sas_sinies",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_sas_sinies',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'SAS_SINIES',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+
+@task_group(group_id='landing_sise',dag=dag)
+def landing_sise():
+
+  load_fraud_di = CloudDataFusionStartPipelineOperator(
+    task_id="load_fraud_di",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_fraud_di',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'FRAUD_DI',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  load_fraud_pv = CloudDataFusionStartPipelineOperator(
+    task_id="load_fraud_pv",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_fraud_pv',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'FRAUD_PV',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  load_fraud_rp = CloudDataFusionStartPipelineOperator(
+    task_id="load_fraud_rp",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_fraud_rp',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'FRAUD_RP',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
 
 
 
-
+@task_group(group_id='landing_dua',dag=dag)
+def landing_dua():
+  
+  load_datos_dua = CloudDataFusionStartPipelineOperator(
+    task_id="load_datos_dua",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_datos_dua',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'DATOS_DUA',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+@task_group(group_id='end_landing',dag=dag)
+def end_landing():
+  
+  delete_cluster = DataprocDeleteClusterOperator(
+    task_id="delete_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_name="verificaciones-dataproc",
+    region="us-central1",
+  )
+  
+  
+@task_group(group_id='bq_elt',dag=dag)
+def bq_elt():
+  pass
+  
+  
+init >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> landing_siniestros_2() >> landing_sise() >> landing_dua() >> end_landing()

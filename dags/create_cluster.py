@@ -61,9 +61,10 @@ CLUSTER_CONFIG = {
       "spark:spark.executor.instances": "6",                 # Aumentar
       "spark:spark.yarn.am.memory": "1g",                   
       "spark:spark.dynamicAllocation.enabled": "true",      
-      "spark:spark.dynamicAllocation.minExecutors": "2",    
-      "spark:spark.dynamicAllocation.maxExecutors": "20",    # Aumentar
-      "spark:spark.scheduler.mode": "FAIR",                  
+      "spark:spark.dynamicAllocation.minExecutors": "5",    
+      "spark:spark.dynamicAllocation.maxExecutors": "48",   
+      "spark:spark.dynamicAllocation.initialExecutors": "30", 
+      "spark:spark.scheduler.mode": "FIFO",                  
       "spark:spark.task.maxFailures": "8",
       "spark:spark.stage.maxConsecutiveAttempts": "4",
       "spark:spark.locality.wait": "10s",                   # Nuevo

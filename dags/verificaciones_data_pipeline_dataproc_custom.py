@@ -16,9 +16,6 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 
 from lib.utils import get_bucket_file_contents
 
-
-
-
 CLUSTER_CONFIG = {
   "gce_cluster_config": {
     "internal_ip_only": True,
@@ -73,7 +70,6 @@ CLUSTER_CONFIG = {
     "enable_http_port_access": True
   }
 }
-
 
 init_date = '2025-03-01'
 final_date = '2025-03-31'
@@ -130,20 +126,16 @@ load_apercab_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'APERCAB_BSC',
     'init_date':init_date, 
-    'final_date':final_date,
-    'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
-
+    'final_date':final_date
   },
   dag=dag
 )
@@ -163,17 +155,14 @@ load_maseg_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'MASEG_BSC',
-    'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
+    'TABLE_NAME':'MASEG_BSC'
   },
   dag=dag
 )
@@ -193,19 +182,16 @@ load_pagoprove = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PAGOPROVE',
     'init_date':init_date, 
-    'final_date':final_date,
-    'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
+    'final_date':final_date
   },
   dag=dag
 )
@@ -224,6 +210,9 @@ load_pagosproveedores = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",    
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -231,12 +220,6 @@ load_pagosproveedores = CloudDataFusionStartPipelineOperator(
     'TABLE_NAME':'PAGOSPROVEEDORES',
     'init_date':init_date, 
     'final_date':final_date,
-        'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -255,17 +238,14 @@ load_prestadores = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",        
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'PRESTADORES',
-    'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
+    'TABLE_NAME':'PRESTADORES'
   },
   dag=dag
 )
@@ -284,19 +264,16 @@ load_reservas_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",        
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'RESERVAS_BSC',
     'init_date':init_date, 
-    'final_date':final_date,
-        'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
+    'final_date':final_date
   },
   dag=dag
 )
@@ -316,17 +293,14 @@ load_testado_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",  
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
-    'TABLE_NAME':'TESTADO_BSC',
-        'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
+    'TABLE_NAME':'TESTADO_BSC'
   },
   dag=dag
 )
@@ -346,17 +320,14 @@ load_tipoproveedor = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",  
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'TIPOPROVEEDOR',
-        'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
   },
   dag=dag
 )
@@ -376,19 +347,16 @@ load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
   deferrable=True,
   poll_interval=30,
   runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
     'dataproc.cluster.name':'verificaciones-dataproc',
     "system.profile.name" : "USER:verificaciones-dataproc",  
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'TSUC_BSC',
     'init_date':init_date, 
-    'final_date':final_date,
-        'spark.driver.memory': '2g',
-    'spark.executor.memory': '3g',
-    'spark.executor.cores': '2',
-    'spark.executor.instances': '4',
-    'system.spark.driver.memory': '2g',
-    'system.spark.executor.memory': '3g',
+    'final_date':final_date
   },
   dag=dag
 )
@@ -399,6 +367,328 @@ init_landing_bsc_siniestros_3 = BashOperator(task_id='init_landing_bsc_siniestro
 
 end_landing_bsc_siniestros = BashOperator(task_id='end_landing_bsc_siniestros',bash_command='echo end landing',dag=dag)
 
+
+
+init_landing_siniestros_1 = BashOperator(task_id='init_landing_siniestros_1',bash_command='echo end landing',dag=dag)
+
+load_analistas = CloudDataFusionStartPipelineOperator(
+  task_id="load_analistas",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_analistas',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'ANALISTAS',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+load_cat_causa = CloudDataFusionStartPipelineOperator(
+  task_id="load_cat_causa",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_cat_causa',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'CAT_CAUSA'
+  },
+  dag=dag
+)
+
+load_cobranza = CloudDataFusionStartPipelineOperator(
+  task_id="load_cobranza",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_cobranza',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'COBRANZA',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+init_landing_siniestros_2 = BashOperator(task_id='init_landing_siniestros_2',bash_command='echo end landing',dag=dag)
+
+load_cobranza_hist = CloudDataFusionStartPipelineOperator(
+  task_id="load_cobranza_hist",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_cobranza_hist',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'COBRANZA_HIST',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+load_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
+  task_id="load_etiqueta_siniestro",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_etiqueta_siniestro',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'ETIQUETA_SINIESTRO',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+load_registro = CloudDataFusionStartPipelineOperator(
+  task_id="load_registro",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_registro',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'REGISTRO',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+load_sas_sinies = CloudDataFusionStartPipelineOperator(
+  task_id="load_sas_sinies",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_sas_sinies',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'SAS_SINIES',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+end_landing_siniestros = BashOperator(task_id='end_landing_siniestros',bash_command='echo end landing',dag=dag)
+
+init_landing_sise = BashOperator(task_id='init_landing_sise',bash_command='echo init landing sise',dag=dag)
+
+load_fraud_di = CloudDataFusionStartPipelineOperator(
+  task_id="load_fraud_di",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_fraud_di',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'FRAUD_DI',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+load_fraud_pv = CloudDataFusionStartPipelineOperator(
+  task_id="load_fraud_pv",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_fraud_pv',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'FRAUD_PV',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+load_fraud_rp = CloudDataFusionStartPipelineOperator(
+  task_id="load_fraud_rp",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_fraud_rp',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'1',
+    'task.executor.system.resources.memory':'2048',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'FRAUD_RP',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+
+end_landing_sise = BashOperator(task_id='end_landing_sise',bash_command='echo end landing',dag=dag)
+
+init_landing_dua = BashOperator(task_id='init_landing_dua',bash_command='echo init landing dua',dag=dag)
+
+load_datos_dua = CloudDataFusionStartPipelineOperator(
+  task_id="load_datos_dua",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='load_datos_dua',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",  
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'LAN_VERIFICACIONES',
+    'TABLE_NAME':'DATOS_DUA',
+    'init_date':init_date, 
+    'final_date':final_date
+  },
+  dag=dag
+)
+
+end_landing_dua = BashOperator(task_id='end_landing_dua',bash_command='echo end landing dua',dag=dag)
 
 delete_cluster = DataprocDeleteClusterOperator(
   task_id="delete_cluster",
@@ -420,9 +710,28 @@ init_landing_bsc_siniestros_3 >> load_testado_bsc >> end_landing_bsc_siniestros
 init_landing_bsc_siniestros_3 >> load_tipoproveedor >> end_landing_bsc_siniestros
 init_landing_bsc_siniestros_3 >> load_tsuc_bsc >> end_landing_bsc_siniestros
 
-# init_landing_bsc_siniestros_2 >> end_landing_bsc_siniestros
-end_landing_bsc_siniestros >> delete_cluster
+end_landing_bsc_siniestros >> init_landing_siniestros_1
 
+init_landing_siniestros_1 >> load_analistas >> init_landing_siniestros_2
+init_landing_siniestros_1 >> load_cat_causa >> init_landing_siniestros_2
+init_landing_siniestros_1 >> load_cobranza >> init_landing_siniestros_2
+
+init_landing_siniestros_2 >> load_cobranza_hist >> end_landing_siniestros
+init_landing_siniestros_2 >> load_etiqueta_siniestro >> end_landing_siniestros
+init_landing_siniestros_2 >> load_registro >> end_landing_siniestros
+init_landing_siniestros_2 >> load_sas_sinies >> end_landing_siniestros
+
+end_landing_siniestros >> init_landing_sise
+
+init_landing_sise >> load_fraud_di >> end_landing_sise
+init_landing_sise >> load_fraud_pv >> end_landing_sise
+init_landing_sise >> load_fraud_rp >> end_landing_sise
+
+end_landing_sise >> init_landing_dua
+
+init_landing_dua >> load_datos_dua >> end_landing_dua
+
+end_landing_dua >> delete_cluster
 
 
 
