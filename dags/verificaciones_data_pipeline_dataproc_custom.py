@@ -54,25 +54,24 @@ CLUSTER_CONFIG = {
     "is_preemptible": False,
   },
   "software_config": {
-  "image_version":"2.1.85-debian11",
-  "properties": {
-    "dataproc:dataproc.conscrypt.provider.enable": "false",
-    "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
-    "spark:spark.executor.cores": "2",                     # Reducir de 10 a 2
-    "spark:spark.executor.memory": "3g",                   # Añadir configuración de memoria
-    "spark:spark.driver.memory": "4g",                     # Añadir memoria para el driver
-    "spark:spark.executor.instances": "4",                 # Controlar número de executors
-    "spark:spark.yarn.am.memory": "1g",                    # Memoria para YARN Application Master
-    "spark:spark.dynamicAllocation.enabled": "true",       # Habilitar asignación dinámica
-    "spark:spark.dynamicAllocation.minExecutors": "2",     # Mínimo de executors
-    "spark:spark.dynamicAllocation.maxExecutors": "8",     # Máximo de executors
-    "spark:spark.scheduler.mode": "FAIR"                   # Programador justo
-  }
-},
-  "endpoint_config": {
-      "enable_http_port_access": True
+    "image_version":"2.1.85-debian11",
+    "properties": {
+      "dataproc:dataproc.conscrypt.provider.enable": "false",
+      "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
+      "spark:spark.executor.cores": "2",                     # Reducir de 10 a 2
+      "spark:spark.executor.memory": "3g",                   # Añadir configuración de memoria
+      "spark:spark.driver.memory": "4g",                     # Añadir memoria para el driver
+      "spark:spark.executor.instances": "4",                 # Controlar número de executors
+      "spark:spark.yarn.am.memory": "1g",                    # Memoria para YARN Application Master
+      "spark:spark.dynamicAllocation.enabled": "true",       # Habilitar asignación dinámica
+      "spark:spark.dynamicAllocation.minExecutors": "2",     # Mínimo de executors
+      "spark:spark.dynamicAllocation.maxExecutors": "8",     # Máximo de executors
+      "spark:spark.scheduler.mode": "FAIR"                   # Programador justo
     }
-
+  },
+  "endpoint_config": {
+    "enable_http_port_access": True
+  }
 }
 
 
@@ -201,7 +200,7 @@ load_pagoprove = CloudDataFusionStartPipelineOperator(
     'TABLE_NAME':'PAGOPROVE',
     'init_date':init_date, 
     'final_date':final_date,
-        'spark.driver.memory': '2g',
+    'spark.driver.memory': '2g',
     'spark.executor.memory': '3g',
     'spark.executor.cores': '2',
     'spark.executor.instances': '4',
@@ -261,7 +260,7 @@ load_prestadores = CloudDataFusionStartPipelineOperator(
     'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
     'DATASET_NAME':'LAN_VERIFICACIONES',
     'TABLE_NAME':'PRESTADORES',
-        'spark.driver.memory': '2g',
+    'spark.driver.memory': '2g',
     'spark.executor.memory': '3g',
     'spark.executor.cores': '2',
     'spark.executor.instances': '4',

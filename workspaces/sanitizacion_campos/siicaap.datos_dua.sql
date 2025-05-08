@@ -1,6 +1,5 @@
 -- Consulta de sanitización para SIICAAP.DATOS_DUA (sin campos CLOB) - Eliminando tabs, saltos de línea y retornos de carro
 SELECT
-    -- Se omiten campos CLOB
     PROCESO,
     ENVIADO_EMAIL,
     CHECK_2,
