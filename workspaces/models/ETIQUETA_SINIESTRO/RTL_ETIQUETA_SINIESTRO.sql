@@ -1,6 +1,5 @@
--- Crea la tabla DM_ETIQUETA_SINIESTRO en el esquema DM_FRAUDES
--- y versiona los registros de como SCD-2
-CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}` AS
+TRUNCATE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}`;
+INSERT INTO `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}`
 SELECT
   E1.Z_ID AS ID
   ,E1.REPORTE AS ID_REPORTE
