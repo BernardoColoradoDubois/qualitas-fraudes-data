@@ -490,6 +490,71 @@ dm_siniestros = BigQueryInsertJobOperator(
   dag=dag 
 )
 
+stg_dua = BigQueryInsertJobOperator(
+  task_id="stg_dua",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/STG_DUA.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'DATOS_DUA',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_DUA',
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+rtl_dua = BigQueryInsertJobOperator(
+  task_id="rtl_dua",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/RTL_DUA.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_DUA',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'RTL_DUA',
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_dua = BigQueryInsertJobOperator(
+  task_id="dm_dua",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/DM_DUA.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'RTL_DUA',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_DUA',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
 end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
 init_elt >> dm_asegurados >> end_elt
@@ -503,6 +568,7 @@ init_elt >> dm_causas >> end_elt
 init_elt >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> rtl_etiqueta_siniestro >> dm_etiqueta_siniestro >> end_elt
 init_elt >> stg_registro >> rtl_registro >> dm_registro >> end_elt
 init_elt >> stg_siniestros >> rtl_siniestros >> dm_siniestros >> end_elt
+init_elt >> stg_dua >> rtl_dua >> dm_dua >> end_elt
 
 
 
