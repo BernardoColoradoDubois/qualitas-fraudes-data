@@ -555,6 +555,137 @@ dm_dua = BigQueryInsertJobOperator(
   dag=dag 
 )
 
+stg_polizas_vigentes_1 = BigQueryInsertJobOperator(
+  task_id="stg_polizas_vigentes_1",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_1.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'FRAUD_PV',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_polizas_vigentes_2 = BigQueryInsertJobOperator(
+  task_id="stg_polizas_vigentes_2",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_2.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_polizas_vigentes_3 = BigQueryInsertJobOperator(
+  task_id="stg_polizas_vigentes_3",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_polizas_vigentes_4 = BigQueryInsertJobOperator(
+  task_id="stg_polizas_vigentes_4",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_4.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+rtl_polizas_vigentes = BigQueryInsertJobOperator(
+  task_id="rtl_polizas_vigentes",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/RTL_POLIZAS_VIGENTES.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_polizas_vigentes = BigQueryInsertJobOperator(
+  task_id="dm_polizas_vigentes",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/DM_POLIZAS_VIGENTES.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_POLIZAS_VIGENTES',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+
 end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
 init_elt >> dm_asegurados >> end_elt
@@ -569,7 +700,7 @@ init_elt >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta
 init_elt >> stg_registro >> rtl_registro >> dm_registro >> end_elt
 init_elt >> stg_siniestros >> rtl_siniestros >> dm_siniestros >> end_elt
 init_elt >> stg_dua >> rtl_dua >> dm_dua >> end_elt
-
+init_elt >> stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> stg_polizas_vigentes_3 >> stg_polizas_vigentes_4 >> rtl_polizas_vigentes >> dm_polizas_vigentes >> end_elt
 
 
 

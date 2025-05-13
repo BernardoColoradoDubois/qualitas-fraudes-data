@@ -35,7 +35,7 @@ CLUSTER_CONFIG = {
     }
   },
   "worker_config": {
-    "num_instances": 12,
+    "num_instances": 16,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
@@ -63,7 +63,8 @@ CLUSTER_CONFIG = {
       "spark:spark.dynamicAllocation.enabled": "true",       # Habilitar asignación dinámica
       "spark:spark.dynamicAllocation.minExecutors": "2",     # Mínimo de executors
       "spark:spark.dynamicAllocation.maxExecutors": "8",     # Máximo de executors
-      "spark:spark.scheduler.mode": "FAIR"                   # Programador justo
+      "spark:spark.scheduler.mode": "FAIR",                  # Programador justo
+      "spark:spark.yarn.executor.memoryOverhead": "512m"     # Ajustar overhead memory
     }
   },
   "endpoint_config": {
