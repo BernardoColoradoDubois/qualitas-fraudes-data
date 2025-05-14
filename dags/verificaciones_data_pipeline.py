@@ -80,7 +80,7 @@ final_date = '2025-03-31'
 
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
-  'retries': 3,
+  'retries': 4,
   'retry_delay': timedelta(minutes=2)
 }
 
@@ -94,7 +94,7 @@ dag = DAG(
   dagrun_timeout=timedelta(minutes=120),
 )
 
-init = BashOperator(task_id='init',bash_command='echo init landing',dag=dag)
+landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)
 
 
 @task_group(group_id='init_landing',dag=dag)
@@ -536,8 +536,8 @@ def landing_siniestros_2():
     poll_interval=30,
     runtime_args={
       'app.pipeline.overwriteConfig':'true',
-      'task.executor.system.resources.cores':'2',
-      'task.executor.system.resources.memory':'3072',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
       'dataproc.cluster.name':'verificaciones-dataproc',
       "system.profile.name" : "USER:verificaciones-dataproc",  
       'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -708,10 +708,1128 @@ def end_landing():
     region="us-central1",
   )
   
+elt = BashOperator(task_id='elt',bash_command='echo init landing',dag=dag)
   
 @task_group(group_id='bq_elt',dag=dag)
 def bq_elt():
-  pass
+
+  # ASEGURADO
+  dm_asegurados = BigQueryInsertJobOperator(
+    task_id="dm_asegurados",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ASEGURADOS/DM_ASEGURADOS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'MASEG_BSC',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_ASEGURADOS',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  # PAGOS_PROVEEDORES
+  rtl_pagos_proveedores = BigQueryInsertJobOperator(
+    task_id="rtl_pagos_proveedores",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_PROVEEDORES/RTL_PAGOS_PROVEEDORES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'PAGOPROVE',
+      'SOURCE_SECOND_TABLE_NAME': 'PAGOSPROVEEDORES',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_pagos_proveedores = BigQueryInsertJobOperator(
+    task_id="dm_pagos_proveedores",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_PROVEEDORES/DM_PAGOS_PROVEEDORES.sql'),
+        "useLegacySql": False,
+      },
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_PAGOS_PROVEEDORES',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  # PROVEEDORES
+  dm_proveedores = BigQueryInsertJobOperator(
+    task_id="dm_proveedores",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PROVEEDORES/DM_PROVEEDORES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'PRESTADORES',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_PROVEEDORES',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  rtl_coberturas_movimientos = BigQueryInsertJobOperator(
+    task_id="rtl_coberturas_movimientos",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/RTL_COBERTURAS_MOVIMIENTOS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RESERVAS_BSC',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS'
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_coberturas_movimientos = BigQueryInsertJobOperator(
+    task_id="dm_coberturas_movimientos",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/DM_COBERTURAS_MOVIMIENTOS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_COBERTURAS_MOVIMIENTOS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_estados = BigQueryInsertJobOperator(
+    task_id="dm_estados",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ESTADOS/DM_ESTADOS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'TESTADO_BSC',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_ESTADOS',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_oficinas = BigQueryInsertJobOperator(
+    task_id="dm_oficinas",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'TSUC_BSC',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_OFICINAS',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_tipos_proveedores = BigQueryInsertJobOperator(
+    task_id="dm_tipos_proveedores",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/TIPOS_PROVEEDORES/DM_TIPOS_PROVEEDORES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'TIPOPROVEEDOR',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_TIPOS_PROVEEDORES',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_causas = BigQueryInsertJobOperator(
+    task_id="dm_causas",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/CAUSAS/DM_CAUSAS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'CAT_CAUSA',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_CAUSAS',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_etiqueta_siniestro_1 = BigQueryInsertJobOperator(
+    task_id="stg_etiqueta_siniestro_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'ETIQUETA_SINIESTRO',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_etiqueta_siniestro_2 = BigQueryInsertJobOperator(
+    task_id="stg_etiqueta_siniestro_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_etiqueta_siniestro_3 = BigQueryInsertJobOperator(
+    task_id="stg_etiqueta_siniestro_3",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  rtl_etiqueta_siniestro = BigQueryInsertJobOperator(
+    task_id="rtl_etiqueta_siniestro",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/RTL_ETIQUETA_SINIESTRO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'RTL_ETIQUETA_SINIESTRO',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_etiqueta_siniestro = BigQueryInsertJobOperator(
+    task_id="dm_etiqueta_siniestro",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/DM_ETIQUETA_SINIESTRO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RTL_ETIQUETA_SINIESTRO',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_ETIQUETA_SINIESTRO',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_registro = BigQueryInsertJobOperator(
+    task_id="stg_registro",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/REGISTRO/STG_REGISTRO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'REGISTRO',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_REGISTRO',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  rtl_registro = BigQueryInsertJobOperator(
+    task_id="rtl_registro",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/REGISTRO/RTL_REGISTRO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_REGISTRO',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'RTL_REGISTRO',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_registro = BigQueryInsertJobOperator(
+    task_id="dm_registro",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/REGISTRO/DM_REGISTRO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RTL_REGISTRO',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_REGISTRO',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_siniestros = BigQueryInsertJobOperator(
+    task_id="stg_siniestros",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/SINIESTROS/STG_SINIESTROS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'SAS_SINIES',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_SINIESTROS'
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  rtl_siniestros = BigQueryInsertJobOperator(
+    task_id="rtl_siniestros",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/SINIESTROS/RTL_SINIESTROS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'RTL_SINIESTROS'
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_siniestros = BigQueryInsertJobOperator(
+    task_id="dm_siniestros",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/SINIESTROS/DM_SINIESTROS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RTL_SINIESTROS',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_SINIESTROS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_dua = BigQueryInsertJobOperator(
+    task_id="stg_dua",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/STG_DUA.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'DATOS_DUA',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_DUA',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  rtl_dua = BigQueryInsertJobOperator(
+    task_id="rtl_dua",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/RTL_DUA.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_DUA',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'RTL_DUA',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_dua = BigQueryInsertJobOperator(
+    task_id="dm_dua",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/DM_DUA.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RTL_DUA',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_DUA',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_polizas_vigentes_1 = BigQueryInsertJobOperator(
+    task_id="stg_polizas_vigentes_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'FRAUD_PV',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_polizas_vigentes_2 = BigQueryInsertJobOperator(
+    task_id="stg_polizas_vigentes_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_polizas_vigentes_3 = BigQueryInsertJobOperator(
+    task_id="stg_polizas_vigentes_3",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_3.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  stg_polizas_vigentes_4 = BigQueryInsertJobOperator(
+    task_id="stg_polizas_vigentes_4",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_4.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  rtl_polizas_vigentes = BigQueryInsertJobOperator(
+    task_id="rtl_polizas_vigentes",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/RTL_POLIZAS_VIGENTES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+
+  dm_polizas_vigentes = BigQueryInsertJobOperator(
+    task_id="dm_polizas_vigentes",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/DM_POLIZAS_VIGENTES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_POLIZAS_VIGENTES',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )  
+  
+  rtl_pagos_proveedores  >> dm_pagos_proveedores
+  rtl_coberturas_movimientos >> dm_coberturas_movimientos
+  stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> rtl_etiqueta_siniestro >> dm_etiqueta_siniestro
+  stg_registro >> rtl_registro >> dm_registro
+  stg_siniestros >> rtl_siniestros >> dm_siniestros
+  stg_dua >> rtl_dua >> dm_dua
+  stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> stg_polizas_vigentes_3 >> stg_polizas_vigentes_4 >> rtl_polizas_vigentes >> dm_polizas_vigentes
+  
+inject = BashOperator(task_id='inject',bash_command='echo init landing',dag=dag)
+
+@task_group(group_id='init_injection',dag=dag)
+def init_injection():
+  
+  create_cluster = DataprocCreateClusterOperator(
+    task_id="create_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+  )
+  
+  get_datafusion_instance = CloudDataFusionGetInstanceOperator(
+    task_id="get_datafusion_instance",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    project_id='qlts-nonprod-data-tools',
+    dag=dag,
+  )
+  
+  create_cluster >> get_datafusion_instance
+  
+@task_group(group_id='injection_1',dag=dag)
+def injection_1():
+  inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_asegurados",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_asegurados',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_ASEGURADOS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_ASEGURADOS',
+    },
+    dag=dag
+  )
+
+  inject_coberturas_movimientos = CloudDataFusionStartPipelineOperator(
+    task_id="inject_coberturas_movimientos",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_coberturas_movimientos',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_COBERTURAS_MOVIMIENTOS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  inject_dm_estados = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_estados",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_estados',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_ESTADOS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_ESTADOS',
+    },
+    dag=dag
+  )
+  
+@task_group(group_id='injection_2',dag=dag)
+def injection_2():
+
+  inject_pagos_proveedores = CloudDataFusionStartPipelineOperator(
+    task_id="inject_pagos_proveedores",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_pagos_proveedores',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_PAGOS_PROVEEDORES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_PAGOS_PROVEEDORES',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  inject_proveedores = CloudDataFusionStartPipelineOperator(
+    task_id="inject_proveedores",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_proveedores',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_PROVEEDORES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_PROVEEDORES',
+    },
+    dag=dag
+  )
+
+  inject_tipos_proveedores = CloudDataFusionStartPipelineOperator(
+    task_id="inject_tipos_proveedores",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_tipos_proveedores',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_TIPOS_PROVEEDORES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_TIPOS_PROVEEDORES',
+    },
+    dag=dag
+  )
+  
+@task_group(group_id='injection_3',dag=dag)
+def injection_3():
+
+  inject_causas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_causas",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_causas',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_CAUSAS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_CAUSAS',
+    },
+    dag=dag
+  )
+
+  inject_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
+    task_id="inject_etiqueta_siniestro",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_etiqueta_siniestro',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_ETIQUETA_SINIESTRO',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_ETIQUETA_SINIESTRO',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  inject_registro = CloudDataFusionStartPipelineOperator(
+    task_id="inject_registro",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_registro',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_REGISTRO',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_REGISTRO',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+@task_group(group_id='injection_4',dag=dag)
+def injection_4():
+
+  inject_dua = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dua",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_dua',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      "system.spark.spark.default.parallelism":"8",
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_DUA',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_DUA',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_oficinas",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_oficinas',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_OFICINAS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_OFICINAS',
+    },
+    dag=dag
+  )
+
+@task_group(group_id='injection_5',dag=dag)
+def injection_5():
+  
+  inject_polizas_vigentes = CloudDataFusionStartPipelineOperator(
+    task_id="inject_polizas_vigentes",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_siniestros',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_POLIZAS_VIGENTES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_POLIZAS_VIGENTES',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+  inject_pagos_polizas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_pagos_polizas",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_siniestros',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_PAGOS_POLIZAS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_PAGOS_POLIZAS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+@task_group(group_id='injection_6',dag=dag)
+def injection_6():
+  
+  inject_siniestros = CloudDataFusionStartPipelineOperator(
+    task_id="inject_siniestros",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_siniestros',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_SINIESTROS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_SINIESTROS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
   
   
-init >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> landing_siniestros_2() >> landing_sise() >> landing_dua() >> end_landing()
+@task_group(group_id='end_injection',dag=dag)
+def end_injection():
+  
+  delete_cluster = DataprocDeleteClusterOperator(
+    task_id="delete_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_name="verificaciones-dataproc",
+    region="us-central1",
+  )
+  
+end = BashOperator(task_id='end',bash_command='echo end landing',dag=dag)
+
+landing >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> landing_siniestros_2() >> landing_sise() >> landing_dua() >> end_landing()  >> elt
+elt >> bq_elt() >> inject
+inject >> init_injection() >> injection_1() >> injection_2() >> injection_3() >> injection_4()>> injection_5() >> injection_6() >> end_injection() >> end
