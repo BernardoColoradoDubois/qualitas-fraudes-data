@@ -3,6 +3,8 @@ import re
 import os
 from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
+from datetime import datetime, timedelta
+import pytz
 
 #from airflow.providers.oracle.hooks.oracle import OracleHook
 from sqlalchemy import create_engine
@@ -92,3 +94,30 @@ def execute_query_to_load_oracle_database(project_id,query,**kwargs):
   cursor.close()
 
 
+def get_date_interval(project_id:str,period:str,**kwargs):
+  
+  if period == 'YESTERDAY':
+    timezone = pytz.timezone('America/Mexico_City')
+    today = datetime.now(timezone)
+    yesterday = today - timedelta(days=1)
+    string_date = yesterday.strftime('%Y-%m-%d')
+    
+    print(string_date)
+
+  else:
+    client = bigquery.Client(project=project_id)
+    query = f"""
+        WITH dates AS ( 
+          SELECT DATE FROM `DM_VERIFICACIONES.DM_CALENDARIO` WHERE PERIOD_STRING = '{period}' 
+        ) 
+        SELECT MIN(DATE) AS init_date, MAX(DATE) AS final_date FROM dates
+      """
+    query_job = client.query(query)
+    result = query_job.result()
+    
+    
+    for row in result:
+      init_date = row[0]
+      final_date = row[1]
+      print(init_date)
+      print(final_date)

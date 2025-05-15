@@ -1,0 +1,18 @@
+CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}` AS (
+    WITH date_range AS (
+    SELECT date FROM UNNEST(GENERATE_DATE_ARRAY('{{task.params.init_date}}', '{{task.params.final_date}}')) AS date
+  )
+  SELECT
+    date AS DATE,
+    EXTRACT(DAY FROM date) AS DAY,
+    EXTRACT(MONTH FROM date) AS MONTH,
+    EXTRACT(YEAR FROM date) AS YEAR,
+    EXTRACT(QUARTER FROM date) AS QUARTER,
+    CAST(REPLACE(SUBSTRING(CAST(date AS STRING),0,7),'-','') AS INTEGER) AS PERIOD_NUMBER,
+    SUBSTRING(CAST(date AS STRING),0,7) AS PERIOD_STRING,
+    EXTRACT(DAYOFYEAR FROM date) AS DAY_OF_YEAR,
+    EXTRACT(DAYOFWEEK FROM date) AS DAY_OF_WEEK,
+    EXTRACT(WEEK FROM date) AS WEEK,
+  FROM date_range
+  ORDER BY date
+);

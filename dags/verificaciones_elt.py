@@ -685,6 +685,213 @@ dm_polizas_vigentes = BigQueryInsertJobOperator(
   dag=dag 
 )
 
+stg_pagos_polizas = BigQueryInsertJobOperator(
+  task_id="stg_pagos_polizas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_POLIZAS/STG_PAGOS_POLIZAS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'FRAUD_RP',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_PAGOS_POLIZAS',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+rtl_pagos_polizas = BigQueryInsertJobOperator(
+  task_id="rtl_pagos_polizas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_POLIZAS/RTL_PAGOS_POLIZAS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_PAGOS_POLIZAS',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'RTL_PAGOS_POLIZAS',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_pagos_polizas = BigQueryInsertJobOperator(
+  task_id="dm_pagos_polizas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_POLIZAS/DM_PAGOS_POLIZAS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'RTL_PAGOS_POLIZAS',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_PAGOS_POLIZAS',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_incisos_polizas_1 = BigQueryInsertJobOperator(
+  task_id="stg_incisos_polizas_1",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_1.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'FRAUD_DI',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_incisos_polizas_2 = BigQueryInsertJobOperator(
+  task_id="stg_incisos_polizas_2",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_2.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_incisos_polizas_3 = BigQueryInsertJobOperator(
+  task_id="stg_incisos_polizas_3",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_3.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_3',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+stg_incisos_polizas_4 = BigQueryInsertJobOperator(
+  task_id="stg_incisos_polizas_4",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_4.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_3',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_4',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+rtl_incisos_polizas = BigQueryInsertJobOperator(
+  task_id="rtl_incisos_polizas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/RTL_INCISOS_POLIZAS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_4',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'RTL_INCISOS_POLIZAS',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
+dm_incisos_polizas = BigQueryInsertJobOperator(
+  task_id="dm_incisos_polizas",
+  configuration={
+    "query": {
+      "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/DM_INCISOS_POLIZAS.sql'),
+      "useLegacySql": False,
+    }
+  },
+  params={
+    'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+    'SOURCE_TABLE_NAME': 'RTL_INCISOS_POLIZAS',
+    'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+    'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+    'DEST_TABLE_NAME': 'DM_INCISOS_POLIZAS',
+    'init_date':init_date,
+    'final_date':final_date
+  },
+  location='us-central1',
+  gcp_conn_id="google_cloud_default",
+  dag=dag 
+)
+
 
 end_elt = BashOperator(task_id='end_elt',bash_command='echo end ELT',dag=dag)
 
@@ -701,7 +908,8 @@ init_elt >> stg_registro >> rtl_registro >> dm_registro >> end_elt
 init_elt >> stg_siniestros >> rtl_siniestros >> dm_siniestros >> end_elt
 init_elt >> stg_dua >> rtl_dua >> dm_dua >> end_elt
 init_elt >> stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> stg_polizas_vigentes_3 >> stg_polizas_vigentes_4 >> rtl_polizas_vigentes >> dm_polizas_vigentes >> end_elt
-
+init_elt >> stg_pagos_polizas >> rtl_pagos_polizas >> dm_pagos_polizas >> end_elt
+init_elt >> stg_incisos_polizas_1 >> stg_incisos_polizas_2 >> stg_incisos_polizas_3 >> stg_incisos_polizas_4 >> rtl_incisos_polizas >> dm_incisos_polizas >> end_elt
 
 
 
