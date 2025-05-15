@@ -96,28 +96,54 @@ def execute_query_to_load_oracle_database(project_id,query,**kwargs):
 
 def get_date_interval(project_id:str,period:str,**kwargs):
   
+  init_date = 'yyyy-mm-dd'
+  final_date = 'yyyy-mm-dd'
+  
+  print(f"period: {period}")
+  
   if period == 'YESTERDAY':
     timezone = pytz.timezone('America/Mexico_City')
     today = datetime.now(timezone)
     yesterday = today - timedelta(days=1)
     string_date = yesterday.strftime('%Y-%m-%d')
     
-    print(string_date)
+    init_date = string_date
+    final_date = string_date
+    
+    print(f"YESTERDAY: {init_date}  {final_date}")
+    
+    return {
+      'init_date': init_date,
+      'final_date': final_date
+    }
 
   else:
     client = bigquery.Client(project=project_id)
     query = f"""
         WITH dates AS ( 
-          SELECT DATE FROM `DM_VERIFICACIONES.DM_CALENDARIO` WHERE PERIOD_STRING = '{period}' 
+          SELECT DATE FROM `DM_VERIFICACIONES.DM_CALENDARIO` WHERE PERIOD_STRING = '{period}'
         ) 
-        SELECT MIN(DATE) AS init_date, MAX(DATE) AS final_date FROM dates
+        SELECT MIN(DATE) AS init_date, MAX(DATE) AS final_date FROM dates WHERE DATE < CURRENT_DATE('-06')
       """
     query_job = client.query(query)
     result = query_job.result()
     
-    
     for row in result:
       init_date = row[0]
       final_date = row[1]
-      print(init_date)
-      print(final_date)
+    
+    print(f"PERIOD: {period}  {init_date}  {final_date}")
+    return {
+      'init_date': init_date,
+      'final_date': final_date
+    }
+
+
+def get_cluster_tipe_creator(init_date:str,final_date:str,small_cluster_label:str,big_cluster_label:str,**kwargs):
+  
+  if init_date == final_date:
+    return small_cluster_label
+    
+  else:
+    return  big_cluster_label
+  

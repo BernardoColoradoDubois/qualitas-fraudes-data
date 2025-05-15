@@ -18,7 +18,6 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 
 from lib.utils import get_bucket_file_contents
 
-
 CLUSTER_CONFIG = {
   "gce_cluster_config": {
     "internal_ip_only": True,
@@ -38,7 +37,7 @@ CLUSTER_CONFIG = {
     }
   },
   "worker_config": {
-    "num_instances": 12,
+    "num_instances": 16,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
@@ -74,9 +73,8 @@ CLUSTER_CONFIG = {
   }
 }
 
-
-init_date = '2025-03-01'
-final_date = '2025-03-31'
+init_date = '2025-04-01'
+final_date = '2025-04-30'
 
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
@@ -689,6 +687,12 @@ def landing_dua():
       'task.executor.system.resources.memory':'3072',
       'dataproc.cluster.name':'verificaciones-dataproc',
       "system.profile.name" : "USER:verificaciones-dataproc",  
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',
       'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
       'DATASET_NAME':'LAN_VERIFICACIONES',
       'TABLE_NAME':'DATOS_DUA',
