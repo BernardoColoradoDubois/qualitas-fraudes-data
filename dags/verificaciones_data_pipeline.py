@@ -211,6 +211,7 @@ def init_landing():
     region="us-central1",
     cluster_name="verificaciones-dataproc",
     num_retries_if_resource_is_not_ready=3,
+    dag=dag
   )
   
   create_small_cluster = DataprocCreateClusterOperator(
@@ -220,6 +221,7 @@ def init_landing():
     region="us-central1",
     cluster_name="verificaciones-dataproc",
     num_retries_if_resource_is_not_ready=3,
+    dag=dag
   )
   
   get_datafusion_instance = CloudDataFusionGetInstanceOperator(
