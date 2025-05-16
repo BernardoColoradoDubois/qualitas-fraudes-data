@@ -181,6 +181,7 @@ dm_estados = BigQueryInsertJobOperator(
     'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
     'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
     'SOURCE_TABLE_NAME': 'TESTADO_BSC',
+    'SOURCE_SECOND_TABLE_NAME': 'ESTADOS_MEXICO',
     'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
     'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
     'DEST_TABLE_NAME': 'DM_ESTADOS',

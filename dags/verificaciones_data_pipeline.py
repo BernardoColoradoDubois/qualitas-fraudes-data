@@ -71,11 +71,11 @@ BIG_CLUSTER_CONFIG = {
       "spark:spark.executor.memory": "2g",                   # Ajustar memoria
       "spark:spark.driver.memory": "4g",                     # Mantener
       "spark:spark.executor.instances": "4",                 # Aumentar
-      "spark:spark.yarn.am.memory": "1g",                   
+      "spark:spark.yarn.am.memory": "1.5g",                   
       "spark:spark.dynamicAllocation.enabled": "true",      
       "spark:spark.dynamicAllocation.minExecutors": "5",    
-      "spark:spark.dynamicAllocation.maxExecutors": "48",   
-      "spark:spark.dynamicAllocation.initialExecutors": "30", 
+      "spark:spark.dynamicAllocation.maxExecutors": "24",   
+      "spark:spark.dynamicAllocation.initialExecutors": "16", 
       "spark:spark.scheduler.mode": "FAIR",                  
       "spark:spark.task.maxFailures": "8",
       "spark:spark.stage.maxConsecutiveAttempts": "4",
@@ -129,7 +129,7 @@ SMALL_CLUSTER_CONFIG = {
       "dataproc:dataproc.conscrypt.provider.enable": "false",
       "capacity-scheduler:yarn.scheduler.capacity.resource-calculator":"org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
       "spark:spark.executor.cores": "1",                     # Reducir para tener más executors
-      "spark:spark.executor.memory": "1g",                   # Ajustar memoria
+      "spark:spark.executor.memory": "1.5g",                   # Ajustar memoria
       "spark:spark.driver.memory": "2g",                     # Mantener
       "spark:spark.executor.instances": "4",                 # Aumentar
       "spark:spark.yarn.am.memory": "1g",                   
@@ -972,6 +972,7 @@ def bq_elt():
       'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
       'SOURCE_TABLE_NAME': 'TESTADO_BSC',
+      'SOURCE_SECOND_TABLE_NAME': 'ESTADOS_MEXICO',
       'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
       'DEST_TABLE_NAME': 'DM_ESTADOS',

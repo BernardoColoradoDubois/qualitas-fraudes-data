@@ -131,6 +131,9 @@ def get_date_interval(project_id:str,period:str,**kwargs):
     for row in result:
       init_date = row[0]
       final_date = row[1]
+      
+    init_date = init_date.strftime('%Y-%m-%d')
+    final_date = final_date.strftime('%Y-%m-%d')
     
     print(f"PERIOD: {period}  {init_date}  {final_date}")
     return {
