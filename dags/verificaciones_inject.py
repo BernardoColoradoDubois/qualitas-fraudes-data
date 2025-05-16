@@ -472,6 +472,36 @@ inject_siniestros = CloudDataFusionStartPipelineOperator(
 )
 
 
+
+inject_incisos_polizas = CloudDataFusionStartPipelineOperator(
+  task_id="inject_incisos_polizas",
+  location='us-central1',
+  instance_name='qlts-data-fusion-dev',
+  namespace='verificaciones',
+  pipeline_name='inject_dm_incisos_polizas',
+  project_id='qlts-nonprod-data-tools',
+  pipeline_type = DataFusionPipelineType.BATCH,
+  success_states=["COMPLETED"],
+  asynchronous=False,
+  pipeline_timeout=3600,
+  deferrable=True,
+  poll_interval=30,
+  runtime_args={
+    'app.pipeline.overwriteConfig':'true',
+    'task.executor.system.resources.cores':'2',
+    'task.executor.system.resources.memory':'3072',
+    'dataproc.cluster.name':'verificaciones-dataproc',
+    "system.profile.name" : "USER:verificaciones-dataproc",    
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':'DM_INCISOS_POLIZAS',
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':'STG_INCISOS_POLIZAS'
+  },
+  dag=dag
+)
+
+
 end_injection = BashOperator(task_id='end_injection',bash_command='echo end injection',dag=dag)
 
 
@@ -500,6 +530,9 @@ init_injection_4 >> inject_dua >> init_injection_5
 init_injection_4 >> inject_dm_oficinas >> init_injection_5
 
 init_injection_5 >> inject_siniestros >> end_injection
+init_injection_5 >> inject_incisos_polizas >> end_injection
+
+
 
 
 end_injection >> delete_cluster

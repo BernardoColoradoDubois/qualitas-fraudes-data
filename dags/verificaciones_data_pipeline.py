@@ -108,7 +108,7 @@ SMALL_CLUSTER_CONFIG = {
     }
   },
   "worker_config": {
-    "num_instances": 6,
+    "num_instances": 7,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
@@ -131,12 +131,12 @@ SMALL_CLUSTER_CONFIG = {
       "spark:spark.executor.cores": "1",                     # Reducir para tener más executors
       "spark:spark.executor.memory": "1g",                   # Ajustar memoria
       "spark:spark.driver.memory": "2g",                     # Mantener
-      "spark:spark.executor.instances": "2",                 # Aumentar
+      "spark:spark.executor.instances": "4",                 # Aumentar
       "spark:spark.yarn.am.memory": "1g",                   
       "spark:spark.dynamicAllocation.enabled": "true",      
       "spark:spark.dynamicAllocation.minExecutors": "2",    
-      "spark:spark.dynamicAllocation.maxExecutors": "24",   
-      "spark:spark.dynamicAllocation.initialExecutors": "15", 
+      "spark:spark.dynamicAllocation.maxExecutors": "6",   
+      "spark:spark.dynamicAllocation.initialExecutors": "4", 
       "spark:spark.scheduler.mode": "FAIR",                  
       "spark:spark.task.maxFailures": "8",
       "spark:spark.stage.maxConsecutiveAttempts": "4",
@@ -190,20 +190,7 @@ def init_landing():
     gcp_conn_id="google_cloud_default",
     dag=dag 
   )
-  
-  select_cluster_creator = BranchPythonOperator(
-    task_id="select_cluster_creator",
-    python_callable=get_cluster_tipe_creator,
-    op_kwargs={
-      'init_date':init_date,
-      'final_date':final_date,
-      'small_cluster_label':'create_small_cluster',
-      'big_cluster_label':'create_big_cluster'
-    },
-    provide_context=True,
-    dag=dag
-  )  
-  
+
   create_big_cluster = DataprocCreateClusterOperator(
     task_id="create_big_cluster",
     project_id="qlts-nonprod-data-tools",
@@ -217,12 +204,27 @@ def init_landing():
   create_small_cluster = DataprocCreateClusterOperator(
     task_id="create_small_cluster",
     project_id="qlts-nonprod-data-tools",
-    cluster_config=BIG_CLUSTER_CONFIG,
+    cluster_config=SMALL_CLUSTER_CONFIG,
     region="us-central1",
     cluster_name="verificaciones-dataproc",
     num_retries_if_resource_is_not_ready=3,
     dag=dag
   )
+  
+  select_cluster_creator = BranchPythonOperator(
+    task_id="select_cluster_creator",
+    python_callable=get_cluster_tipe_creator,
+    op_kwargs={
+      'init_date':init_date,
+      'final_date':final_date,
+      'small_cluster_label': 'init_landing.create_small_cluster',
+      'big_cluster_label': 'init_landing.create_big_cluster'
+    },
+    provide_context=True,
+    dag=dag
+  )  
+  
+
   
   get_datafusion_instance = CloudDataFusionGetInstanceOperator(
     task_id="get_datafusion_instance",
@@ -595,9 +597,10 @@ def landing_siniestros_2():
     deferrable=True,
     poll_interval=30,
     runtime_args={
+      "system.spark.spark.default.parallelism":"6",
       'app.pipeline.overwriteConfig':'true',
       'task.executor.system.resources.cores':'2',
-      'task.executor.system.resources.memory':'3072',
+      'task.executor.system.resources.memory':'4096',
       'dataproc.cluster.name':'verificaciones-dataproc',
       "system.profile.name" : "USER:verificaciones-dataproc",  
       'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -1920,9 +1923,10 @@ def injection_3():
     deferrable=True,
     poll_interval=30,
     runtime_args={
+      "system.spark.spark.default.parallelism":"4",
       'app.pipeline.overwriteConfig':'true',
-      'task.executor.system.resources.cores':'1',
-      'task.executor.system.resources.memory':'2048',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
       'dataproc.cluster.name':'verificaciones-dataproc',
       "system.profile.name" : "USER:verificaciones-dataproc",
       'APP_ORACLE_DRIVER_NAME':'Oracle 8',
@@ -1936,6 +1940,8 @@ def injection_3():
       'TABLE_NAME':'DM_CAUSAS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_CAUSAS',
+      "system.spark.log.level": "DEBUG"
+
     },
     dag=dag
   )
@@ -1990,9 +1996,10 @@ def injection_3():
     deferrable=True,
     poll_interval=30,
     runtime_args={
+      "system.spark.spark.default.parallelism":"4",
       'app.pipeline.overwriteConfig':'true',
-      'task.executor.system.resources.cores':'1',
-      'task.executor.system.resources.memory':'2048',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
       'dataproc.cluster.name':'verificaciones-dataproc',
       "system.profile.name" : "USER:verificaciones-dataproc",
       'APP_ORACLE_DRIVER_NAME':'Oracle 8',
