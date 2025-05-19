@@ -7,8 +7,6 @@ from airflow.operators.bash import BashOperator
 from airflow.decorators import task_group
 from airflow.models import Variable
 
-
-
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionStartPipelineOperator
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionGetInstanceOperator
 from airflow.providers.google.cloud.operators.datafusion import DataFusionPipelineType 
@@ -47,14 +45,14 @@ BIG_CLUSTER_CONFIG = {
     }
   },
   "worker_config": {
-    "num_instances": 12,
+    "num_instances": 16,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
     }
   },
   "secondary_worker_config": {
-    "num_instances": 2,
+    "num_instances": 4,
     "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard",
@@ -70,12 +68,12 @@ BIG_CLUSTER_CONFIG = {
       "spark:spark.executor.cores": "1",                     # Reducir para tener más executors
       "spark:spark.executor.memory": "2g",                   # Ajustar memoria
       "spark:spark.driver.memory": "4g",                     # Mantener
-      "spark:spark.executor.instances": "4",                 # Aumentar
-      "spark:spark.yarn.am.memory": "1.5g",                   
+      "spark:spark.executor.instances": "6",                 # Aumentar
+      "spark:spark.yarn.am.memory": "1g",                   
       "spark:spark.dynamicAllocation.enabled": "true",      
       "spark:spark.dynamicAllocation.minExecutors": "5",    
-      "spark:spark.dynamicAllocation.maxExecutors": "24",   
-      "spark:spark.dynamicAllocation.initialExecutors": "16", 
+      "spark:spark.dynamicAllocation.maxExecutors": "48",   
+      "spark:spark.dynamicAllocation.initialExecutors": "30", 
       "spark:spark.scheduler.mode": "FAIR",                  
       "spark:spark.task.maxFailures": "8",
       "spark:spark.stage.maxConsecutiveAttempts": "4",
@@ -108,7 +106,7 @@ SMALL_CLUSTER_CONFIG = {
     }
   },
   "worker_config": {
-    "num_instances": 7,
+    "num_instances": 8,
      "machine_type_uri": "e2-custom-2-8192",
     "disk_config": {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
@@ -135,8 +133,8 @@ SMALL_CLUSTER_CONFIG = {
       "spark:spark.yarn.am.memory": "1g",                   
       "spark:spark.dynamicAllocation.enabled": "true",      
       "spark:spark.dynamicAllocation.minExecutors": "2",    
-      "spark:spark.dynamicAllocation.maxExecutors": "6",   
-      "spark:spark.dynamicAllocation.initialExecutors": "4", 
+      "spark:spark.dynamicAllocation.maxExecutors": "16",   
+      "spark:spark.dynamicAllocation.initialExecutors": "8", 
       "spark:spark.scheduler.mode": "FAIR",                  
       "spark:spark.task.maxFailures": "8",
       "spark:spark.stage.maxConsecutiveAttempts": "4",
@@ -696,6 +694,8 @@ def landing_siniestros_2():
     dag=dag
   )
 
+  load_sas_sinies >> load_etiqueta_siniestro
+  load_cobranza_hist >> load_registro
 
 @task_group(group_id='landing_sise',dag=dag)
 def landing_sise():
@@ -822,6 +822,62 @@ def landing_dua():
   )
   
 elt = BashOperator(task_id='elt',bash_command='echo init landing',dag=dag)
+
+@task_group(group_id='recreate_cluster',dag=dag)
+def recreate_cluster():
+  
+  delete_cluster = DataprocDeleteClusterOperator(
+    task_id="delete_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_name="verificaciones-dataproc",
+    region="us-central1",
+  )
+  
+  select_cluster_creator = BranchPythonOperator(
+    task_id="select_cluster_creator",
+    python_callable=get_cluster_tipe_creator,
+    op_kwargs={
+      'init_date':init_date,
+      'final_date':final_date,
+      'small_cluster_label': 'recreate_cluster.create_small_cluster',
+      'big_cluster_label': 'recreate_cluster.create_big_cluster'
+    },
+    provide_context=True,
+    dag=dag
+  )  
+  
+  create_big_cluster = DataprocCreateClusterOperator(
+    task_id="create_big_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=BIG_CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+    dag=dag
+  )
+  
+  create_small_cluster = DataprocCreateClusterOperator(
+    task_id="create_small_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=SMALL_CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+    dag=dag
+  )
+  
+  get_datafusion_instance = CloudDataFusionGetInstanceOperator(
+    task_id="get_datafusion_instance",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    trigger_rule='one_success',
+    project_id='qlts-nonprod-data-tools',
+    dag=dag,
+  )
+  
+  delete_cluster >> select_cluster_creator >> [create_big_cluster,create_small_cluster] >> get_datafusion_instance
+  
+  
   
 @task_group(group_id='bq_elt',dag=dag)
 def bq_elt():
@@ -1729,6 +1785,8 @@ def injection_1():
       'TABLE_NAME':'DM_ASEGURADOS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_ASEGURADOS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_ASEGURADOS'
     },
     dag=dag
   )
@@ -1763,6 +1821,8 @@ def injection_1():
       'TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_COBERTURAS_MOVIMIENTOS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1799,6 +1859,8 @@ def injection_1():
       'TABLE_NAME':'DM_ESTADOS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_ESTADOS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_ESTADOS',
     },
     dag=dag
   )
@@ -1833,6 +1895,8 @@ def injection_2():
       'TABLE_NAME':'DM_PAGOS_PROVEEDORES',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_PAGOS_PROVEEDORES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_PAGOS_PROVEEDORES',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1869,6 +1933,8 @@ def injection_2():
       'TABLE_NAME':'DM_PROVEEDORES',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_PROVEEDORES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_PROVEEDORES'
     },
     dag=dag
   )
@@ -1903,6 +1969,8 @@ def injection_2():
       'TABLE_NAME':'DM_TIPOS_PROVEEDORES',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_TIPOS_PROVEEDORES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_TIPOS_PROVEEDORES'
     },
     dag=dag
   )
@@ -1941,6 +2009,8 @@ def injection_3():
       'TABLE_NAME':'DM_CAUSAS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_CAUSAS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_CAUSAS',
       "system.spark.log.level": "DEBUG"
 
     },
@@ -1977,6 +2047,8 @@ def injection_3():
       'TABLE_NAME':'DM_ETIQUETA_SINIESTRO',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_ETIQUETA_SINIESTRO',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_ETIQUETA_SINIESTRO',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -2014,6 +2086,8 @@ def injection_3():
       'TABLE_NAME':'DM_REGISTRO',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_REGISTRO',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_REGISTRO',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -2054,6 +2128,8 @@ def injection_4():
       'TABLE_NAME':'DM_DUA',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_DUA',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_DUA',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -2090,6 +2166,8 @@ def injection_4():
       'TABLE_NAME':'DM_OFICINAS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_OFICINAS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'STG_OFICINAS'
     },
     dag=dag
   )
@@ -2127,6 +2205,8 @@ def injection_5():
       'TABLE_NAME':'DM_POLIZAS_VIGENTES',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_POLIZAS_VIGENTES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_POLIZAS_VIGENTES',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -2163,6 +2243,8 @@ def injection_5():
       'TABLE_NAME':'DM_PAGOS_POLIZAS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_PAGOS_POLIZAS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_PAGOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -2239,6 +2321,8 @@ def injection_6():
       'TABLE_NAME':'DM_SINIESTROS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_SINIESTROS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_SINIESTROS',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -2260,4 +2344,5 @@ end = BashOperator(task_id='end',bash_command='echo end landing',dag=dag)
 
 landing >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> landing_siniestros_2() >> landing_sise() >> landing_dua() >> elt
 elt >> bq_elt() >> inject
+elt >> recreate_cluster() >> inject
 inject  >> injection_1() >> injection_2() >> injection_3() >> injection_4()>> injection_5() >> injection_6() >> end_injection() >> end
