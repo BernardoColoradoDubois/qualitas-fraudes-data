@@ -152,7 +152,7 @@ SMALL_CLUSTER_CONFIG = {
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
   'retries': 4,
-  'retry_delay': timedelta(minutes=2)
+  'retry_delay': timedelta(minutes=5)
 }
 
 dag = DAG(
@@ -610,6 +610,94 @@ def landing_siniestros_2():
     dag=dag
   )
 
+@task_group(group_id='recreate_cluster_1',dag=dag)
+def recreate_cluster_1():
+  
+  delete_cluster = DataprocDeleteClusterOperator(
+    task_id="delete_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_name="verificaciones-dataproc",
+    region="us-central1",
+  )
+  
+  select_cluster_creator = BranchPythonOperator(
+    task_id="select_cluster_creator",
+    python_callable=get_cluster_tipe_creator,
+    op_kwargs={
+      'init_date':init_date,
+      'final_date':final_date,
+      'small_cluster_label': 'recreate_cluster_1.create_small_cluster',
+      'big_cluster_label': 'recreate_cluster_1.create_big_cluster'
+    },
+    provide_context=True,
+    dag=dag
+  )  
+  
+  create_big_cluster = DataprocCreateClusterOperator(
+    task_id="create_big_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=BIG_CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+    dag=dag
+  )
+  
+  create_small_cluster = DataprocCreateClusterOperator(
+    task_id="create_small_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=SMALL_CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+    dag=dag
+  )
+  
+  get_datafusion_instance = CloudDataFusionGetInstanceOperator(
+    task_id="get_datafusion_instance",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    trigger_rule='one_success',
+    project_id='qlts-nonprod-data-tools',
+    dag=dag,
+  )
+  
+  delete_cluster >> select_cluster_creator >> [create_big_cluster,create_small_cluster] >> get_datafusion_instance
+  
+  
+
+
+@task_group(group_id='landing_siniestros_3',dag=dag)
+def landing_siniestros_3():
+  
+  load_sas_sinies = CloudDataFusionStartPipelineOperator(
+    task_id="load_sas_sinies",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='load_sas_sinies',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'2',
+      'task.executor.system.resources.memory':'3072',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc",  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'LAN_VERIFICACIONES',
+      'TABLE_NAME':'SAS_SINIES',
+      'init_date':init_date, 
+      'final_date':final_date
+    },
+    dag=dag
+  )  
+  
   load_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
     task_id="load_etiqueta_siniestro",
     location='us-central1',
@@ -665,37 +753,6 @@ def landing_siniestros_2():
     },
     dag=dag
   )
-
-  load_sas_sinies = CloudDataFusionStartPipelineOperator(
-    task_id="load_sas_sinies",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
-    pipeline_name='load_sas_sinies',
-    project_id='qlts-nonprod-data-tools',
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig':'true',
-      'task.executor.system.resources.cores':'2',
-      'task.executor.system.resources.memory':'3072',
-      'dataproc.cluster.name':'verificaciones-dataproc',
-      "system.profile.name" : "USER:verificaciones-dataproc",  
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'LAN_VERIFICACIONES',
-      'TABLE_NAME':'SAS_SINIES',
-      'init_date':init_date, 
-      'final_date':final_date
-    },
-    dag=dag
-  )
-
-  load_sas_sinies >> load_etiqueta_siniestro
-  load_cobranza_hist >> load_registro
 
 @task_group(group_id='landing_sise',dag=dag)
 def landing_sise():
@@ -823,8 +880,8 @@ def landing_dua():
   
 elt = BashOperator(task_id='elt',bash_command='echo init landing',dag=dag)
 
-@task_group(group_id='recreate_cluster',dag=dag)
-def recreate_cluster():
+@task_group(group_id='recreate_cluster_2',dag=dag)
+def recreate_cluster_2():
   
   delete_cluster = DataprocDeleteClusterOperator(
     task_id="delete_cluster",
@@ -839,8 +896,8 @@ def recreate_cluster():
     op_kwargs={
       'init_date':init_date,
       'final_date':final_date,
-      'small_cluster_label': 'recreate_cluster.create_small_cluster',
-      'big_cluster_label': 'recreate_cluster.create_big_cluster'
+      'small_cluster_label': 'recreate_cluster_2.create_small_cluster',
+      'big_cluster_label': 'recreate_cluster_2.create_big_cluster'
     },
     provide_context=True,
     dag=dag
@@ -2167,7 +2224,7 @@ def injection_4():
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_OFICINAS',
       'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'STG_OFICINAS'
+      'INSUMOS_TABLE_NAME':'DM_OFICINAS'
     },
     dag=dag
   )
@@ -2342,7 +2399,7 @@ def end_injection():
   
 end = BashOperator(task_id='end',bash_command='echo end landing',dag=dag)
 
-landing >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> landing_siniestros_2() >> landing_sise() >> landing_dua() >> elt
+landing >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> landing_siniestros_2() >> landing_siniestros_3() >> landing_sise() >> landing_dua() >> elt
 elt >> bq_elt() >> inject
-elt >> recreate_cluster() >> inject
+elt >> recreate_cluster_2() >> inject
 inject  >> injection_1() >> injection_2() >> injection_3() >> injection_4()>> injection_5() >> injection_6() >> end_injection() >> end
