@@ -2338,6 +2338,8 @@ def injection_5():
       'TABLE_NAME':'DM_INCISOS_POLIZAS',
       'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
       'INJECT_TABLE_NAME':'STG_INCISOS_POLIZAS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_INCISOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
