@@ -2151,7 +2151,7 @@ def injection_3():
     dag=dag
   )
 
-task_group(group_id='recreate_cluster_3',dag=dag)
+@task_group(group_id='recreate_cluster_3',dag=dag)
 def recreate_cluster_3():
   
   delete_cluster = DataprocDeleteClusterOperator(
