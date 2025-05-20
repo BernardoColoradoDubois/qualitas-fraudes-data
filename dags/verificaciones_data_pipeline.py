@@ -51,6 +51,15 @@ BIG_CLUSTER_CONFIG = {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
     }
   },
+  "secondary_worker_config": {
+    "num_instances": 4,
+    "machine_type_uri": "e2-custom-2-8192",
+    "disk_config": {
+      "boot_disk_type": "pd-standard",
+      "boot_disk_size_gb": 32,
+    },
+    "is_preemptible": False,
+  },
   "software_config": {
     "image_version":"2.1.85-debian11",
     "properties": {
