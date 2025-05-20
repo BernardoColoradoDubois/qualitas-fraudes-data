@@ -51,15 +51,6 @@ BIG_CLUSTER_CONFIG = {
       "boot_disk_type": "pd-standard", "boot_disk_size_gb": 32
     }
   },
-  "secondary_worker_config": {
-    "num_instances": 4,
-    "machine_type_uri": "e2-custom-2-8192",
-    "disk_config": {
-      "boot_disk_type": "pd-standard",
-      "boot_disk_size_gb": 32,
-    },
-    "is_preemptible": False,
-  },
   "software_config": {
     "image_version":"2.1.85-debian11",
     "properties": {
@@ -2151,6 +2142,63 @@ def injection_3():
     dag=dag
   )
 
+task_group(group_id='recreate_cluster_3',dag=dag)
+def recreate_cluster_3():
+  
+  delete_cluster = DataprocDeleteClusterOperator(
+    task_id="delete_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_name="verificaciones-dataproc",
+    region="us-central1",
+  )
+  
+  select_cluster_creator = BranchPythonOperator(
+    task_id="select_cluster_creator",
+    python_callable=get_cluster_tipe_creator,
+    op_kwargs={
+      'init_date':init_date,
+      'final_date':final_date,
+      'small_cluster_label': 'recreate_cluster_3.create_small_cluster',
+      'big_cluster_label': 'recreate_cluster_3.create_big_cluster'
+    },
+    provide_context=True,
+    dag=dag
+  )  
+  
+  create_big_cluster = DataprocCreateClusterOperator(
+    task_id="create_big_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=BIG_CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+    dag=dag
+  )
+  
+  create_small_cluster = DataprocCreateClusterOperator(
+    task_id="create_small_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=SMALL_CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+    dag=dag
+  )
+  
+  get_datafusion_instance = CloudDataFusionGetInstanceOperator(
+    task_id="get_datafusion_instance",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    trigger_rule='one_success',
+    project_id='qlts-nonprod-data-tools',
+    dag=dag,
+  )
+  
+  delete_cluster >> select_cluster_creator >> [create_big_cluster,create_small_cluster] >> get_datafusion_instance
+  
+  
+  
+
 @task_group(group_id='injection_4',dag=dag)
 def injection_4():
 
@@ -2401,7 +2449,7 @@ def end_injection():
   
 end = BashOperator(task_id='end',bash_command='echo end landing',dag=dag)
 
-landing >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> landing_siniestros_2() >> landing_siniestros_3() >> landing_sise() >> landing_dua() >> elt
+landing >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> recreate_cluster_1() >> landing_siniestros_2() >> landing_siniestros_3() >> landing_sise() >> landing_dua() >> elt
 elt >> bq_elt() >> inject
 elt >> recreate_cluster_2() >> inject
-inject  >> injection_1() >> injection_2() >> injection_3() >> injection_4()>> injection_5() >> injection_6() >> end_injection() >> end
+inject  >> injection_1() >> injection_2() >> injection_3() >> recreate_cluster_3() >> injection_4()>> injection_5() >> injection_6() >> end_injection() >> end
