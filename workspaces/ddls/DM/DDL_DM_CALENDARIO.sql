@@ -1,5 +1,7 @@
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.DM_VERIFICACIONES.DM_CALENDARIO`
+DROP TABLE IF EXISTS `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`;
+CREATE TABLE `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`
 (
+  ID INT64,
   DATE DATE,
   DAY INT64,
   MONTH INT64,
@@ -11,3 +13,23 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.DM_VERIFICACIONES.DM_CALENDARIO`
   DAY_OF_WEEK INT64,
   WEEK INT64
 );
+
+INSERT INTO `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`
+SELECT
+  UNIX_DATE(date) AS ID,
+  date AS DATE,
+  EXTRACT(DAY FROM date) AS DAY,
+  EXTRACT(MONTH FROM date) AS MONTH,
+  EXTRACT(YEAR FROM date) AS YEAR,
+  EXTRACT(QUARTER FROM date) AS QUARTER,
+  CAST(REPLACE(SUBSTRING(CAST(date AS STRING),0,7),'-','') AS INTEGER) AS PERIOD_NUMBER,
+  SUBSTRING(CAST(date AS STRING),0,7) AS PERIOD_STRING,
+  EXTRACT(DAYOFYEAR FROM date) AS DAY_OF_YEAR,
+  EXTRACT(DAYOFWEEK FROM date) AS DAY_OF_WEEK,
+  EXTRACT(WEEK FROM date) AS WEEK,
+FROM(
+  SELECT 
+    date 
+  FROM UNNEST(GENERATE_DATE_ARRAY('{{task.params.init_date}}', '{{task.params.final_date}}')) AS date
+)
+ORDER BY date
