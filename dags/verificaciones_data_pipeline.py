@@ -1811,7 +1811,7 @@ def bq_elt():
       'SOURCE_TABLE_NAME': 'VALUACION_BSC',
       'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
-      'DEST_TABLE_NAME': 'RTL_VALUACION',
+      'DEST_TABLE_NAME': 'RTL_VALUACIONES',
       'init_date':init_date,
       'final_date':final_date
     },
