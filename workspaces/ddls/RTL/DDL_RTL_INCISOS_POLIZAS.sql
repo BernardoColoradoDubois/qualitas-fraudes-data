@@ -1,4 +1,4 @@
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.RTL_VERIFICACIONES.RTL_INCISOS_POLIZAS`
+CREATE TABLE `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`
 (
   ID STRING,
   SECCION STRING,

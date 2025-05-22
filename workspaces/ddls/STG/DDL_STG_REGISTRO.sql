@@ -1,4 +1,4 @@
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.STG_VERIFICACIONES.STG_REGISTRO`
+CREATE TABLE `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`
 (
   ID_SINIESTRO STRING,
   ID_OFICINA STRING,

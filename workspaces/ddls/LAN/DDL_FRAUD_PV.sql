@@ -1,4 +1,4 @@
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.FRAUD_PV`
+CREATE TABLE `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`
 (
   FRAU_PV STRING,
   COD_ASEG STRING,

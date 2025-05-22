@@ -1,4 +1,4 @@
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.SAS_SINIES`
+CREATE TABLE `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`
 (
   Z_ID STRING NOT NULL,
   REPORTE STRING,

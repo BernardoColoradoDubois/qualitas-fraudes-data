@@ -1,4 +1,4 @@
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.PAGOSPROVEEDORES`
+CREATE TABLE `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`
 (
   Clave STRING NOT NULL,
   Status_Proveedor STRING,

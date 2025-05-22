@@ -1,4 +1,4 @@
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.STG_VERIFICACIONES.STG_POLIZAS_VIGENTES_2`
+CREATE TABLE `{{task.params.PROJECT_ID}}.{{task.params.DATASET_NAME}}.{{task.params.TABLE_NAME}}`
 (
   FRAU_PV STRING,
   RAMO STRING,
