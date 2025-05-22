@@ -1796,6 +1796,52 @@ def bq_elt():
     gcp_conn_id="google_cloud_default",
     dag=dag 
   )
+  
+  rtl_valuacion = BigQueryInsertJobOperator(
+    task_id="rtl_valuacion",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACION/RTL_VALUACION.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'VALUACION_BSC',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'RTL_VALUACION',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+  
+  dm_valuacion = BigQueryInsertJobOperator(
+    task_id="rtl_valuacion",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACION/DM_VALUACION.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'RTL_VALUACION',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'DM_INCISOS_POLIZAS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
  
   rtl_pagos_proveedores  >> dm_pagos_proveedores
   rtl_coberturas_movimientos >> dm_coberturas_movimientos
