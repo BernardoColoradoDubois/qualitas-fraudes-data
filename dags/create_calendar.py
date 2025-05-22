@@ -40,14 +40,14 @@ def seed_tables():
     task_id="seed_estados_mexico",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/CALENDARIO/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/SEED/DDL_ESTADOS_MEXICO.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'SEED_VERIFICACIONES',
+      'TABLE_NAME': 'ESTADOS_MEXICO',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -69,8 +69,8 @@ def landing_tables():
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'ANALISTAS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -81,14 +81,14 @@ def landing_tables():
     task_id="lan_apercab",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_APERCAB_BSC.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'APERCAB_BSC',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -99,13 +99,13 @@ def landing_tables():
     task_id="lan_cat_causa",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_CAT_CAUSA.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
       'TABLE_NAME': 'DM_CALENDARIO',
     },
     location='us-central1',
@@ -117,14 +117,14 @@ def landing_tables():
     task_id="lan_cobranza",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_COBRANZA.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'COBRANZA',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -135,14 +135,14 @@ def landing_tables():
     task_id="lan_cobranza_hist",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_COBRANZA_HIST.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'COBRANZA_HIST',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -153,14 +153,14 @@ def landing_tables():
     task_id="lan_datos_dua",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_DATOS_DUA.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'DATOS_DUA',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -171,14 +171,14 @@ def landing_tables():
     task_id="lan_etiqueta_siniestro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_ETIQUETA_SINIESTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'ETIQUETA_SINIESTRO',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -189,14 +189,14 @@ def landing_tables():
     task_id="lan_frau_pv",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_FRAUD_PV.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'FRAUD_PV',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -207,14 +207,14 @@ def landing_tables():
     task_id="lan_frau_di",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_FRAUD_DI.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'FRAUD_DI',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -225,14 +225,14 @@ def landing_tables():
     task_id="lan_frau_rp",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_FRAUD_RP.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'FRAUD_RP',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -244,14 +244,14 @@ def landing_tables():
     task_id="lan_maseg_bsc",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_MASEG_BSC.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'MASEG_BSC',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -262,14 +262,14 @@ def landing_tables():
     task_id="lan_pagoprove",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_PAGOPROVE.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'PAGOPROVE',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -280,14 +280,14 @@ def landing_tables():
     task_id="lan_pagosproveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_PAGOSPROVEEDORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'PAGOSPROVEEDORES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -298,14 +298,14 @@ def landing_tables():
     task_id="lan_prestadores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_PRESTADORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'PRESTADORES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -316,14 +316,14 @@ def landing_tables():
     task_id="lan_reservas_bsc",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_RESERVAS_BSC.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'RESERVAS_BSC',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -334,14 +334,14 @@ def landing_tables():
     task_id="lan_sas_sinies",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_SAS_SINIES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'SAS_SINIES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -352,14 +352,14 @@ def landing_tables():
     task_id="lan_testado",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_TESTADO_BSC.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'TESTADO_BSC',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -370,14 +370,14 @@ def landing_tables():
     task_id="lan_tipoproveedor",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_TIPOPROVEEDOR.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'TIPOPROVEEDOR',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -388,14 +388,14 @@ def landing_tables():
     task_id="lan_tsuc_bsc",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/LAN/DDL_TSUC_BSC.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': 'TSUC_BSC',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -411,14 +411,14 @@ def staging_tables():
     task_id="stg_dua",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_DUA.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_DUA',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -429,14 +429,14 @@ def staging_tables():
     task_id="stg_etiqueta_siniestro_1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_ETIQUETA_SINIESTRO_1.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -447,14 +447,14 @@ def staging_tables():
     task_id="stg_etiqueta_siniestro_2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_ETIQUETA_SINIESTRO_2.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -465,14 +465,14 @@ def staging_tables():
     task_id="stg_etiqueta_siniestro_3",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_ETIQUETA_SINIESTRO_3.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -483,14 +483,14 @@ def staging_tables():
     task_id="stg_incisos_polizas_1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_INCISOS_POLIZAS_1.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -501,14 +501,14 @@ def staging_tables():
     task_id="stg_incisos_polizas_2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_INCISOS_POLIZAS_2.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -519,14 +519,14 @@ def staging_tables():
     task_id="stg_incisos_polizas_3",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_INCISOS_POLIZAS_3.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_INCISOS_POLIZAS_3',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -537,14 +537,14 @@ def staging_tables():
     task_id="stg_incisos_polizas_4",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_INCISOS_POLIZAS_4.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_INCISOS_POLIZAS_4',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -555,14 +555,14 @@ def staging_tables():
     task_id="stg_incisos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_PAGOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_PAGOS_POLIZAS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -573,14 +573,14 @@ def staging_tables():
     task_id="stg_polizas_vigentes_1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_POLIZAS_VIGENTES_1.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -591,14 +591,14 @@ def staging_tables():
     task_id="stg_polizas_vigentes_2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_POLIZAS_VIGENTES_2.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -609,14 +609,14 @@ def staging_tables():
     task_id="stg_polizas_vigentes_3",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_POLIZAS_VIGENTES_3.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -627,14 +627,14 @@ def staging_tables():
     task_id="stg_polizas_vigentes_4",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_POLIZAS_VIGENTES_4.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -645,14 +645,14 @@ def staging_tables():
     task_id="stg_registro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_REGISTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_REGISTRO',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -663,14 +663,14 @@ def staging_tables():
     task_id="stg_siniestros",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/STG/DDL_STG_SINIESTROS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'STG_VERIFICACIONES',
+      'TABLE_NAME': 'STG_SINIESTROS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -685,14 +685,14 @@ def ready_to_load_tables():
     task_id="rtl_coberturas_movimientos",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_COBERTURAS_MOVIMIENTOS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -703,14 +703,14 @@ def ready_to_load_tables():
     task_id="rtl_dua",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_DUA.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_DUA',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -721,14 +721,14 @@ def ready_to_load_tables():
     task_id="rtl_etiqueta_siniestro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_ETIQUETA_SINIESTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_ETIQUETA_SINIESTRO',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -739,14 +739,14 @@ def ready_to_load_tables():
     task_id="rtl_incisos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_INCISOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_INCISOS_POLIZAS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -757,14 +757,14 @@ def ready_to_load_tables():
     task_id="rtl_pagos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_PAGOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_PAGOS_POLIZAS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -775,14 +775,14 @@ def ready_to_load_tables():
     task_id="rtl_pagos_proveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_PAGOS_PROVEEDORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -793,14 +793,14 @@ def ready_to_load_tables():
     task_id="rtl_polizas_vigentes",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_POLIZAS_VIGENTES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -811,14 +811,14 @@ def ready_to_load_tables():
     task_id="rtl_registro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_REGISTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_REGISTRO',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -829,14 +829,14 @@ def ready_to_load_tables():
     task_id="rtl_siniestros",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/RTL/DDL_RTL_SINIESTROS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'DATASET_NAME': 'RTL_VERIFICACIONES',
+      'TABLE_NAME': 'RTL_SINIESTROS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -850,7 +850,7 @@ def data_mart_tables():
     task_id="dm_calendario",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_CALENDARIO.sql'),
         "useLegacySql": False,
       }
     },
@@ -868,14 +868,14 @@ def data_mart_tables():
     task_id="dm_asegurados",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_ASEGURADOS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_ASEGURADOS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -886,14 +886,14 @@ def data_mart_tables():
     task_id="rtl_dua",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_CAUSAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_CAUSAS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -904,14 +904,14 @@ def data_mart_tables():
     task_id="dm_coberturas_movimientos",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DDL_DM_COBERTURAS_MOVIMIENTOS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_COBERTURAS_MOVIMIENTOS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -923,14 +923,14 @@ def data_mart_tables():
     task_id="dm_dua",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_DUA.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_DUA',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -941,14 +941,14 @@ def data_mart_tables():
     task_id="dm_estados",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_ESTADOS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_ESTADOS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -959,14 +959,14 @@ def data_mart_tables():
     task_id="dm_etiqueta_siniestro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_ETIQUETA_SINIESTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_ETIQUETA_SINIESTRO',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -977,14 +977,14 @@ def data_mart_tables():
     task_id="dm_incisos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_INCISOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_INCISOS_POLIZAS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -995,14 +995,14 @@ def data_mart_tables():
     task_id="dm_oficinas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_OFICINAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_OFICINAS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -1013,14 +1013,14 @@ def data_mart_tables():
     task_id="dm_pagos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_PAGOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_PAGOS_POLIZAS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -1031,14 +1031,14 @@ def data_mart_tables():
     task_id="dm_pagos_proveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_PAGOS_PROVEEDORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_PAGOS_PROVEEDORES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -1049,14 +1049,14 @@ def data_mart_tables():
     task_id="dm_polizas_vigentes",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_POLIZAS_VIGENTES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_POLIZAS_VIGENTES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -1067,14 +1067,14 @@ def data_mart_tables():
     task_id="dm_proveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_PROVEEDORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_PROVEEDORES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -1085,14 +1085,14 @@ def data_mart_tables():
     task_id="dm_registro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_REGISTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_REGISTRO',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -1103,14 +1103,14 @@ def data_mart_tables():
     task_id="dm_siniestros",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_SINIESTROS.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_SINIESTROS',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
@@ -1121,14 +1121,14 @@ def data_mart_tables():
     task_id="dm_tipos_proveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DM_CALENDARIO.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/ddls/DM/DDL_DM_TIPOS_PROVEEDORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DATASET_NAME': 'DM_VERIFICACIONES',
-      'TABLE_NAME': 'DM_CALENDARIO',
+      'TABLE_NAME': 'DM_TIPOS_PROVEEDORES',
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
