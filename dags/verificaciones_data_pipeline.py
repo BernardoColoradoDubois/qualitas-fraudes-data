@@ -495,12 +495,12 @@ def landing_bsc_siniestros_3():
 @task_group(group_id='landing_siniestros_1',dag=dag)
 def landing_siniestros_1():
 
-  load_analistas = CloudDataFusionStartPipelineOperator(
-    task_id="load_analistas",
+  load_valuacion_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_valuacion_bsc",
     location='us-central1',
     instance_name='qlts-data-fusion-dev',
     namespace='verificaciones',
-    pipeline_name='load_analistas',
+    pipeline_name='load_valuacion_bsc',
     project_id='qlts-nonprod-data-tools',
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -516,7 +516,7 @@ def landing_siniestros_1():
       "system.profile.name" : "USER:verificaciones-dataproc",  
       'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
       'DATASET_NAME':'LAN_VERIFICACIONES',
-      'TABLE_NAME':'ANALISTAS',
+      'TABLE_NAME':'VALUACION_BSC',
       'init_date':init_date, 
       'final_date':final_date
     },
