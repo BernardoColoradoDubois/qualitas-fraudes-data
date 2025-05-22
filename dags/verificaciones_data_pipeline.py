@@ -1834,7 +1834,7 @@ def bq_elt():
       'SOURCE_TABLE_NAME': 'RTL_VALUACION',
       'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-      'DEST_TABLE_NAME': 'DM_INCISOS_POLIZAS',
+      'DEST_TABLE_NAME': 'DM_VALUACION',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1852,6 +1852,7 @@ def bq_elt():
   stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> stg_polizas_vigentes_3 >> stg_polizas_vigentes_4 >> rtl_polizas_vigentes >> dm_polizas_vigentes
   stg_pagos_polizas >> rtl_pagos_polizas >> dm_pagos_polizas
   stg_incisos_polizas_1 >> stg_incisos_polizas_2 >> stg_incisos_polizas_3 >> stg_incisos_polizas_4 >> rtl_incisos_polizas >> dm_incisos_polizas
+  rtl_valuacion >> dm_valuacion
  
  
 inject = BashOperator(task_id='inject',bash_command='echo init landing',dag=dag)
