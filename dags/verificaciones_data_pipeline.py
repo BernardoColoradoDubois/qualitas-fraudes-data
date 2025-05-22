@@ -1821,7 +1821,7 @@ def bq_elt():
   )
   
   dm_valuacion = BigQueryInsertJobOperator(
-    task_id="rtl_valuacion",
+    task_id="dm_valuacion",
     configuration={
       "query": {
         "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACION/DM_VALUACION.sql'),
