@@ -1797,11 +1797,11 @@ def bq_elt():
     dag=dag 
   )
   
-  rtl_valuacion = BigQueryInsertJobOperator(
-    task_id="rtl_valuacion",
+  rtl_valuaciones = BigQueryInsertJobOperator(
+    task_id="rtl_valuaciones",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACION/RTL_VALUACION.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACIONES/RTL_VALUACIONES.sql'),
         "useLegacySql": False,
       }
     },
@@ -1820,21 +1820,21 @@ def bq_elt():
     dag=dag 
   )
   
-  dm_valuacion = BigQueryInsertJobOperator(
-    task_id="dm_valuacion",
+  dm_valuaciones = BigQueryInsertJobOperator(
+    task_id="dm_valuaciones",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACION/DM_VALUACION.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACIONES/DM_VALUACIONES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
-      'SOURCE_TABLE_NAME': 'RTL_VALUACION',
+      'SOURCE_TABLE_NAME': 'RTL_VALUACIONES',
       'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
-      'DEST_TABLE_NAME': 'DM_VALUACION',
+      'DEST_TABLE_NAME': 'DM_VALUACIONES',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1852,7 +1852,7 @@ def bq_elt():
   stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> stg_polizas_vigentes_3 >> stg_polizas_vigentes_4 >> rtl_polizas_vigentes >> dm_polizas_vigentes
   stg_pagos_polizas >> rtl_pagos_polizas >> dm_pagos_polizas
   stg_incisos_polizas_1 >> stg_incisos_polizas_2 >> stg_incisos_polizas_3 >> stg_incisos_polizas_4 >> rtl_incisos_polizas >> dm_incisos_polizas
-  rtl_valuacion >> dm_valuacion
+  rtl_valuaciones >> dm_valuaciones
  
  
 inject = BashOperator(task_id='inject',bash_command='echo init landing',dag=dag)
