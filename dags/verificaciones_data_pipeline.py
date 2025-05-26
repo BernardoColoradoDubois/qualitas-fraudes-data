@@ -2450,9 +2450,50 @@ def injection_5():
     dag=dag
   )
   
-  
 @task_group(group_id='injection_6',dag=dag)
 def injection_6():
+    
+  inject_valuaciones = CloudDataFusionStartPipelineOperator(
+    task_id="inject_valuaciones",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_valuaciones',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig':'true',
+      'task.executor.system.resources.cores':'1',
+      'task.executor.system.resources.memory':'2048',
+      'dataproc.cluster.name':'verificaciones-dataproc',
+      "system.profile.name" : "USER:verificaciones-dataproc", 
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_VALUACIONES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_VALUACIONES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_VALUACIONES',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+  
+@task_group(group_id='injection_7',dag=dag)
+def injection_7():
   
   inject_siniestros = CloudDataFusionStartPipelineOperator(
     task_id="inject_siniestros",
@@ -2505,7 +2546,7 @@ def end_injection():
   
 end = BashOperator(task_id='end',bash_command='echo end landing',dag=dag)
 
-landing >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> landing_siniestros_1() >> recreate_cluster_1() >> landing_siniestros_2() >> landing_siniestros_3() >> landing_sise() >> landing_dua() >> elt
+landing >> init_landing() >> landing_bsc_siniestros_1() >> landing_bsc_siniestros_2() >> landing_bsc_siniestros_3() >> recreate_cluster_1() >> landing_siniestros_1() >> landing_siniestros_2() >> landing_siniestros_3() >> landing_sise() >> landing_dua() >> elt
 elt >> bq_elt() >> inject
 elt >> recreate_cluster_2() >> inject
-inject  >> injection_1() >> injection_2() >> injection_3() >> recreate_cluster_3() >> injection_4()>> injection_5() >> injection_6() >> end_injection() >> end
+inject  >> injection_1() >> injection_2() >> injection_3() >> recreate_cluster_3() >> injection_4()>> injection_5() >> injection_6() >> injection_7() >> end_injection() >> end
