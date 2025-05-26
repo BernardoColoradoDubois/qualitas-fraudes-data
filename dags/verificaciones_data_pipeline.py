@@ -2458,7 +2458,7 @@ def injection_6():
     location='us-central1',
     instance_name='qlts-data-fusion-dev',
     namespace='verificaciones',
-    pipeline_name='inyect_dm_valuaciones',
+    pipeline_name='inject_dm_valuaciones',
     project_id='qlts-nonprod-data-tools',
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
