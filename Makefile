@@ -18,6 +18,7 @@ qlts-composer-update-all:
 	gsutil cp ./dags/delete_cluster.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/delete_cluster.py;\
 	gsutil cp ./dags/create_calendar.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/create_calendar.py;\
 	gsutil cp ./dags/range_test.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/range_test.py;\
+	gsutil cp ./dags/qualitas_verificaciones_data_pipeline.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/qualitas_verificaciones_data_pipeline.py;\
 	gsutil -m cp -r ./dags/lib/* gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/lib/;\
 	gsutil -m cp -r ./workspaces/* gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/workspaces/;
 
