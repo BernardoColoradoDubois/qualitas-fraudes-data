@@ -20,7 +20,7 @@ SELECT
   Nom_Comer AS NOMBRE_COMER,
   GRUPO,
   FEC_ALTA AS FECHA_ALTA,
-  CTA_ESP, ------------------
+  CTA_ESP, 
   TIPO_AJUS AS TIPO_AJUSTE,
   MARCA_TIPO AS TIPO_MARCA,
   RFC,
@@ -29,15 +29,14 @@ SELECT
   Correo_Comercial2 AS CORREO_COMERCIAL_2,
   MARCA_MOTOS,
   TEL_SIICA AS TELEFONO_SIICA,
-  AE, ------------------
+  AE, 
   LATITUD,
   LONGITUD,
   RECIBE24 AS RECIBE_24,
   ZONAPROV AS ZONA_PROVEEDOR,
-  VED, -------------
+  VED, 
   TIPO_PERSONA,
-  CEXP, -----------------
-  TBODY, ----------------
+  CEXP, 
+  TBODY, 
   NUM_EMPL AS NUMERO_EMPLEADO
-FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`
-WHERE ID <> 'ED MP';
+FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`;

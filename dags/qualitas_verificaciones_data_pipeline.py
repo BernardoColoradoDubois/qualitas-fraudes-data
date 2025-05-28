@@ -224,7 +224,7 @@ dag = DAG(
   schedule_interval='0 0 1 1 *',
   max_active_runs=2,
   catchup=False,
-  dagrun_timeout=timedelta(minutes=120),
+  dagrun_timeout=timedelta(minutes=180),
 )
 
 landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)
@@ -755,6 +755,49 @@ def bq_elt():
   )
 
   # PROVEEDORES
+  
+  stg_proveedores_1 = BigQueryInsertJobOperator(
+    task_id="stg_proveedores_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PROVEEDORES/STG_PROVEEDORES_1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'PRESTADORES',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_PROVEEDORES_1',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+  
+  stg_proveedores_2 = BigQueryInsertJobOperator(
+    task_id="stg_proveedores_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PROVEEDORES/STG_PROVEEDORES_2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_PROVEEDORES_1',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_PROVEEDORES_2',
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+  
   dm_proveedores = BigQueryInsertJobOperator(
     task_id="dm_proveedores",
     configuration={
@@ -765,8 +808,8 @@ def bq_elt():
     },
     params={
       'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-      'SOURCE_TABLE_NAME': 'PRESTADORES',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_PROVEEDORES_2',
       'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
       'DEST_TABLE_NAME': 'DM_PROVEEDORES',
@@ -1544,6 +1587,52 @@ def bq_elt():
     dag=dag 
   )
   
+  stg_valuaciones_1 = BigQueryInsertJobOperator(
+    task_id="stg_valuaciones_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACIONES/STG_VALUACIONES_1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'VALUACION_BSC',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_VALUACIONES_1',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )
+  
+  stg_valuaciones_2 = BigQueryInsertJobOperator(
+    task_id="stg_valuaciones_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACIONES/STG_VALUACIONES_2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_VALUACIONES_1',
+      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
+      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_TABLE_NAME': 'STG_VALUACIONES_2',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location='us-central1',
+    gcp_conn_id="google_cloud_default",
+    dag=dag 
+  )  
+
   rtl_valuaciones = BigQueryInsertJobOperator(
     task_id="rtl_valuaciones",
     configuration={
@@ -1554,8 +1643,8 @@ def bq_elt():
     },
     params={
       'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-      'SOURCE_TABLE_NAME': 'VALUACION_BSC',
+      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_TABLE_NAME': 'STG_VALUACIONES_2',
       'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
       'DEST_TABLE_NAME': 'RTL_VALUACIONES',
@@ -1594,14 +1683,14 @@ def bq_elt():
     task_id="dm_datos_generales",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DATOS_GENERALES/DATOS_GENERALES.sql'),
+        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DATOS_GENERALES/DM_DATOS_GENERALES.sql'),
         "useLegacySql": False,
       }
     },
     params={
       'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
-      'SOURCE_TABLE_NAME': 'RTL_VALUACIONES',
+      'SOURCE_TABLE_NAME': 'DATOSGENERALES',
       'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
       'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
       'DEST_TABLE_NAME': 'DM_DATOS_GENERALES'
@@ -1620,9 +1709,702 @@ def bq_elt():
   stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> stg_polizas_vigentes_3 >> stg_polizas_vigentes_4 >> rtl_polizas_vigentes >> dm_polizas_vigentes
   stg_pagos_polizas >> rtl_pagos_polizas >> dm_pagos_polizas
   stg_incisos_polizas_1 >> stg_incisos_polizas_2 >> stg_incisos_polizas_3 >> stg_incisos_polizas_4 >> rtl_incisos_polizas >> dm_incisos_polizas
-  rtl_valuaciones >> dm_valuaciones
- 
- 
+  stg_valuaciones_1 >> stg_valuaciones_2 >> rtl_valuaciones >> dm_valuaciones
+  stg_proveedores_1 >> stg_proveedores_2 >> dm_proveedores
+  
+@task_group(group_id='recreate_cluster',dag=dag)
+def recreate_cluster():
 
+  
+  select_cluster_creator = BranchPythonOperator(
+    task_id="select_cluster_creator",
+    python_callable=get_cluster_tipe_creator,
+    op_kwargs={
+      'init_date':init_date,
+      'final_date':final_date,
+      'small_cluster_label': 'recreate_cluster.create_small_cluster',
+      'big_cluster_label': 'recreate_cluster.create_big_cluster'
+    },
+    provide_context=True,
+    dag=dag
+  )  
+  
+  create_big_cluster = DataprocCreateClusterOperator(
+    task_id="create_big_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=BIG_CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+    dag=dag
+  )
+  
+  create_small_cluster = DataprocCreateClusterOperator(
+    task_id="create_small_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_config=SMALL_CLUSTER_CONFIG,
+    region="us-central1",
+    cluster_name="verificaciones-dataproc",
+    num_retries_if_resource_is_not_ready=3,
+    dag=dag
+  )
+  
+  get_datafusion_instance = CloudDataFusionGetInstanceOperator(
+    task_id="get_datafusion_instance",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    trigger_rule='one_success',
+    project_id='qlts-nonprod-data-tools',
+    dag=dag,
+  )
+  
+  select_cluster_creator >> [create_big_cluster,create_small_cluster] >> get_datafusion_instance
+  
+@task_group(group_id='injection',dag=dag)
+def injection():
+  inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_asegurados",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_asegurados',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_ASEGURADOS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_ASEGURADOS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_ASEGURADOS'
+    },
+    dag=dag
+  )
 
-landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_datos_generales()] >> end_landing()
+  inject_coberturas_movimientos = CloudDataFusionStartPipelineOperator(
+    task_id="inject_coberturas_movimientos",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_coberturas_movimientos',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_COBERTURAS_MOVIMIENTOS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  inject_dm_estados = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_estados",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_estados',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc', 
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_ESTADOS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_ESTADOS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_ESTADOS',
+    },
+    dag=dag
+  )
+  
+  inject_pagos_proveedores = CloudDataFusionStartPipelineOperator(
+    task_id="inject_pagos_proveedores",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_pagos_proveedores',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_PAGOS_PROVEEDORES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_PAGOS_PROVEEDORES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_PAGOS_PROVEEDORES',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  inject_proveedores = CloudDataFusionStartPipelineOperator(
+    task_id="inject_proveedores",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_proveedores',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_PROVEEDORES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_PROVEEDORES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_PROVEEDORES'
+    },
+    dag=dag
+  )
+
+  inject_tipos_proveedores = CloudDataFusionStartPipelineOperator(
+    task_id="inject_tipos_proveedores",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_tipos_proveedores',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_TIPOS_PROVEEDORES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_TIPOS_PROVEEDORES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_TIPOS_PROVEEDORES'
+    },
+    dag=dag
+  )
+  
+  inject_causas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_causas",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_causas',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',      
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_CAUSAS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_CAUSAS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_CAUSAS',
+      "system.spark.log.level": "DEBUG"
+
+    },
+    dag=dag
+  )
+
+  inject_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
+    task_id="inject_etiqueta_siniestro",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_etiqueta_siniestro',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',   
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_ETIQUETA_SINIESTRO',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_ETIQUETA_SINIESTRO',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_ETIQUETA_SINIESTRO',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  inject_registro = CloudDataFusionStartPipelineOperator(
+    task_id="inject_registro",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_registro',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',      
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_REGISTRO',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_REGISTRO',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_REGISTRO',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+
+  inject_dua = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dua",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_dua',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_DUA',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_DUA',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_DUA',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_oficinas",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_oficinas',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',   
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_OFICINAS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_OFICINAS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_OFICINAS'
+    },
+    dag=dag
+  )
+  
+  inject_polizas_vigentes = CloudDataFusionStartPipelineOperator(
+    task_id="inject_polizas_vigentes",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_polizas_vigentes',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc', 
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',    
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_POLIZAS_VIGENTES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_POLIZAS_VIGENTES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_POLIZAS_VIGENTES',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+  inject_pagos_polizas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_pagos_polizas",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_pagos_polizas',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc', 
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_PAGOS_POLIZAS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_PAGOS_POLIZAS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_PAGOS_POLIZAS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+  inject_incisos_polizas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_incisos_polizas",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_incisos_polizas',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',   
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_INCISOS_POLIZAS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_INCISOS_POLIZAS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_INCISOS_POLIZAS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+  inject_valuaciones = CloudDataFusionStartPipelineOperator(
+    task_id="inject_valuaciones",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_valuaciones',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_VALUACIONES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_VALUACIONES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_VALUACIONES',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+  inject_datos_generales = CloudDataFusionStartPipelineOperator(
+    task_id="inject_datos_generales",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_datos_generales',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_DATOS_GENERALES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_DATOS_GENERALES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_DATOS_GENERALES',
+    },
+    dag=dag
+  )
+  
+  inject_siniestros = CloudDataFusionStartPipelineOperator(
+    task_id="inject_siniestros",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inyect_dm_siniestros',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc', 
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_SINIESTROS',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_SINIESTROS',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_SINIESTROS',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    dag=dag
+  )
+  
+  [ inject_dm_estados,inject_dm_asegurados,inject_coberturas_movimientos,inject_pagos_proveedores,inject_proveedores,inject_tipos_proveedores,inject_causas,inject_etiqueta_siniestro,inject_registro,inject_dua,inject_dm_oficinas,inject_polizas_vigentes,inject_pagos_polizas,inject_incisos_polizas,inject_valuaciones,inject_datos_generales] >> inject_siniestros
+  
+@task_group(group_id='end_injection',dag=dag)
+def end_injection():
+  
+  delete_cluster = DataprocDeleteClusterOperator(
+    task_id="delete_cluster",
+    project_id="qlts-nonprod-data-tools",
+    cluster_name="verificaciones-dataproc",
+    region="us-central1",
+  )
+  
+landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_datos_generales()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()

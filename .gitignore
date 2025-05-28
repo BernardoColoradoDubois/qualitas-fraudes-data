@@ -6,3 +6,4 @@ redeploy.sh
 delete_python_cache.sh
 files/*
 .idea
+csv/*
