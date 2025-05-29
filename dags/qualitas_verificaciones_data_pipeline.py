@@ -55,7 +55,7 @@ def get_datafusion_runtime_args(table_name, small=False, init_date=None, final_d
     base_args = {
         'app.pipeline.overwriteConfig': 'true',
         'task.executor.system.resources.cores': '2',
-        'task.executor.system.resources.memory': '16g',
+        'task.executor.system.resources.memory': '16384',
         'dataproc.cluster.name': 'verificaciones-dataproc',
         'system.profile.name': 'USER:verificaciones-dataproc',
         'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
@@ -66,7 +66,7 @@ def get_datafusion_runtime_args(table_name, small=False, init_date=None, final_d
     if small:
       base_args.update({
         'task.executor.system.resources.cores': '1',
-        'task.executor.system.resources.memory': '8g',
+        'task.executor.system.resources.memory': '8192',
       })
     
     if init_date is not None and final_date is not None:
@@ -77,9 +77,6 @@ def get_datafusion_runtime_args(table_name, small=False, init_date=None, final_d
     
     return base_args
   
-
-
-
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
   'retries': 4,
@@ -1648,7 +1645,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1682,7 +1679,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1718,7 +1715,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8g',
+      'task.executor.system.resources.memory': '8192',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc', 
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1752,7 +1749,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1788,7 +1785,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1822,7 +1819,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8g',
+      'task.executor.system.resources.memory': '8192',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1856,7 +1853,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8g',
+      'task.executor.system.resources.memory': '8192',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1892,7 +1889,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',   
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1928,7 +1925,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1964,7 +1961,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -1999,7 +1996,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8g',
+      'task.executor.system.resources.memory': '8192',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',   
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -2033,7 +2030,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc', 
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -2069,7 +2066,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc', 
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -2105,7 +2102,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',   
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -2141,7 +2138,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -2177,7 +2174,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -2211,7 +2208,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8g',
+      'task.executor.system.resources.memory': '8192',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -2245,7 +2242,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8g',
+      'task.executor.system.resources.memory': '8192',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
@@ -2280,7 +2277,7 @@ def injection():
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.memory': '16384',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc', 
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
