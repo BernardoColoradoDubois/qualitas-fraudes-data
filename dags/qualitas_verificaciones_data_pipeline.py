@@ -18,6 +18,31 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 
 from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator
 
+VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES", deserialize_json=True)
+
+DATA_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_ID']
+DATA_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_REGION']
+DATA_DATAFUSION_INSTANCE_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAFUSION_INSTANCE_NAME']
+DATA_DATAFUSION_TEMPORARY_BUCKET_NAME =  VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAFUSION_TEMPORARY_BUCKET_NAME']
+DATA_DATAPROC_CLUSTER_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAPROC_CLUSTER_NAME']
+DATA_DATAPROC_PROFILE_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAPROC_PROFILE_NAME']
+
+VERIFICACIONES_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES
+VERIFICACIONES_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_REGION']
+VERIFICACIONES_LAN_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_LAN_DATASET_NAME']
+VERIFICACIONES_RTL_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_RTL_DATASET_NAME']
+VERIFICACIONES_STG_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_STG_DATASET_NAME']
+VERIFICACIONES_DM_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_DM_DATASET_NAME']
+VERIFICACIONES_SEED_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_SEED_DATASET_NAME']
+
+APP_ORACLE_HOST = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_HOST']
+APP_ORACLE_SERVICE_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_SERVICE_NAME']
+APP_ORACLE_USER = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_USER']
+APP_ORACLE_PASSWORD = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_PASSWORD']
+
+VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG", deserialize_json=True)
+VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
+
 VERIFICACIONES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
 
 interval = get_date_interval(project_id='qlts-dev-mx-au-bro-verificacio',period=VERIFICACIONES_LOAD_INTERVAL)
@@ -25,10 +50,8 @@ interval = get_date_interval(project_id='qlts-dev-mx-au-bro-verificacio',period=
 init_date = interval['init_date']
 final_date = interval['final_date']
 
-
 def get_datafusion_runtime_args(table_name, small=False, init_date=None, final_date=None):
       
-
     base_args = {
         'app.pipeline.overwriteConfig': 'true',
         'task.executor.system.resources.cores': '2',
@@ -54,161 +77,7 @@ def get_datafusion_runtime_args(table_name, small=False, init_date=None, final_d
     
     return base_args
   
-SMALL_CLUSTER_CONFIG = {
-  "gce_cluster_config": {
-    "internal_ip_only": True,
-    "subnetwork_uri": "projects/shared-nonprod-eba6/regions/us-central1/subnetworks/qlts-svpc-non-prd-sn",
-    "service_account": "dataproc-dev-operaciones@qlts-nonprod-data-tools.iam.gserviceaccount.com",
-    "shielded_instance_config": {
-      "enable_secure_boot": False,
-      "enable_vtpm": False,
-      "enable_integrity_monitoring": False,
-    }
-  },
-  "master_config": {
-    "num_instances": 1,
-    "machine_type_uri": "n2-highmem-8",  # Escalado: 8 vCPU, 64GB RAM
-    "disk_config": {
-      "boot_disk_type": "pd-ssd", 
-      "boot_disk_size_gb": 100
-    }
-  },
-  "worker_config": {
-    "num_instances": 9,  # Escalado: de 4 a 9 workers
-    "machine_type_uri": "n2-highmem-4",  # Mantiene: 4 vCPU, 32GB RAM per worker
-    "disk_config": {
-      "boot_disk_type": "pd-ssd", 
-      "boot_disk_size_gb": 200
-    }
-  },
-  "secondary_worker_config": {
-    "num_instances": 0,  # Removed preemptible workers for stability
-    "is_preemptible": False,
-  },
-  "software_config": {
-    "image_version":"2.1.85-debian11",
-    "properties": {
-      # Core Spark configuration
-      "spark:spark.scheduler.mode": "FAIR",
-      "spark:spark.executor.memory": "6g",
-      "spark:spark.driver.memory": "10g",  # Escalado: de 6g a 10g para manejar más pipelines
-      "spark:spark.executor.cores": "2",
-      "spark:spark.executor.memoryOverhead": "2g",
-      
-      # Dynamic allocation - Escalado para 20 pipelines
-      "spark:spark.dynamicAllocation.enabled": "true",
-      "spark:spark.dynamicAllocation.minExecutors": "4",  # Escalado: de 2 a 4
-      "spark:spark.dynamicAllocation.maxExecutors": "18", # Escalado: de 8 a 18
-      "spark:spark.dynamicAllocation.initialExecutors": "9", # Escalado: de 4 a 9
-      
-      # YARN configuration - Total cluster memory: 9 workers * 32GB = 288GB
-      # Reserve ~4GB per node for system, so ~28GB available per worker
-      "yarn:yarn.nodemanager.resource.memory-mb": "28672",  # 28GB per worker
-      "yarn:yarn.scheduler.maximum-allocation-mb": "28672",
-      "capacity-scheduler:yarn.scheduler.capacity.resource-calculator": "org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
-      
-      # Spark SQL optimizations for Oracle JDBC
-      "spark:spark.sql.execution.arrow.maxRecordsPerBatch": "10000",
-      "spark:spark.sql.sources.parallelPartitionDiscovery.threshold": "32",
-      "spark:spark.sql.adaptive.advisoryPartitionSizeInBytes": "134217728",  # 128MB
-      "spark:spark.sql.sources.partitionOverwriteMode": "dynamic",
-      "spark:spark.hadoop.parquet.memory.pool.ratio": "0.3",
-      
-      # Additional performance optimizations
-      "spark:spark.yarn.am.memory": "4g",  # Escalado: de 2g a 4g
-      "spark:spark.task.maxFailures": "8",
-      "spark:spark.stage.maxConsecutiveAttempts": "4",
-      "spark:spark.locality.wait": "10s",
-      "spark:spark.shuffle.service.enabled": "true",
-      "dataproc:dataproc.conscrypt.provider.enable": "false",
-      
-      # Adaptive query execution
-      "spark:spark.sql.adaptive.enabled": "true",
-      "spark:spark.sql.adaptive.coalescePartitions.enabled": "true",
-    }
-  },
-  "endpoint_config": {
-    "enable_http_port_access": True
-  }
-}
 
-BIG_CLUSTER_CONFIG = {
-  "gce_cluster_config": {
-    "internal_ip_only": True,
-    "subnetwork_uri": "projects/shared-nonprod-eba6/regions/us-central1/subnetworks/qlts-svpc-non-prd-sn",
-    "service_account": "dataproc-dev-operaciones@qlts-nonprod-data-tools.iam.gserviceaccount.com",
-    "shielded_instance_config": {
-      "enable_secure_boot": False,
-      "enable_vtpm": False,
-      "enable_integrity_monitoring": False,
-    }
-  },
-  "master_config": {
-    "num_instances": 1,
-    "machine_type_uri": "n2-highmem-8",  # Escalado vertical 1.5x: 16 vCPU, 128GB RAM
-    "disk_config": {
-      "boot_disk_type": "pd-ssd", 
-      "boot_disk_size_gb": 150  # Escalado 1.5x: 100GB → 150GB
-    }
-  },
-  "worker_config": {
-    "num_instances": 14,  # Escalado vertical 1.5x: 9 → 14 workers (redondeado)
-    "machine_type_uri": "n2-highmem-4",  # Escalado vertical 1.5x: 8 vCPU, 64GB RAM per worker
-    "disk_config": {
-      "boot_disk_type": "pd-ssd", 
-      "boot_disk_size_gb": 300  # Escalado 1.5x: 200GB → 300GB
-    }
-  },
-  "secondary_worker_config": {
-    "num_instances": 0,  # Removed preemptible workers for stability
-    "is_preemptible": False,
-  },
-  "software_config": {
-    "image_version":"2.1.85-debian11",
-    "properties": {
-      # Core Spark configuration
-      "spark:spark.scheduler.mode": "FAIR",
-      "spark:spark.executor.memory": "9g",  # Escalado vertical 1.5x: 6g → 9g
-      "spark:spark.driver.memory": "15g",   # Escalado vertical 1.5x: 10g → 15g
-      "spark:spark.executor.cores": "3",    # Escalado vertical 1.5x: 2 → 3 cores
-      "spark:spark.executor.memoryOverhead": "3g",  # Escalado vertical 1.5x: 2g → 3g
-      
-      # Dynamic allocation - Escalado vertical 1.5x
-      "spark:spark.dynamicAllocation.enabled": "true",
-      "spark:spark.dynamicAllocation.minExecutors": "6",  # Escalado 1.5x: 4 → 6
-      "spark:spark.dynamicAllocation.maxExecutors": "27", # Escalado 1.5x: 18 → 27
-      "spark:spark.dynamicAllocation.initialExecutors": "14", # Escalado 1.5x: 9 → 14
-      
-      # YARN configuration - Total cluster memory: 14 workers * 64GB = 896GB
-      # Reserve ~6GB per node for system, so ~58GB available per worker
-      "yarn:yarn.nodemanager.resource.memory-mb": "59392",  # Escalado 1.5x: ~58GB per worker
-      "yarn:yarn.scheduler.maximum-allocation-mb": "59392", # Escalado 1.5x
-      "capacity-scheduler:yarn.scheduler.capacity.resource-calculator": "org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
-      
-      # Spark SQL optimizations for Oracle JDBC
-      "spark:spark.sql.execution.arrow.maxRecordsPerBatch": "10000",
-      "spark:spark.sql.sources.parallelPartitionDiscovery.threshold": "32",
-      "spark:spark.sql.adaptive.advisoryPartitionSizeInBytes": "134217728",  # 128MB
-      "spark:spark.sql.sources.partitionOverwriteMode": "dynamic",
-      "spark:spark.hadoop.parquet.memory.pool.ratio": "0.3",
-      
-      # Additional performance optimizations
-      "spark:spark.yarn.am.memory": "6g",  # Escalado vertical 1.5x: 4g → 6g
-      "spark:spark.task.maxFailures": "8",
-      "spark:spark.stage.maxConsecutiveAttempts": "4",
-      "spark:spark.locality.wait": "10s",
-      "spark:spark.shuffle.service.enabled": "true",
-      "dataproc:dataproc.conscrypt.provider.enable": "false",
-      
-      # Adaptive query execution
-      "spark:spark.sql.adaptive.enabled": "true",
-      "spark:spark.sql.adaptive.coalescePartitions.enabled": "true",
-    }
-  },
-  "endpoint_config": {
-    "enable_http_port_access": True
-  }
-}
 
 
 default_args = {
@@ -225,6 +94,7 @@ dag = DAG(
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=180),
+  tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']
 )
 
 landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)
@@ -254,7 +124,7 @@ def init_landing():
   create_big_cluster = DataprocCreateClusterOperator(
     task_id="create_big_cluster",
     project_id="qlts-nonprod-data-tools",
-    cluster_config=BIG_CLUSTER_CONFIG,
+    cluster_config=VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG,
     region="us-central1",
     cluster_name="verificaciones-dataproc",
     num_retries_if_resource_is_not_ready=3,
@@ -264,7 +134,7 @@ def init_landing():
   create_small_cluster = DataprocCreateClusterOperator(
     task_id="create_small_cluster",
     project_id="qlts-nonprod-data-tools",
-    cluster_config=SMALL_CLUSTER_CONFIG,
+    cluster_config=VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG,
     region="us-central1",
     cluster_name="verificaciones-dataproc",
     num_retries_if_resource_is_not_ready=3,
@@ -1732,7 +1602,7 @@ def recreate_cluster():
   create_big_cluster = DataprocCreateClusterOperator(
     task_id="create_big_cluster",
     project_id="qlts-nonprod-data-tools",
-    cluster_config=BIG_CLUSTER_CONFIG,
+    cluster_config=VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG,
     region="us-central1",
     cluster_name="verificaciones-dataproc",
     num_retries_if_resource_is_not_ready=3,
@@ -1742,7 +1612,7 @@ def recreate_cluster():
   create_small_cluster = DataprocCreateClusterOperator(
     task_id="create_small_cluster",
     project_id="qlts-nonprod-data-tools",
-    cluster_config=SMALL_CLUSTER_CONFIG,
+    cluster_config=VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG,
     region="us-central1",
     cluster_name="verificaciones-dataproc",
     num_retries_if_resource_is_not_ready=3,
@@ -1781,9 +1651,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
@@ -1817,9 +1685,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
@@ -1851,13 +1717,11 @@ def injection():
     poll_interval=30,
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.cores': '1',
+      'task.executor.system.resources.memory': '8g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc', 
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
@@ -1891,9 +1755,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
@@ -1929,9 +1791,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
@@ -1961,13 +1821,11 @@ def injection():
     poll_interval=30,
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.cores': '1',
+      'task.executor.system.resources.memory': '8g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',    
@@ -1997,13 +1855,11 @@ def injection():
     poll_interval=30,
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.cores': '1',
+      'task.executor.system.resources.memory': '8g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',      
@@ -2039,9 +1895,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',   
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
@@ -2077,9 +1931,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',      
@@ -2115,9 +1967,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
@@ -2148,13 +1998,11 @@ def injection():
     poll_interval=30,
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.cores': '1',
+      'task.executor.system.resources.memory': '8g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',   
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
@@ -2188,9 +2036,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc', 
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',    
@@ -2226,9 +2072,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc', 
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
@@ -2264,9 +2108,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',   
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
@@ -2302,9 +2144,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
@@ -2340,9 +2180,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
@@ -2372,13 +2210,11 @@ def injection():
     poll_interval=30,
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.cores': '1',
+      'task.executor.system.resources.memory': '8g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
@@ -2408,13 +2244,11 @@ def injection():
     poll_interval=30,
     runtime_args={
       'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16g',
+      'task.executor.system.resources.cores': '1',
+      'task.executor.system.resources.memory': '8g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
@@ -2449,9 +2283,7 @@ def injection():
       'task.executor.system.resources.memory': '16g',
       'dataproc.cluster.name': 'verificaciones-dataproc',
       'system.profile.name': 'USER:verificaciones-dataproc', 
-      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
       'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_PORT':'1521',
       'APP_ORACLE_SERVICE_NAME':'ORCL',
       'APP_ORACLE_USER':'ADMIN',
       'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
