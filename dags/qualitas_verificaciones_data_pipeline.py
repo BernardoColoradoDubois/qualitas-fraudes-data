@@ -2357,6 +2357,79 @@ def injection():
     dag=dag
   )
   
+  inject_agentes = CloudDataFusionStartPipelineOperator(
+    task_id="inject_agentes",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_agentes',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_AGENTES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_AGENTES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_AGENTES',
+    },
+    dag=dag
+  )
+  
+  inject_gerentes = CloudDataFusionStartPipelineOperator(
+    task_id="inject_gerentes",
+    location='us-central1',
+    instance_name='qlts-data-fusion-dev',
+    namespace='verificaciones',
+    pipeline_name='inject_dm_gerentes',
+    project_id='qlts-nonprod-data-tools',
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args={
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16g',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'APP_ORACLE_DRIVER_NAME':'Oracle 8',
+      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+      'APP_ORACLE_PORT':'1521',
+      'APP_ORACLE_SERVICE_NAME':'ORCL',
+      'APP_ORACLE_USER':'ADMIN',
+      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
+      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME':'DM_VERIFICACIONES',
+      'TABLE_NAME':'DM_GERENTES',
+      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+      'INJECT_TABLE_NAME':'STG_GERENTES',
+      'INSUMOS_SCHEMA_NAME':'INSUMOS',
+      'INSUMOS_TABLE_NAME':'DM_GERENTES',
+    },
+    dag=dag
+  )
+  
+  #SINIESTROS ULTIMA INYECCION
   inject_siniestros = CloudDataFusionStartPipelineOperator(
     task_id="inject_siniestros",
     location='us-central1',
@@ -2395,7 +2468,8 @@ def injection():
     dag=dag
   )
   
-  [ inject_dm_estados,inject_dm_asegurados,inject_coberturas_movimientos,inject_pagos_proveedores,inject_proveedores,inject_tipos_proveedores,inject_causas,inject_etiqueta_siniestro,inject_registro,inject_dua,inject_dm_oficinas,inject_polizas_vigentes,inject_pagos_polizas,inject_incisos_polizas,inject_valuaciones,inject_datos_generales] >> inject_siniestros
+  # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
+  [ inject_dm_estados,inject_dm_asegurados,inject_coberturas_movimientos,inject_pagos_proveedores,inject_proveedores,inject_tipos_proveedores,inject_causas,inject_etiqueta_siniestro,inject_registro,inject_dua,inject_dm_oficinas,inject_polizas_vigentes,inject_pagos_polizas,inject_incisos_polizas,inject_valuaciones,inject_datos_generales,inject_agentes,inject_gerentes] >> inject_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
 def end_injection():
