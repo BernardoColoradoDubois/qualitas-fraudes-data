@@ -50,32 +50,73 @@ interval = get_date_interval(project_id='qlts-dev-mx-au-bro-verificacio',period=
 init_date = interval['init_date']
 final_date = interval['final_date']
 
-def get_datafusion_runtime_args(table_name, small=False, init_date=None, final_date=None):
-      
+
+def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, final_date=None):
+  
+  base_args = {
+    'app.pipeline.overwriteConfig': 'true',
+    'task.executor.system.resources.cores': '2',
+    'task.executor.system.resources.memory': '8192',
+    'dataproc.cluster.name': 'verificaciones-dataproc',
+    'system.profile.name': 'USER:verificaciones-dataproc',
+    'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME': 'LAN_VERIFICACIONES',
+    'TABLE_NAME': table_name,  
+  }
+  
+  if size == 'XS':
     base_args = {
-        'app.pipeline.overwriteConfig': 'true',
-        'task.executor.system.resources.cores': '2',
-        'task.executor.system.resources.memory': '16384',
-        'dataproc.cluster.name': 'verificaciones-dataproc',
-        'system.profile.name': 'USER:verificaciones-dataproc',
-        'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
-        'DATASET_NAME': 'LAN_VERIFICACIONES',
-        'TABLE_NAME': table_name,
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '1',
+      'task.executor.system.resources.memory': '2048',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': table_name,
     }
+  elif size == 'S':
+    base_args = {
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '4096',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': table_name,
+    } 
+  elif size == 'M':
+    base_args = {
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '8192',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': table_name,
+    }   
+  elif size == 'L':
+    base_args = {
+      'app.pipeline.overwriteConfig': 'true',
+      'task.executor.system.resources.cores': '2',
+      'task.executor.system.resources.memory': '16384',
+      'dataproc.cluster.name': 'verificaciones-dataproc',
+      'system.profile.name': 'USER:verificaciones-dataproc',
+      'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
+      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'TABLE_NAME': table_name,
+    }    
     
-    if small:
-      base_args.update({
-        'task.executor.system.resources.cores': '1',
-        'task.executor.system.resources.memory': '8192',
-      })
+  if init_date is not None and final_date is not None:
+    base_args.update({
+      'init_date': init_date,
+      'final_date': final_date
+    })
     
-    if init_date is not None and final_date is not None:
-        base_args.update({
-            'init_date': init_date,
-            'final_date': final_date
-        })
-    
-    return base_args
+
+  return base_args
   
 default_args = {
   'start_date': airflow.utils.dates.days_ago(0),
@@ -178,7 +219,7 @@ def landing_bsc_siniestros():
     asynchronous=False,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('APERCAB_BSC',init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('APERCAB_BSC',size='L',init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -195,7 +236,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('MASEG_BSC'),
+    runtime_args=get_datafusion_load_runtime_args('MASEG_BSC',size='M'),
     dag=dag
   )
 
@@ -212,7 +253,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('PAGOPROVE', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('PAGOPROVE',size='L',init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -229,7 +270,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('PAGOSPROVEEDORES', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('PAGOSPROVEEDORES',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -246,7 +287,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('PRESTADORES'),
+    runtime_args=get_datafusion_load_runtime_args('PRESTADORES',size='S'),
     dag=dag
   )
 
@@ -263,7 +304,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('RESERVAS_BSC', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('RESERVAS_BSC',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -280,7 +321,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('TESTADO_BSC',small=True),
+    runtime_args=get_datafusion_load_runtime_args('TESTADO_BSC',size='XS'),
     dag=dag
   )
 
@@ -297,7 +338,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('TIPOPROVEEDOR',small=True),
+    runtime_args=get_datafusion_load_runtime_args('TIPOPROVEEDOR',size='XS'),
     dag=dag
   )
 
@@ -314,7 +355,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('TSUC_BSC',small=True),
+    runtime_args=get_datafusion_load_runtime_args('TSUC_BSC',size='XS'),
     dag=dag
   )
   
@@ -331,7 +372,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('VALUACION_BSC', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('VALUACION_BSC',size='M', init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -352,7 +393,7 @@ def landing_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('CAT_CAUSA',small=True),
+    runtime_args=get_datafusion_load_runtime_args('CAT_CAUSA', size='XS'),
     dag=dag
   )
 
@@ -369,7 +410,7 @@ def landing_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('COBRANZA', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('COBRANZA', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -386,7 +427,7 @@ def landing_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('COBRANZA_HIST', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('COBRANZA_HIST',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )  
   load_sas_sinies = CloudDataFusionStartPipelineOperator(
@@ -402,7 +443,7 @@ def landing_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('SAS_SINIES', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('SAS_SINIES', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )  
   
@@ -419,7 +460,7 @@ def landing_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('ETIQUETA_SINIESTRO', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('ETIQUETA_SINIESTRO', size='M', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -436,7 +477,7 @@ def landing_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('REGISTRO', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('REGISTRO',size='S', init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -457,7 +498,7 @@ def landing_sise():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('FRAUD_DI', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('FRAUD_DI',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -474,7 +515,7 @@ def landing_sise():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('FRAUD_PV', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('FRAUD_PV',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -491,7 +532,7 @@ def landing_sise():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('FRAUD_RP', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('FRAUD_RP',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -513,7 +554,7 @@ def landing_dua():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('DATOS_DUA', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('DATOS_DUA', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -534,7 +575,7 @@ def landing_datos_generales():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_runtime_args('DATOSGENERALES', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('DATOSGENERALES', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )  
 
