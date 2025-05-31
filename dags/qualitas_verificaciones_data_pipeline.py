@@ -50,6 +50,61 @@ interval = get_date_interval(project_id='qlts-dev-mx-au-bro-verificacio',period=
 init_date = interval['init_date']
 final_date = interval['final_date']
 
+def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, insumos_table_name:str, size:str,init_date=None, final_date=None):
+
+#  executor_cores=''
+#  executor_memory=''
+#  table_name=''
+#  inject_table_name=''
+#  insumos_table_name=''
+
+
+  if size == 'XS':
+    executor_cores='1'
+    executor_memory='2048'
+
+  elif size == 'S':
+    executor_cores='2'
+    executor_memory='4096'
+  elif size == 'M':
+    executor_cores='2'
+    executor_memory='8192'
+  elif size == 'L':
+    executor_cores='2'
+    executor_memory='16384'
+
+
+  inject_runtime_args={
+    'app.pipeline.overwriteConfig': 'true',
+    'task.executor.system.resources.cores': executor_cores,
+    'task.executor.system.resources.memory': executor_memory,
+    'dataproc.cluster.name': 'verificaciones-dataproc',
+    'system.profile.name': 'USER:verificaciones-dataproc', 
+    'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
+    'APP_ORACLE_SERVICE_NAME':'ORCL',
+    'APP_ORACLE_USER':'ADMIN',
+    'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
+    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
+    'DATASET_NAME':'DM_VERIFICACIONES',
+    'TABLE_NAME':table_name,
+    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_TABLE_NAME':inject_table_name,
+    'INSUMOS_SCHEMA_NAME':'INSUMOS',
+    'INSUMOS_TABLE_NAME':insumos_table_name
+  }
+
+  if init_date is not None and final_date is not None:
+    inject_runtime_args.update({
+      'init_date': init_date,
+      'final_date': final_date
+    })
+  
+
+
+
+  return inject_runtime_args
+
+
 
 def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, final_date=None):
   
@@ -591,6 +646,9 @@ def end_landing():
   )
 
 
+
+
+
 @task_group(group_id='bq_elt',dag=dag)
 def bq_elt():
 
@@ -613,6 +671,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -636,6 +697,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -659,6 +723,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -682,6 +749,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
   
@@ -703,6 +773,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
   
@@ -724,6 +797,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -745,6 +821,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -768,6 +847,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -790,6 +872,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -811,6 +896,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -832,6 +920,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -853,6 +944,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -874,6 +968,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -895,6 +992,9 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
+
     dag=dag 
   )
 
@@ -916,6 +1016,8 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
     dag=dag 
   )
 
@@ -937,6 +1039,8 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
     dag=dag 
   )
 
@@ -960,6 +1064,8 @@ def bq_elt():
     },
     location='us-central1',
     gcp_conn_id="google_cloud_default",
+    deferrable=True,
+    poll_interval=30,
     dag=dag 
   )
 
@@ -1683,24 +1789,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_ASEGURADOS',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_ASEGURADOS',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_ASEGURADOS'
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_ASEGURADOS", "STG_ASEGURADOS", "DM_ASEGURADOS", "M"),
     dag=dag
   )
 
@@ -1717,26 +1806,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_COBERTURAS_MOVIMIENTOS',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_COBERTURAS_MOVIMIENTOS',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_COBERTURAS_MOVIMIENTOS", "STG_COBERTURAS_MOVIMIENTOS", "DM_COBERTURAS_MOVIMIENTOS", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -1753,24 +1823,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8192',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc', 
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_ESTADOS',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_ESTADOS',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_ESTADOS',
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_ESTADOS", "STG_ESTADOS", "DM_ESTADOS", "XS"),
     dag=dag
   )
   
@@ -1787,26 +1840,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_PAGOS_PROVEEDORES',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_PAGOS_PROVEEDORES',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_PAGOS_PROVEEDORES',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_PAGOS_PROVEEDORES", "STG_PAGOS_PROVEEDORES", "DM_PAGOS_PROVEEDORES", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -1823,24 +1857,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_PROVEEDORES',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_PROVEEDORES',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_PROVEEDORES'
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_PROVEEDORES", "STG_PROVEEDORES", "DM_PROVEEDORES", "L"),
     dag=dag
   )
 
@@ -1857,24 +1874,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8192',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',    
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_TIPOS_PROVEEDORES',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_TIPOS_PROVEEDORES',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_TIPOS_PROVEEDORES'
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_TIPOS_PROVEEDORES", "STG_TIPOS_PROVEEDORES", "DM_TIPOS_PROVEEDORES", "XS"),
     dag=dag
   )
   
@@ -1891,26 +1891,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8192',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',      
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_CAUSAS',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_CAUSAS',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_CAUSAS',
-      "system.spark.log.level": "DEBUG"
-
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_CAUSAS", "STG_CAUSAS", "DM_CAUSAS", "XS"),
     dag=dag
   )
 
@@ -1927,26 +1908,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',   
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_ETIQUETA_SINIESTRO',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_ETIQUETA_SINIESTRO',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_ETIQUETA_SINIESTRO',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_ETIQUETA_SINIESTRO", "STG_ETIQUETA_SINIESTRO", "DM_ETIQUETA_SINIESTRO", "M", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -1963,26 +1925,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',      
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_REGISTRO',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_REGISTRO',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_REGISTRO',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_REGISTRO", "STG_REGISTRO", "DM_REGISTRO", "S", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -1999,28 +1942,10 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_DUA',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_DUA',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_DUA',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_DUA", "STG_DUA", "DM_DUA", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
+
   inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_oficinas",
     location='us-central1',
@@ -2034,24 +1959,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8192',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',   
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_OFICINAS',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_OFICINAS',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_OFICINAS'
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_OFICINAS", "STG_OFICINAS", "DM_OFICINAS", "M"),
     dag=dag
   )
   
@@ -2068,26 +1976,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc', 
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',    
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_POLIZAS_VIGENTES',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_POLIZAS_VIGENTES',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_POLIZAS_VIGENTES',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_POLIZAS_VIGENTES", "STG_POLIZAS_VIGENTES", "DM_POLIZAS_VIGENTES", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2104,26 +1993,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc', 
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',   
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_PAGOS_POLIZAS',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_PAGOS_POLIZAS',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_PAGOS_POLIZAS',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_PAGOS_POLIZAS", "STG_PAGOS_POLIZAS", "DM_PAGOS_POLIZAS", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2140,26 +2010,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',   
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',  
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_INCISOS_POLIZAS',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_INCISOS_POLIZAS',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_INCISOS_POLIZAS',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_INCISOS_POLIZAS", "STG_INCISOS_POLIZAS", "DM_INCISOS_POLIZAS", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2176,26 +2027,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_VALUACIONES',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_VALUACIONES',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_VALUACIONES',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_VALUACIONES", "STG_VALUACIONES", "DM_VALUACIONES", "M", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2212,24 +2044,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_DATOS_GENERALES',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_DATOS_GENERALES',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_DATOS_GENERALES',
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_DATOS_GENERALES", "STG_DATOS_GENERALES", "DM_DATOS_GENERALES", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2246,24 +2061,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8192',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_AGENTES',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_AGENTES',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_AGENTES',
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_AGENTES", "STG_AGENTES", "DM_AGENTES", "XS"),
     dag=dag
   )
   
@@ -2280,24 +2078,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '1',
-      'task.executor.system.resources.memory': '8192',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_GERENTES',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_GERENTES',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_GERENTES',
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_GERENTES", "STG_GERENTES", "DM_GERENTES", "XS"),
     dag=dag
   )
   
@@ -2315,26 +2096,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args={
-      'app.pipeline.overwriteConfig': 'true',
-      'task.executor.system.resources.cores': '2',
-      'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc', 
-      'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-      'APP_ORACLE_SERVICE_NAME':'ORCL',
-      'APP_ORACLE_USER':'ADMIN',
-      'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
-      'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME':'DM_VERIFICACIONES',
-      'TABLE_NAME':'DM_SINIESTROS',
-      'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
-      'INJECT_TABLE_NAME':'STG_SINIESTROS',
-      'INSUMOS_SCHEMA_NAME':'INSUMOS',
-      'INSUMOS_TABLE_NAME':'DM_SINIESTROS',
-      'init_date':init_date,
-      'final_date':final_date
-    },
+    runtime_args=get_datafusion_inject_runtime_args("DM_SINIESTROS", "STG_SINIESTROS", "DM_SINIESTROS", "L", init_date=init_date, final_date=final_date ),
     dag=dag
   )
   
