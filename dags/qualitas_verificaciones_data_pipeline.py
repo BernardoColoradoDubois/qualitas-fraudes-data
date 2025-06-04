@@ -24,28 +24,33 @@ DATA_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_ID']
 DATA_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_REGION']
 DATA_DATAFUSION_INSTANCE_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAFUSION_INSTANCE_NAME']
 DATA_DATAFUSION_TEMPORARY_BUCKET_NAME =  VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAFUSION_TEMPORARY_BUCKET_NAME']
+DATA_DATAFUSION_NAMESPACE = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAFUSION_NAMESPACE']
 DATA_DATAPROC_CLUSTER_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAPROC_CLUSTER_NAME']
 DATA_DATAPROC_PROFILE_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAPROC_PROFILE_NAME']
+DATA_COMPOSER_WORKSPACE_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_COMPOSER_WORKSPACE_BUCKET_NAME']
 
-VERIFICACIONES_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES
+VERIFICACIONES_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_ID']
 VERIFICACIONES_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_REGION']
 VERIFICACIONES_LAN_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_LAN_DATASET_NAME']
 VERIFICACIONES_RTL_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_RTL_DATASET_NAME']
 VERIFICACIONES_STG_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_STG_DATASET_NAME']
 VERIFICACIONES_DM_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_DM_DATASET_NAME']
 VERIFICACIONES_SEED_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_SEED_DATASET_NAME']
+VERIFICACIONES_CONNECTION_DEFAULT = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_CONNECTION_DEFAULT']
 
 APP_ORACLE_HOST = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_HOST']
 APP_ORACLE_SERVICE_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_SERVICE_NAME']
 APP_ORACLE_USER = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_USER']
 APP_ORACLE_PASSWORD = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_PASSWORD']
+APP_ORACLE_INJECT_SCHEMA_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_INJECT_SCHEMA_NAME']
+APP_ORACLE_INSUMOS_SCHEMA_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_INSUMOS_SCHEMA_NAME']
 
 VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG", deserialize_json=True)
 VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
 
 VERIFICACIONES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
 
-interval = get_date_interval(project_id='qlts-dev-mx-au-bro-verificacio',period=VERIFICACIONES_LOAD_INTERVAL)
+interval = get_date_interval(project_id=VERIFICACIONES_PROJECT_ID,period=VERIFICACIONES_LOAD_INTERVAL)
 
 init_date = interval['init_date']
 final_date = interval['final_date']
@@ -78,18 +83,18 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
     'app.pipeline.overwriteConfig': 'true',
     'task.executor.system.resources.cores': executor_cores,
     'task.executor.system.resources.memory': executor_memory,
-    'dataproc.cluster.name': 'verificaciones-dataproc',
-    'system.profile.name': 'USER:verificaciones-dataproc', 
-    'APP_ORACLE_HOST':'qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com',
-    'APP_ORACLE_SERVICE_NAME':'ORCL',
-    'APP_ORACLE_USER':'ADMIN',
-    'APP_ORACLE_PASSWORD':'FqzJ3n3Kvwcftakshcmi',     
-    'TEMPORARY_BUCKET_NAME':'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME':'DM_VERIFICACIONES',
+    'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
+    'system.profile.name': DATA_DATAPROC_PROFILE_NAME, 
+    'APP_ORACLE_HOST':APP_ORACLE_HOST,
+    'APP_ORACLE_SERVICE_NAME':APP_ORACLE_SERVICE_NAME,
+    'APP_ORACLE_USER':APP_ORACLE_USER,
+    'APP_ORACLE_PASSWORD':APP_ORACLE_PASSWORD,     
+    'TEMPORARY_BUCKET_NAME':DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
+    'DATASET_NAME':VERIFICACIONES_DM_DATASET_NAME,
     'TABLE_NAME':table_name,
-    'INJECT_SCHEMA_NAME':'RAW_INSUMOS',
+    'INJECT_SCHEMA_NAME':APP_ORACLE_INJECT_SCHEMA_NAME,
     'INJECT_TABLE_NAME':inject_table_name,
-    'INSUMOS_SCHEMA_NAME':'INSUMOS',
+    'INSUMOS_SCHEMA_NAME':APP_ORACLE_INSUMOS_SCHEMA_NAME,
     'INSUMOS_TABLE_NAME':insumos_table_name
   }
 
@@ -112,10 +117,10 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
     'app.pipeline.overwriteConfig': 'true',
     'task.executor.system.resources.cores': '2',
     'task.executor.system.resources.memory': '8192',
-    'dataproc.cluster.name': 'verificaciones-dataproc',
-    'system.profile.name': 'USER:verificaciones-dataproc',
-    'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
-    'DATASET_NAME': 'LAN_VERIFICACIONES',
+    'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
+    'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
+    'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
+    'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
     'TABLE_NAME': table_name,  
   }
   
@@ -124,10 +129,10 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '1',
       'task.executor.system.resources.memory': '2048',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
+      'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
+      'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
+      'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'TABLE_NAME': table_name,
     }
   elif size == 'S':
@@ -135,10 +140,10 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
       'task.executor.system.resources.memory': '4096',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
+      'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
+      'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
+      'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'TABLE_NAME': table_name,
     } 
   elif size == 'M':
@@ -146,10 +151,10 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
       'task.executor.system.resources.memory': '8192',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
+      'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
+      'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
+      'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'TABLE_NAME': table_name,
     }   
   elif size == 'L':
@@ -157,10 +162,10 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'app.pipeline.overwriteConfig': 'true',
       'task.executor.system.resources.cores': '2',
       'task.executor.system.resources.memory': '16384',
-      'dataproc.cluster.name': 'verificaciones-dataproc',
-      'system.profile.name': 'USER:verificaciones-dataproc',
-      'TEMPORARY_BUCKET_NAME': 'gcs-qlts-dev-mx-au-bro-verificaciones',
-      'DATASET_NAME': 'LAN_VERIFICACIONES',
+      'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
+      'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
+      'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
+      'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'TABLE_NAME': table_name,
     }    
     
@@ -187,7 +192,7 @@ dag = DAG(
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=180),
-  tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']
+  tags=['MX','AUTOS',DATA_DATAFUSION_NAMESPACE,'INSUMOS']
 )
 
 landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)
@@ -209,27 +214,27 @@ def init_landing():
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
   create_big_cluster = DataprocCreateClusterOperator(
     task_id="create_big_cluster",
-    project_id="qlts-nonprod-data-tools",
+    project_id=DATA_PROJECT_ID,
     cluster_config=VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG,
-    region="us-central1",
-    cluster_name="verificaciones-dataproc",
+    region=DATA_PROJECT_REGION,
+    cluster_name=DATA_DATAPROC_CLUSTER_NAME,
     num_retries_if_resource_is_not_ready=3,
     dag=dag
   )
   
   create_small_cluster = DataprocCreateClusterOperator(
     task_id="create_small_cluster",
-    project_id="qlts-nonprod-data-tools",
+    project_id=DATA_PROJECT_ID,
     cluster_config=VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG,
-    region="us-central1",
-    cluster_name="verificaciones-dataproc",
+    region=DATA_PROJECT_REGION,
+    cluster_name=DATA_DATAPROC_CLUSTER_NAME,
     num_retries_if_resource_is_not_ready=3,
     dag=dag
   )
@@ -249,10 +254,10 @@ def init_landing():
   
   get_datafusion_instance = CloudDataFusionGetInstanceOperator(
     task_id="get_datafusion_instance",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     trigger_rule='one_success',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     dag=dag,
   )
   
@@ -263,11 +268,11 @@ def landing_bsc_siniestros():
   
   load_apercab_bsc = CloudDataFusionStartPipelineOperator(
     task_id="load_apercab_bsc",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='qlts_dev_verificaciones_apercab_bsc_bkp',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     pipeline_timeout=3600,
@@ -280,11 +285,11 @@ def landing_bsc_siniestros():
 
   load_maseg_bsc = CloudDataFusionStartPipelineOperator(
     task_id="load_maseg_bsc",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='qlts_dev_verificaciones_maseg_bkp',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -297,11 +302,11 @@ def landing_bsc_siniestros():
 
   load_pagoprove = CloudDataFusionStartPipelineOperator(
     task_id="load_pagoprove",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='qlts_dev_verificaciones_pagoprove',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -314,11 +319,11 @@ def landing_bsc_siniestros():
   
   load_pagosproveedores = CloudDataFusionStartPipelineOperator(
     task_id="load_pagosproveedores",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='qlts_dev_verificaciones_pagosproveedores',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -331,11 +336,11 @@ def landing_bsc_siniestros():
 
   load_prestadores = CloudDataFusionStartPipelineOperator(
     task_id="load_prestadores",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='qlts_dev_verificaciones_prestadores',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -348,11 +353,11 @@ def landing_bsc_siniestros():
 
   load_reservas_bsc = CloudDataFusionStartPipelineOperator(
     task_id="load_reservas_bsc",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='qlts_dev_verificaciones_reservas',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -365,11 +370,11 @@ def landing_bsc_siniestros():
 
   load_testado_bsc = CloudDataFusionStartPipelineOperator(
     task_id="load_testado_bsc",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='qlts_dev_verificaciones_testados_bsc',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -382,11 +387,11 @@ def landing_bsc_siniestros():
 
   load_tipoproveedor = CloudDataFusionStartPipelineOperator(
     task_id="load_tipoproveedor",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='qlts_dev_verificaciones_tipoproveedor',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -399,11 +404,11 @@ def landing_bsc_siniestros():
 
   load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
     task_id="load_tsuc_bsc",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='carga_qlts_dev_verificaciones_tsuc',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -416,11 +421,11 @@ def landing_bsc_siniestros():
   
   load_valuacion_bsc = CloudDataFusionStartPipelineOperator(
     task_id="load_valuacion_bsc",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_valuacion_bsc',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -437,11 +442,11 @@ def landing_siniestros():
 
   load_cat_causa = CloudDataFusionStartPipelineOperator(
     task_id="load_cat_causa",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_cat_causa',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -454,11 +459,11 @@ def landing_siniestros():
 
   load_cobranza = CloudDataFusionStartPipelineOperator(
     task_id="load_cobranza",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_cobranza',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -471,11 +476,11 @@ def landing_siniestros():
 
   load_cobranza_hist = CloudDataFusionStartPipelineOperator(
     task_id="load_cobranza_hist",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_cobranza_hist',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -487,11 +492,11 @@ def landing_siniestros():
   )  
   load_sas_sinies = CloudDataFusionStartPipelineOperator(
     task_id="load_sas_sinies",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_sas_sinies',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -504,11 +509,11 @@ def landing_siniestros():
   
   load_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
     task_id="load_etiqueta_siniestro",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_etiqueta_siniestro',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -521,11 +526,11 @@ def landing_siniestros():
 
   load_registro = CloudDataFusionStartPipelineOperator(
     task_id="load_registro",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_registro',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -542,11 +547,11 @@ def landing_sise():
 
   load_fraud_di = CloudDataFusionStartPipelineOperator(
     task_id="load_fraud_di",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_fraud_di',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -559,11 +564,11 @@ def landing_sise():
 
   load_fraud_pv = CloudDataFusionStartPipelineOperator(
     task_id="load_fraud_pv",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_fraud_pv',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -576,11 +581,11 @@ def landing_sise():
 
   load_fraud_rp = CloudDataFusionStartPipelineOperator(
     task_id="load_fraud_rp",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_fraud_rp',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -598,11 +603,11 @@ def landing_dua():
   
   load_datos_dua = CloudDataFusionStartPipelineOperator(
     task_id="load_datos_dua",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_datos_dua',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -619,11 +624,11 @@ def landing_datos_generales():
   
   load_datosgenerales = CloudDataFusionStartPipelineOperator(
     task_id="load_datosgenerales",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='load_datos_generales',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -640,9 +645,9 @@ def end_landing():
   
   delete_cluster = DataprocDeleteClusterOperator(
     task_id="delete_cluster",
-    project_id="qlts-nonprod-data-tools",
-    cluster_name="verificaciones-dataproc",
-    region="us-central1",
+    project_id=DATA_PROJECT_ID,
+    cluster_name=DATA_DATAPROC_CLUSTER_NAME,
+    region=DATA_PROJECT_REGION,
   )
 
 
@@ -657,20 +662,20 @@ def bq_elt():
     task_id="dm_asegurados",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ASEGURADOS/DM_ASEGURADOS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ASEGURADOS/DM_ASEGURADOS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'MASEG_BSC',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_ASEGURADOS',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -682,21 +687,21 @@ def bq_elt():
     task_id="rtl_pagos_proveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_PROVEEDORES/RTL_PAGOS_PROVEEDORES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PAGOS_PROVEEDORES/RTL_PAGOS_PROVEEDORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'PAGOPROVE',
       'SOURCE_SECOND_TABLE_NAME': 'PAGOSPROVEEDORES',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -707,22 +712,22 @@ def bq_elt():
     task_id="dm_pagos_proveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_PROVEEDORES/DM_PAGOS_PROVEEDORES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PAGOS_PROVEEDORES/DM_PAGOS_PROVEEDORES.sql'),
         "useLegacySql": False,
       },
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_PAGOS_PROVEEDORES',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -735,20 +740,20 @@ def bq_elt():
     task_id="stg_proveedores_1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PROVEEDORES/STG_PROVEEDORES_1.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PROVEEDORES/STG_PROVEEDORES_1.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'PRESTADORES',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_PROVEEDORES_1',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -759,20 +764,20 @@ def bq_elt():
     task_id="stg_proveedores_2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PROVEEDORES/STG_PROVEEDORES_2.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PROVEEDORES/STG_PROVEEDORES_2.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_PROVEEDORES_1',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_PROVEEDORES_2',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -783,20 +788,20 @@ def bq_elt():
     task_id="dm_proveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PROVEEDORES/DM_PROVEEDORES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PROVEEDORES/DM_PROVEEDORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_PROVEEDORES_2',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_PROVEEDORES',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -807,20 +812,20 @@ def bq_elt():
     task_id="rtl_coberturas_movimientos",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/RTL_COBERTURAS_MOVIMIENTOS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/COBERTURAS_MOVIMIENTOS/RTL_COBERTURAS_MOVIMIENTOS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RESERVAS_BSC',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS'
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -831,22 +836,22 @@ def bq_elt():
     task_id="dm_coberturas_movimientos",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/COBERTURAS_MOVIMIENTOS/DM_COBERTURAS_MOVIMIENTOS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/COBERTURAS_MOVIMIENTOS/DM_COBERTURAS_MOVIMIENTOS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_COBERTURAS_MOVIMIENTOS',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -857,21 +862,21 @@ def bq_elt():
     task_id="dm_estados",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ESTADOS/DM_ESTADOS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ESTADOS/DM_ESTADOS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'TESTADO_BSC',
       'SOURCE_SECOND_TABLE_NAME': 'ESTADOS_MEXICO',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_ESTADOS',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -882,20 +887,20 @@ def bq_elt():
     task_id="dm_oficinas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/OFICINAS/DM_OFICINAS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/OFICINAS/DM_OFICINAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'TSUC_BSC',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_OFICINAS',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -906,20 +911,20 @@ def bq_elt():
     task_id="dm_tipos_proveedores",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/TIPOS_PROVEEDORES/DM_TIPOS_PROVEEDORES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TIPOS_PROVEEDORES/DM_TIPOS_PROVEEDORES.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'TIPOPROVEEDOR',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_TIPOS_PROVEEDORES',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -930,20 +935,20 @@ def bq_elt():
     task_id="dm_causas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/CAUSAS/DM_CAUSAS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CAUSAS/DM_CAUSAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'CAT_CAUSA',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_CAUSAS',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -954,20 +959,20 @@ def bq_elt():
     task_id="stg_etiqueta_siniestro_1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_1.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_1.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'ETIQUETA_SINIESTRO',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -978,20 +983,20 @@ def bq_elt():
     task_id="stg_etiqueta_siniestro_2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_2.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_2.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
 
@@ -1002,20 +1007,20 @@ def bq_elt():
     task_id="stg_etiqueta_siniestro_3",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ETIQUETA_SINIESTRO/STG_ETIQUETA_SINIESTRO_3.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
     dag=dag 
@@ -1025,20 +1030,20 @@ def bq_elt():
     task_id="rtl_etiqueta_siniestro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/RTL_ETIQUETA_SINIESTRO.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ETIQUETA_SINIESTRO/RTL_ETIQUETA_SINIESTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_ETIQUETA_SINIESTRO',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
     dag=dag 
@@ -1048,22 +1053,22 @@ def bq_elt():
     task_id="dm_etiqueta_siniestro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/ETIQUETA_SINIESTRO/DM_ETIQUETA_SINIESTRO.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ETIQUETA_SINIESTRO/DM_ETIQUETA_SINIESTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_ETIQUETA_SINIESTRO',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_ETIQUETA_SINIESTRO',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     deferrable=True,
     poll_interval=30,
     dag=dag 
@@ -1073,20 +1078,20 @@ def bq_elt():
     task_id="stg_registro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/REGISTRO/STG_REGISTRO.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REGISTRO/STG_REGISTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'REGISTRO',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_REGISTRO',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1094,20 +1099,20 @@ def bq_elt():
     task_id="rtl_registro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/REGISTRO/RTL_REGISTRO.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REGISTRO/RTL_REGISTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_REGISTRO',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_REGISTRO',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1115,22 +1120,22 @@ def bq_elt():
     task_id="dm_registro",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/REGISTRO/DM_REGISTRO.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REGISTRO/DM_REGISTRO.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_REGISTRO',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_REGISTRO',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1138,20 +1143,20 @@ def bq_elt():
     task_id="stg_siniestros",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/SINIESTROS/STG_SINIESTROS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SINIESTROS/STG_SINIESTROS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'SAS_SINIES',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_SINIESTROS'
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1159,20 +1164,20 @@ def bq_elt():
     task_id="rtl_siniestros",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/SINIESTROS/RTL_SINIESTROS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SINIESTROS/RTL_SINIESTROS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_SINIESTROS'
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1180,22 +1185,22 @@ def bq_elt():
     task_id="dm_siniestros",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/SINIESTROS/DM_SINIESTROS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SINIESTROS/DM_SINIESTROS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_SINIESTROS',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_SINIESTROS',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1203,20 +1208,20 @@ def bq_elt():
     task_id="stg_dua",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/STG_DUA.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/DUA/STG_DUA.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'DATOS_DUA',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_DUA',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1224,20 +1229,20 @@ def bq_elt():
     task_id="rtl_dua",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/RTL_DUA.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/DUA/RTL_DUA.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_DUA',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_DUA',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1245,22 +1250,22 @@ def bq_elt():
     task_id="dm_dua",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DUA/DM_DUA.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/DUA/DM_DUA.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_DUA',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_DUA',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1268,22 +1273,22 @@ def bq_elt():
     task_id="stg_polizas_vigentes_1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_1.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_1.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'FRAUD_PV',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1291,20 +1296,20 @@ def bq_elt():
     task_id="stg_polizas_vigentes_2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_2.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_2.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1312,20 +1317,20 @@ def bq_elt():
     task_id="stg_polizas_vigentes_3",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_3.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_3.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1333,20 +1338,20 @@ def bq_elt():
     task_id="stg_polizas_vigentes_4",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_4.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/POLIZAS_VIGENTES/STG_POLIZAS_VIGENTES_4.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1354,20 +1359,20 @@ def bq_elt():
     task_id="rtl_polizas_vigentes",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/RTL_POLIZAS_VIGENTES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/POLIZAS_VIGENTES/RTL_POLIZAS_VIGENTES.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1375,22 +1380,22 @@ def bq_elt():
     task_id="dm_polizas_vigentes",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/POLIZAS_VIGENTES/DM_POLIZAS_VIGENTES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/POLIZAS_VIGENTES/DM_POLIZAS_VIGENTES.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_POLIZAS_VIGENTES',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )  
 
@@ -1398,22 +1403,22 @@ def bq_elt():
     task_id="stg_pagos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_POLIZAS/STG_PAGOS_POLIZAS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PAGOS_POLIZAS/STG_PAGOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'FRAUD_RP',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_PAGOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1421,22 +1426,22 @@ def bq_elt():
     task_id="rtl_pagos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_POLIZAS/RTL_PAGOS_POLIZAS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PAGOS_POLIZAS/RTL_PAGOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_PAGOS_POLIZAS',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_PAGOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1444,22 +1449,22 @@ def bq_elt():
     task_id="dm_pagos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/PAGOS_POLIZAS/DM_PAGOS_POLIZAS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PAGOS_POLIZAS/DM_PAGOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_PAGOS_POLIZAS',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_PAGOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
   
@@ -1467,22 +1472,22 @@ def bq_elt():
     task_id="stg_incisos_polizas_1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_1.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_1.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'FRAUD_DI',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1490,22 +1495,22 @@ def bq_elt():
     task_id="stg_incisos_polizas_2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_2.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_2.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1513,22 +1518,22 @@ def bq_elt():
     task_id="stg_incisos_polizas_3",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_3.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_3.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_3',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1536,22 +1541,22 @@ def bq_elt():
     task_id="stg_incisos_polizas_4",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_4.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/INCISOS_POLIZAS/STG_INCISOS_POLIZAS_4.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_3',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_4',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1559,22 +1564,22 @@ def bq_elt():
     task_id="rtl_incisos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/RTL_INCISOS_POLIZAS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/INCISOS_POLIZAS/RTL_INCISOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_4',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_INCISOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
@@ -1582,22 +1587,22 @@ def bq_elt():
     task_id="dm_incisos_polizas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/INCISOS_POLIZAS/DM_INCISOS_POLIZAS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/INCISOS_POLIZAS/DM_INCISOS_POLIZAS.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_INCISOS_POLIZAS',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_INCISOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
   
@@ -1605,22 +1610,22 @@ def bq_elt():
     task_id="stg_valuaciones_1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACIONES/STG_VALUACIONES_1.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/VALUACIONES/STG_VALUACIONES_1.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'VALUACION_BSC',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_VALUACIONES_1',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
   
@@ -1628,22 +1633,22 @@ def bq_elt():
     task_id="stg_valuaciones_2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACIONES/STG_VALUACIONES_2.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/VALUACIONES/STG_VALUACIONES_2.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_VALUACIONES_1',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'STG_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_VALUACIONES_2',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )  
 
@@ -1651,22 +1656,22 @@ def bq_elt():
     task_id="rtl_valuaciones",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACIONES/RTL_VALUACIONES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/VALUACIONES/RTL_VALUACIONES.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'STG_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'STG_VALUACIONES_2',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_VALUACIONES',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
   
@@ -1674,22 +1679,22 @@ def bq_elt():
     task_id="dm_valuaciones",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/VALUACIONES/DM_VALUACIONES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/VALUACIONES/DM_VALUACIONES.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'RTL_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RTL_VALUACIONES',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_VALUACIONES',
       'init_date':init_date,
       'final_date':final_date
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
   
@@ -1697,23 +1702,111 @@ def bq_elt():
     task_id="dm_datos_generales",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/models/DATOS_GENERALES/DM_DATOS_GENERALES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/DATOS_GENERALES/DM_DATOS_GENERALES.sql'),
         "useLegacySql": False,
       }
     },
     params={
-      'SOURCE_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'SOURCE_DATASET_NAME': 'LAN_VERIFICACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'DATOSGENERALES',
-      'DEST_PROJECT_ID': 'qlts-dev-mx-au-bro-verificacio',
-      'DEST_DATASET_NAME': 'DM_VERIFICACIONES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
       'DEST_TABLE_NAME': 'DM_DATOS_GENERALES'
     },
-    location='us-central1',
-    gcp_conn_id="google_cloud_default",
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
- 
+  
+  stg_apercab_1 = BigQueryInsertJobOperator(
+    task_id="stg_apercab_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/APERCAB/STG_APERCAB_1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'APERCAB_BSC',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'DEST_TABLE_NAME': 'STG_APERCAB_1'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  stg_apercab_2 = BigQueryInsertJobOperator(
+    task_id="stg_apercab_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/APERCAB/STG_APERCAB_2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'STG_APERCAB_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'DEST_TABLE_NAME': 'STG_APERCAB_2'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  rtl_apercab = BigQueryInsertJobOperator(
+    task_id="rtl_apercab",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/APERCAB/RTL_APERCAB.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'STG_APERCAB_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
+      'DEST_TABLE_NAME': 'RTL_APERCAB'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_apercab = BigQueryInsertJobOperator(
+    task_id="dm_apercab",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/APERCAB/DM_APERCAB.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'RTL_APERCAB',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_APERCAB',
+      'init_date':init_date,
+      'final_date':final_date
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+
+
+
   rtl_pagos_proveedores  >> dm_pagos_proveedores
   rtl_coberturas_movimientos >> dm_coberturas_movimientos
   stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> rtl_etiqueta_siniestro >> dm_etiqueta_siniestro
@@ -1725,7 +1818,10 @@ def bq_elt():
   stg_incisos_polizas_1 >> stg_incisos_polizas_2 >> stg_incisos_polizas_3 >> stg_incisos_polizas_4 >> rtl_incisos_polizas >> dm_incisos_polizas
   stg_valuaciones_1 >> stg_valuaciones_2 >> rtl_valuaciones >> dm_valuaciones
   stg_proveedores_1 >> stg_proveedores_2 >> dm_proveedores
-  
+  stg_apercab_1 >> stg_apercab_2 >> rtl_apercab >> dm_apercab
+
+
+
 @task_group(group_id='recreate_cluster',dag=dag)
 def recreate_cluster():
 
@@ -1745,30 +1841,30 @@ def recreate_cluster():
   
   create_big_cluster = DataprocCreateClusterOperator(
     task_id="create_big_cluster",
-    project_id="qlts-nonprod-data-tools",
+    project_id=DATA_PROJECT_ID,
     cluster_config=VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG,
-    region="us-central1",
-    cluster_name="verificaciones-dataproc",
+    region=DATA_PROJECT_REGION,
+    cluster_name=DATA_DATAPROC_CLUSTER_NAME,
     num_retries_if_resource_is_not_ready=3,
     dag=dag
   )
   
   create_small_cluster = DataprocCreateClusterOperator(
     task_id="create_small_cluster",
-    project_id="qlts-nonprod-data-tools",
+    project_id=DATA_PROJECT_ID,
     cluster_config=VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG,
-    region="us-central1",
-    cluster_name="verificaciones-dataproc",
+    region=DATA_PROJECT_REGION,
+    cluster_name=DATA_DATAPROC_CLUSTER_NAME,
     num_retries_if_resource_is_not_ready=3,
     dag=dag
   )
   
   get_datafusion_instance = CloudDataFusionGetInstanceOperator(
     task_id="get_datafusion_instance",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     trigger_rule='one_success',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     dag=dag,
   )
   
@@ -1778,11 +1874,11 @@ def recreate_cluster():
 def injection():
   inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_asegurados",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inyect_dm_asegurados',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1795,11 +1891,11 @@ def injection():
 
   inject_coberturas_movimientos = CloudDataFusionStartPipelineOperator(
     task_id="inject_coberturas_movimientos",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inyect_dm_coberturas_movimientos',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1812,11 +1908,11 @@ def injection():
 
   inject_dm_estados = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_estados",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inyect_dm_estados',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1829,11 +1925,11 @@ def injection():
   
   inject_pagos_proveedores = CloudDataFusionStartPipelineOperator(
     task_id="inject_pagos_proveedores",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inyect_dm_pagos_proveedores',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1846,11 +1942,11 @@ def injection():
 
   inject_proveedores = CloudDataFusionStartPipelineOperator(
     task_id="inject_proveedores",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_proveedores',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1863,11 +1959,11 @@ def injection():
 
   inject_tipos_proveedores = CloudDataFusionStartPipelineOperator(
     task_id="inject_tipos_proveedores",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inyect_dm_tipos_proveedores',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1880,11 +1976,11 @@ def injection():
   
   inject_causas = CloudDataFusionStartPipelineOperator(
     task_id="inject_causas",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inyect_dm_causas',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1897,11 +1993,11 @@ def injection():
 
   inject_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
     task_id="inject_etiqueta_siniestro",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inyect_dm_etiqueta_siniestro',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1914,11 +2010,11 @@ def injection():
 
   inject_registro = CloudDataFusionStartPipelineOperator(
     task_id="inject_registro",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_registro',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1931,11 +2027,11 @@ def injection():
 
   inject_dua = CloudDataFusionStartPipelineOperator(
     task_id="inject_dua",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_dua',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1948,11 +2044,11 @@ def injection():
 
   inject_dm_oficinas = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_oficinas",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_oficinas',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1965,11 +2061,11 @@ def injection():
   
   inject_polizas_vigentes = CloudDataFusionStartPipelineOperator(
     task_id="inject_polizas_vigentes",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_polizas_vigentes',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1982,11 +2078,11 @@ def injection():
   
   inject_pagos_polizas = CloudDataFusionStartPipelineOperator(
     task_id="inject_pagos_polizas",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_pagos_polizas',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -1999,11 +2095,11 @@ def injection():
   
   inject_incisos_polizas = CloudDataFusionStartPipelineOperator(
     task_id="inject_incisos_polizas",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_incisos_polizas',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -2016,11 +2112,11 @@ def injection():
   
   inject_valuaciones = CloudDataFusionStartPipelineOperator(
     task_id="inject_valuaciones",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_valuaciones',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -2033,11 +2129,11 @@ def injection():
   
   inject_datos_generales = CloudDataFusionStartPipelineOperator(
     task_id="inject_datos_generales",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_datos_generales',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -2050,11 +2146,11 @@ def injection():
   
   inject_agentes = CloudDataFusionStartPipelineOperator(
     task_id="inject_agentes",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_agentes',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -2067,11 +2163,11 @@ def injection():
   
   inject_gerentes = CloudDataFusionStartPipelineOperator(
     task_id="inject_gerentes",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inject_dm_gerentes',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -2082,14 +2178,31 @@ def injection():
     dag=dag
   )
   
+  inject_apercab = CloudDataFusionStartPipelineOperator(
+    task_id="inject_apercab",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_apercab',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_APERCAB", "STG_APERCAB", "DM_APERCAB", "M", init_date=init_date, final_date=final_date ),
+    dag=dag
+  )
+  
   #SINIESTROS ULTIMA INYECCION
   inject_siniestros = CloudDataFusionStartPipelineOperator(
     task_id="inject_siniestros",
-    location='us-central1',
-    instance_name='qlts-data-fusion-dev',
-    namespace='verificaciones',
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
     pipeline_name='inyect_dm_siniestros',
-    project_id='qlts-nonprod-data-tools',
+    project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
     asynchronous=False,
@@ -2101,16 +2214,35 @@ def injection():
   )
   
   # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
-  [ inject_dm_estados,inject_dm_asegurados,inject_coberturas_movimientos,inject_pagos_proveedores,inject_proveedores,inject_tipos_proveedores,inject_causas,inject_etiqueta_siniestro,inject_registro,inject_dua,inject_dm_oficinas,inject_polizas_vigentes,inject_pagos_polizas,inject_incisos_polizas,inject_valuaciones,inject_datos_generales,inject_agentes,inject_gerentes] >> inject_siniestros
+  [ 
+   inject_dm_estados
+   ,inject_dm_asegurados
+   ,inject_coberturas_movimientos
+   ,inject_pagos_proveedores
+   ,inject_proveedores
+   ,inject_tipos_proveedores
+   ,inject_causas
+   ,inject_etiqueta_siniestro
+   ,inject_registro,inject_dua
+   ,inject_dm_oficinas
+   ,inject_polizas_vigentes
+   ,inject_pagos_polizas
+   ,inject_incisos_polizas
+   ,inject_valuaciones
+   ,inject_datos_generales
+   ,inject_agentes
+   ,inject_gerentes
+   ,inject_apercab
+  ] >> inject_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
 def end_injection():
   
   delete_cluster = DataprocDeleteClusterOperator(
     task_id="delete_cluster",
-    project_id="qlts-nonprod-data-tools",
-    cluster_name="verificaciones-dataproc",
-    region="us-central1",
+    project_id=DATA_PROJECT_ID,
+    cluster_name=DATA_DATAPROC_CLUSTER_NAME,
+    region=DATA_PROJECT_REGION
   )
   
 landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_datos_generales()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
