@@ -37,6 +37,7 @@ VERIFICACIONES_STG_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONE
 VERIFICACIONES_DM_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_DM_DATASET_NAME']
 VERIFICACIONES_SEED_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_SEED_DATASET_NAME']
 VERIFICACIONES_CONNECTION_DEFAULT = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_CONNECTION_DEFAULT']
+VERIFICACIONES_CONNECTION_DEFAULT = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_CONNECTION_DEFAULT']
 
 APP_ORACLE_HOST = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_HOST']
 APP_ORACLE_SERVICE_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_SERVICE_NAME']
@@ -46,23 +47,19 @@ APP_ORACLE_INJECT_SCHEMA_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_INJE
 APP_ORACLE_INSUMOS_SCHEMA_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_INSUMOS_SCHEMA_NAME']
 
 VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG", deserialize_json=True)
+
 VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
 
 VERIFICACIONES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
 
-interval = get_date_interval(project_id=VERIFICACIONES_PROJECT_ID,period=VERIFICACIONES_LOAD_INTERVAL)
+interval = get_date_interval(project_id='qlts-dev-mx-au-bro-verificacio',period=VERIFICACIONES_LOAD_INTERVAL)
 
 init_date = interval['init_date']
 final_date = interval['final_date']
 
+
+
 def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, insumos_table_name:str, size:str,init_date=None, final_date=None):
-
-#  executor_cores=''
-#  executor_memory=''
-#  table_name=''
-#  inject_table_name=''
-#  insumos_table_name=''
-
 
   if size == 'XS':
     executor_cores='1'
@@ -167,7 +164,20 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
       'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'TABLE_NAME': table_name,
-    }    
+      'spark.sql.adaptive.enabled': 'true',
+      'spark.sql.adaptive.skewJoin.enabled': 'true',
+      'spark.sql.adaptive.skewJoin.skewedPartitionFactor': '5',
+      'spark.sql.adaptive.skewJoin.skewedPartitionThresholdInBytes': '268435456',  #256MB en bytes
+      'spark.dynamicAllocation.enabled': 'true',
+      'spark.shuffle.service.enabled': 'true',
+      'spark.dynamicAllocation.minExecutors': '4',
+      'spark.dynamicAllocation.maxExecutors': '50',
+      'spark.dynamicAllocation.initialExecutors': '2',
+      'spark.dynamicAllocation.executorIdleTimeout': '60s',
+      'spark.dynamicAllocation.schedulerBacklogTimeout': '1s',
+}
+
+        
     
   if init_date is not None and final_date is not None:
     base_args.update({
