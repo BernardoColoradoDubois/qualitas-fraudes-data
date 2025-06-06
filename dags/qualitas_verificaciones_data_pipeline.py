@@ -201,7 +201,7 @@ dag = DAG(
   schedule_interval='0 0 1 1 *',
   max_active_runs=2,
   catchup=False,
-  dagrun_timeout=timedelta(minutes=180),
+  dagrun_timeout=timedelta(minutes=400),
   tags=['MX','AUTOS',DATA_DATAFUSION_NAMESPACE,'INSUMOS']
 )
 
