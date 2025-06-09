@@ -298,7 +298,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='qlts_dev_verificaciones_maseg_bkp',
+    pipeline_name='load_maseg_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
