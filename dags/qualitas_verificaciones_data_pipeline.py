@@ -2211,7 +2211,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inyect_dm_siniestros',
+    pipeline_name='inject_dm_siniestros',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
