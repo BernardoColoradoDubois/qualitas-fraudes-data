@@ -627,8 +627,8 @@ def landing_dua():
   )
   
   
-@task_group(group_id='landing_datos_generales',dag=dag)
-def landing_datos_generales():
+@task_group(group_id='landing_valuaciones',dag=dag)
+def landing_valuaciones():
   
   load_datosgenerales = CloudDataFusionStartPipelineOperator(
     task_id="load_datosgenerales",
@@ -647,6 +647,345 @@ def landing_datos_generales():
     dag=dag
   )  
 
+  load_analistacdr = CloudDataFusionStartPipelineOperator(
+    task_id="load_analistacdr",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_analistacdr',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ANALISTACDR', size='XS'),
+    dag=dag
+  )  
+  
+  load_causacambiovale = CloudDataFusionStartPipelineOperator(
+    task_id="load_causacambiovale",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_causacambiovale',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('CAUSACAMBIOVALE', size='XS'),
+    dag=dag
+  )  
+  
+  load_cerco = CloudDataFusionStartPipelineOperator(
+    task_id="load_cerco",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_cerco',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('CERCO', size='XS'),
+    dag=dag
+  )  
+  
+  load_color = CloudDataFusionStartPipelineOperator(
+    task_id="load_color",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_color',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('COLOR', size='XS'),
+    dag=dag
+  )  
+  
+  load_complemento = CloudDataFusionStartPipelineOperator(
+    task_id="load_complemento",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_complemento',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('COMPLEMENTO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_datosvehiculo = CloudDataFusionStartPipelineOperator(
+    task_id="load_datosvehiculo",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_datosvehiculo',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('DATOSVEHICULO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_enviohistorico = CloudDataFusionStartPipelineOperator(
+    task_id="load_enviohistorico",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_enviohistorico',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ENVIOHISTORICO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+
+  load_estado = CloudDataFusionStartPipelineOperator(
+    task_id="load_estado",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_estado',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ESTADO', size='XS'),
+    dag=dag
+  )  
+  
+  load_estatus = CloudDataFusionStartPipelineOperator(
+    task_id="load_estatus",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_estatus',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ESTATUS', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_estatusexpedientes = CloudDataFusionStartPipelineOperator(
+    task_id="load_estatusexpedientes",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_estatusexpedientes',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ESTATUSEXPEDIENTES', size='XS'),
+    dag=dag
+  )  
+  
+  load_fechas = CloudDataFusionStartPipelineOperator(
+    task_id="load_fechas",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_fechas',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('FECHAS', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_historicoterminoentrega = CloudDataFusionStartPipelineOperator(
+    task_id="load_historicoterminoentrega",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_historicoterminoentrega',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('HISTORICOTERMINOENTREGA', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+
+  load_marca = CloudDataFusionStartPipelineOperator(
+    task_id="load_marca",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_marca',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('MARCA', size='XS'),
+    dag=dag
+  )  
+  
+  load_proveedor = CloudDataFusionStartPipelineOperator(
+    task_id="load_proveedor",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_proveedor',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('PROVEEDOR', size='S'),
+    dag=dag
+  )  
+  
+  load_refaccion = CloudDataFusionStartPipelineOperator(
+    task_id="load_refaccion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_refaccion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('REFACCION', size='XS'),
+    dag=dag
+  )  
+  
+  load_supervisorintegral = CloudDataFusionStartPipelineOperator(
+    task_id="load_supervisorintegral",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_supervisorintegral',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('SUPERVISORINTEGRAL', size='XS'),
+    dag=dag
+  )  
+  
+  load_talleres = CloudDataFusionStartPipelineOperator(
+    task_id="load_talleres",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_talleres',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('TALLERES', size='XS'),
+    dag=dag
+  )  
+
+  load_vale = CloudDataFusionStartPipelineOperator(
+    task_id="load_vale",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_vale',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALE', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_valehistorico = CloudDataFusionStartPipelineOperator(
+    task_id="load_valehistorico",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_valehistorico',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALEHISTORICO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_valuacion = CloudDataFusionStartPipelineOperator(
+    task_id="load_valuacion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_valuacion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALUACION', size='XS'),
+    dag=dag
+  )  
   
 @task_group(group_id='end_landing',dag=dag)
 def end_landing():
@@ -2254,4 +2593,4 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_datos_generales()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
