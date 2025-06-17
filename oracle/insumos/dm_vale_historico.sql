@@ -1,0 +1,37 @@
+BEGIN
+   EXECUTE IMMEDIATE 'DROP TABLE INSUMOS.DM_VALE_HISTORICO CASCADE CONSTRAINTS';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -942 THEN
+         RAISE;
+      END IF;
+END;
+
+CREATE TABLE INSUMOS.DM_VALE_HISTORICO
+(
+    IDVALEHISTORICO             VARCHAR2(4000) PRIMARY KEY,
+    CONCEPTO                    VARCHAR2(4000),
+    NUMPARTE                    VARCHAR2(4000),
+    REFERENCIA                  VARCHAR2(4000),
+    DESCRIPCION                 VARCHAR2(4000),
+    MONTO                       NUMBER,
+    LISTA                       VARCHAR2(4000),
+    TIPO                        VARCHAR2(4000),
+    IDCOSTO                     VARCHAR2(4000),
+    IDVALE                      VARCHAR2(4000),
+    FECSURTIDO                  DATE,
+    IDREFACCION                 VARCHAR2(4000),
+    IDCAUSACAMBIOVALE           VARCHAR2(4000),
+    USUARIO                     VARCHAR2(4000),
+    FECENVIO                    DATE,
+    FECENTREGAREFACCIONARIA     DATE,
+    FECRECEPCION                DATE,
+    NUMEROGUIA                  VARCHAR2(4000),
+    MENSAJERIA                  VARCHAR2(4000),
+    FECHARECOLECCION            DATE,
+    GUIARECOLECCION             VARCHAR2(4000),
+    MENSAJERIARECOLECCION       VARCHAR2(4000),
+    CANTIDADREFACCIONES         NUMBER,
+    NUMPARTEVALUADOR            VARCHAR2(4000),
+    IDCAUSACANCELARPIEZA        VARCHAR2(4000)
+);

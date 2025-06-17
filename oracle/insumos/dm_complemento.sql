@@ -1,0 +1,59 @@
+BEGIN
+   EXECUTE IMMEDIATE 'DROP TABLE INSUMOS.DM_COMPLEMENTO CASCADE CONSTRAINTS';
+EXCEPTION
+   WHEN OTHERS THEN
+      IF SQLCODE != -942 THEN
+         RAISE;
+      END IF;
+END;
+
+CREATE TABLE INSUMOS.DM_COMPLEMENTO
+(
+    IDCOMPLEMENTO               VARCHAR2(4000) PRIMARY KEY,
+    IDEXPEDIENTE                NUMBER,
+    CODPROVEEDOR                VARCHAR2(4000),
+    IDREFACCION                 VARCHAR2(4000),
+    CONCEPTO                    VARCHAR2(4000),
+    FECHA                       DATE,
+    MONTO                       NUMBER,
+    DESCRIPCION                 VARCHAR2(4000),
+    REFERENCIA                  VARCHAR2(4000),
+    LISTA                       VARCHAR2(4000),
+    NUMPARTE                    VARCHAR2(4000),
+    FECHAACTUALIZACION          DATE,
+    DEMERITO                    NUMBER,
+    OBSERVACIONES               VARCHAR2(4000),
+    FECRECEPCION                DATE,
+    COTIZADO                    VARCHAR2(4000),
+    FECSURTIDO                  DATE,
+    ORIGENANTERIOR              VARCHAR2(4000),
+    IDTIPOTOT                   VARCHAR2(4000),
+    ADMINREF                    VARCHAR2(4000),
+    PIEZAPAQUETE                NUMBER,
+    MONTOCONVENIO               NUMBER,
+    PORCENTAJEADQUISICION       NUMBER,
+    IDTRUCKEST                  NUMBER,
+    FECHAENVIO                  DATE,
+    NUMEROGUIA                  VARCHAR2(4000),
+    MENSAJERIA                  VARCHAR2(4000),
+    BLOQUEOREFACCION            NUMBER,
+    FECASIGNACIONMANUAL         DATE,
+    FECASIGNACIONDIRECTA        DATE,
+    IDDEDUCIBLECOBERTURA        NUMBER,
+    IDDEMERITOTIPO              VARCHAR2(4000),
+    ORIGENSOLICITADO            VARCHAR2(4000),
+    PENDIENTEAUTORIZAR          NUMBER,
+    CLAVENAGS                   VARCHAR2(4000),
+    BLINDAJE                    NUMBER NOT NULL,
+    IDCAUSACAMBIOVALE           VARCHAR2(4000),
+    ORIGENINICIAL               VARCHAR2(4000),
+    ORIGENVALUADOR              VARCHAR2(4000),
+    FECHACHATARRA               DATE,
+    CANTIDAD                    VARCHAR2(4000),
+    MOTIVONORECCHATARRA         VARCHAR2(4000),
+    NUMPARTEVALUADOR            VARCHAR2(4000),
+    ID_REF_COSTO_MEDIO          VARCHAR2(4000),
+    IDDISPONIBILIDAD            VARCHAR2(4000),
+    IDCAUSACANCELARPIEZA        VARCHAR2(4000),
+    FECHACANCELACION            DATE
+);
