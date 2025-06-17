@@ -2264,7 +2264,7 @@ def bq_elt():
     task_id="dm_datos_vehiculo",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/DATOSVEHICULO/DM_DATOS_VEHICULO.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/DATOS_VEHICULO/DM_DATOS_VEHICULO.sql'),
         "useLegacySql": False,
       }
     },
@@ -2369,7 +2369,7 @@ def bq_elt():
     task_id="dm_fechas",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/FECHAS/APERCAB/DM_FECHAS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/FECHAS/DM_FECHAS.sql'),
         "useLegacySql": False,
       }
     },
@@ -2450,8 +2450,8 @@ def bq_elt():
   )
   
   
-  stg_refacion_1= BigQueryInsertJobOperator(
-    task_id="stg_refacion_1",
+  stg_refaccion_1= BigQueryInsertJobOperator(
+    task_id="stg_refaccion_1",
     configuration={
       "query": {
         "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REFACCION/STG_REFACCION_1.sql'),
@@ -2471,8 +2471,8 @@ def bq_elt():
     dag=dag 
   )
   
-  stg_refacion_2= BigQueryInsertJobOperator(
-    task_id="stg_refacion_2",
+  stg_refaccion_2= BigQueryInsertJobOperator(
+    task_id="stg_refaccion_2",
     configuration={
       "query": {
         "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REFACCION/STG_REFACCION_2.sql'),
@@ -2661,8 +2661,6 @@ def bq_elt():
     dag=dag 
   )
   
-
-
   rtl_pagos_proveedores  >> dm_pagos_proveedores
   rtl_coberturas_movimientos >> dm_coberturas_movimientos
   stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> rtl_etiqueta_siniestro >> dm_etiqueta_siniestro
@@ -2676,7 +2674,7 @@ def bq_elt():
   stg_proveedores_1 >> stg_proveedores_2 >> dm_proveedores
   stg_apercab_1 >> stg_apercab_2 >> rtl_apercab >> dm_apercab
   
-  stg_refacion_1 >> stg_refacion_2 >> dm_refacion
+  stg_refaccion_1 >> stg_refaccion_2 >> dm_refacion
   stg_talleres_1 >> stg_talleres_2 >> dm_talleres
 
 
