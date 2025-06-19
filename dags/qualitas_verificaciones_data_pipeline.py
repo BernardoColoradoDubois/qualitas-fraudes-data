@@ -3070,6 +3070,355 @@ def injection():
     dag=dag
   )
   
+  #INJECTS VALUACIONES
+  
+  inject_dm_analista_cdr = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_analista_cdr",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_analista_cdr',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ANALISTA_CDR", "STG_ANALISTA_CDR", "DM_ANALISTA_CDR", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_causa_cambio_vale = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_causa_cambio_vale",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_causa_cambio_vale',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_CAUSA_CAMBIO_VALE", "STG_CAUSA_CAMBIO_VALE", "DM_CAUSA_CAMBIO_VALE", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_cerco = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_cerco",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_cerco',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_CERCO", "STG_CERCO", "DM_CERCO", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_color = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_color",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_color',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_COLOR", "STG_COLOR", "DM_COLOR", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_complemento = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_complemento",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_complemento',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_COMPLEMENTO", "STG_COMPLEMENTO", "DM_COMPLEMENTO", "L"),
+    dag=dag
+  )
+  
+  inject_dm_datos_vehiculo = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_datos_vehiculo",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_datos_vehiculo',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_DATOS_VEHICULO", "STG_DATOS_VEHICULO", "DM_DATOS_VEHICULO", "L"),
+    dag=dag
+  )
+  
+  inject_dm_envio_historico = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_envio_historico",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_envio_historico',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ENVIO_HISTORICO", "STG_ENVIO_HISTORICO", "DM_ENVIO_HISTORICO", "L"),
+    dag=dag
+  )
+  
+  
+  inject_dm_estado = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_estado",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_estado',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ESTADO", "STG_ESTADO", "DM_ESTADO", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_estatus = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_estatus",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_estatus',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ESTATUS", "STG_ESTATUS", "DM_ESTATUS", "L"),
+    dag=dag
+  )
+  
+  inject_dm_estatus_expendientes = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_estatus_expendientes",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_estatus_expendientes',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ESTATUS_EXPEDIENTES", "STG_ESTATUS_EXPEDIENTES", "DM_ESTATUS_EXPEDIENTES", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_fechas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_fechas",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_fechas',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_FECHAS", "STG_FECHAS", "DM_FECHAS", "L"),
+    dag=dag
+  )
+  
+  inject_dm_historico_termino_entrega = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_historico_termino_entrega",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_historico_termino_entrega',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_HISTORICO_TERMINO_ENTREGA", "STG_HISTORICO_TERMINO_ENTREGA", "DM_HISTORICO_TERMINO_ENTREGA", "L"),
+    dag=dag
+  )
+  
+  inject_dm_marca = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_marca",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_marca',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_MARCA", "STG_MARCA", "DM_MARCA", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_proveedor = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_proveedor",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_proveedor',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_PROVEEDOR", "STG_PROVEEDOR", "DM_PROVEEDOR", "S"),
+    dag=dag
+  )
+  
+  inject_dm_refaccion = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_refaccion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_refaccion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_REFACCION", "STG_REFACCION", "DM_REFACCION", "S"),
+    dag=dag
+  )
+  
+  inject_dm_supervisor_integral = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_supervisor_integral",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_supervisor_integral',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_SUPERVISOR_INTEGRAL", "STG_SUPERVISOR_INTEGRAL", "DM_SUPERVISOR_INTEGRAL", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_talleres = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_talleres",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_talleres',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_TALLERES", "STG_TALLERES", "DM_TALLERES", "S"),
+    dag=dag
+  )
+  
+  
+  inject_dm_vale = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_vale",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_vale',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_VALE", "STG_VALE", "DM_VALE", "L"),
+    dag=dag
+  )
+  
+  inject_dm_vale_historico = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_vale_historico",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_vale_historico',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_VALE_HISTORICO", "STG_VALE_HISTORICO", "DM_VALE_HISTORICO", "L"),
+    dag=dag
+  )
+  
+  inject_dm_valuacion = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_valuacion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_valuacion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_VALUACION", "STG_VALUACION", "DM_VALUACION", "XS"),
+    dag=dag
+  )
+  
+  
+  
+  
+  
+  
   # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
   [ 
    inject_dm_estados
@@ -3091,6 +3440,26 @@ def injection():
    ,inject_dm_agentes
    ,inject_dm_gerentes
    ,inject_dm_apercab
+   ,inject_dm_analista_cdr
+   ,inject_dm_causa_cambio_vale
+   ,inject_dm_cerco
+   ,inject_dm_color
+   ,inject_dm_complemento
+   ,inject_dm_datos_vehiculo
+   ,inject_dm_envio_historico
+   ,inject_dm_estado
+   ,inject_dm_estatus
+   ,inject_dm_estatus_expendientes
+   ,inject_dm_fechas
+   ,inject_dm_historico_termino_entrega
+   ,inject_dm_marca
+   ,inject_dm_proveedor
+   ,inject_dm_refaccion
+   ,inject_dm_supervisor_integral
+   ,inject_dm_talleres
+   ,inject_dm_vale
+   ,inject_dm_vale_historico
+   ,inject_dm_valuacion
   ] >> inject_dm_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
