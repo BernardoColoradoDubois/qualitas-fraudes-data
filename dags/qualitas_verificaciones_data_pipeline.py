@@ -98,6 +98,21 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
       'init_date': init_date,
       'final_date': final_date
     })
+
+  if size == 'L':
+    inject_runtime_args.update({
+      "spark:spark.yarn.am.cores": "2",
+      'spark.dynamicAllocation.enabled': 'true',
+      'spark.shuffle.service.enabled': 'true',
+      'spark.dynamicAllocation.minExecutors': '4',
+      'spark.dynamicAllocation.maxExecutors': '50',
+      'spark.dynamicAllocation.initialExecutors': '2',
+      'spark.dynamicAllocation.executorIdleTimeout': '60s',
+      'spark.dynamicAllocation.schedulerBacklogTimeout': '1s',
+      'spark:spark.yarn.am.memory': '2g'
+
+    })
+
   
 
 
