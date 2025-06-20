@@ -608,7 +608,9 @@ def landing_sise():
     dag=dag
   )
   
-  
+
+
+
   
 @task_group(group_id='landing_dua',dag=dag)
 def landing_dua():
@@ -630,9 +632,9 @@ def landing_dua():
     dag=dag
   )
   
-  
-@task_group(group_id='landing_datos_generales',dag=dag)
-def landing_datos_generales():
+
+@task_group(group_id='landing_valuaciones',dag=dag)
+def landing_valuaciones():
   
   load_datosgenerales = CloudDataFusionStartPipelineOperator(
     task_id="load_datosgenerales",
@@ -650,6 +652,347 @@ def landing_datos_generales():
     runtime_args=get_datafusion_load_runtime_args('DATOSGENERALES', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )  
+
+  load_analistacdr = CloudDataFusionStartPipelineOperator(
+    task_id="load_analistacdr",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_analistacdr',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ANALISTACDR', size='XS'),
+    dag=dag
+  )  
+  
+  load_causacambiovale = CloudDataFusionStartPipelineOperator(
+    task_id="load_causacambiovale",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_causacambiovale',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('CAUSACAMBIOVALE', size='XS'),
+    dag=dag
+  )  
+  
+  load_cerco = CloudDataFusionStartPipelineOperator(
+    task_id="load_cerco",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_cerco',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('CERCO', size='XS'),
+    dag=dag
+  )  
+  
+  load_color = CloudDataFusionStartPipelineOperator(
+    task_id="load_color",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_color',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('COLOR', size='XS'),
+    dag=dag
+  )  
+  
+  load_complemento = CloudDataFusionStartPipelineOperator(
+    task_id="load_complemento",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_complemento',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('COMPLEMENTO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_datosvehiculo = CloudDataFusionStartPipelineOperator(
+    task_id="load_datosvehiculo",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_datosvehiculo',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('DATOSVEHICULO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_enviohistorico = CloudDataFusionStartPipelineOperator(
+    task_id="load_enviohistorico",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_enviohistorico',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ENVIOHISTORICO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+
+  load_estado = CloudDataFusionStartPipelineOperator(
+    task_id="load_estado",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_estado',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ESTADO', size='XS'),
+    dag=dag
+  )  
+  
+  load_estatus = CloudDataFusionStartPipelineOperator(
+    task_id="load_estatus",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_estatus',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ESTATUS', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_estatusexpedientes = CloudDataFusionStartPipelineOperator(
+    task_id="load_estatusexpedientes",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_estatusexpedientes',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ESTATUSEXPEDIENTES', size='XS'),
+    dag=dag
+  )  
+  
+  load_fechas = CloudDataFusionStartPipelineOperator(
+    task_id="load_fechas",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_fechas',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('FECHAS', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_historicoterminoentrega = CloudDataFusionStartPipelineOperator(
+    task_id="load_historicoterminoentrega",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_historicoterminoentrega',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('HISTORICOTERMINOENTREGA', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+
+  load_marca = CloudDataFusionStartPipelineOperator(
+    task_id="load_marca",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_marca',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('MARCA', size='XS'),
+    dag=dag
+  )  
+  
+  load_proveedor = CloudDataFusionStartPipelineOperator(
+    task_id="load_proveedor",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_proveedor',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('PROVEEDOR', size='S'),
+    dag=dag
+  )  
+  
+  load_refaccion = CloudDataFusionStartPipelineOperator(
+    task_id="load_refaccion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_refaccion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('REFACCION', size='XS'),
+    dag=dag
+  )  
+  
+  load_supervisorintegral = CloudDataFusionStartPipelineOperator(
+    task_id="load_supervisorintegral",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_supervisorintegral',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('SUPERVISORINTEGRAL', size='XS'),
+    dag=dag
+  )  
+  
+  load_talleres = CloudDataFusionStartPipelineOperator(
+    task_id="load_talleres",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_talleres',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('TALLERES', size='XS'),
+    dag=dag
+  )  
+
+  load_vale = CloudDataFusionStartPipelineOperator(
+    task_id="load_vale",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_vale',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALE', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_valehistorico = CloudDataFusionStartPipelineOperator(
+    task_id="load_valehistorico",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_valehistorico',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALEHISTORICO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_valuacion = CloudDataFusionStartPipelineOperator(
+    task_id="load_valuacion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_valuacion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALUACION', size='XS'),
+    dag=dag
+  )  
+    
 
   
 @task_group(group_id='end_landing',dag=dag)
@@ -1819,6 +2162,514 @@ def bq_elt():
 
 
 
+  dm_analista_cdr = BigQueryInsertJobOperator(
+    task_id="dm_analista_cdr",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ANALISTA_CDR/DM_ANALISTA_CDR.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'ANALISTACDR',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_ANALISTA_CDR'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+
+
+  dm_causa_cambio_vale = BigQueryInsertJobOperator(
+    task_id="dm_causa_cambio_vale",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CAUSA_CAMBIO_VALE/DM_CAUSA_CAMBIO_VALE.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CAUSACAMBIOVALE',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_CAUSA_CAMBIO_VALE'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+
+  dm_cerco= BigQueryInsertJobOperator(
+    task_id="dm_cerco",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CERCO/DM_CERCO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CERCO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_CERCO'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_color= BigQueryInsertJobOperator(
+    task_id="dm_color",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/COLOR/DM_COLOR.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'COLOR',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_COLOR'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_complemento= BigQueryInsertJobOperator(
+    task_id="dm_complemento",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/COMPLEMENTO/DM_COMPLEMENTO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'COMPLEMENTO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_COMPLEMENTO'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_datos_vehiculo= BigQueryInsertJobOperator(
+    task_id="dm_datos_vehiculo",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/DATOS_VEHICULO/DM_DATOS_VEHICULO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'DATOSVEHICULO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_DATOS_VEHICULO'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_envio_historico= BigQueryInsertJobOperator(
+    task_id="dm_envio_historico",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ENVIO_HISTORICO/DM_ENVIO_HISTORICO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'ENVIOHISTORICO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_ENVIO_HISTORICO'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_estado= BigQueryInsertJobOperator(
+    task_id="dm_estado",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ESTADO/DM_ESTADO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'ESTADO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_ESTADO'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_estatus= BigQueryInsertJobOperator(
+    task_id="dm_estatus",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ESTATUS/DM_ESTATUS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'ESTATUS',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_ESTATUS'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_estatus_expedientes= BigQueryInsertJobOperator(
+    task_id="dm_estatus_expedientes",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/ESTATUS_EXPEDIENTES/DM_ESTATUS_EXPEDIENTES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'ESTATUSEXPEDIENTES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_ESTATUS_EXPEDIENTES'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_fechas= BigQueryInsertJobOperator(
+    task_id="dm_fechas",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/FECHAS/DM_FECHAS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'FECHAS',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_FECHAS'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_historico_termino_entrega= BigQueryInsertJobOperator(
+    task_id="dm_historico_termino_entrega",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/HISTORICO_TERMINO_ENTREGA/DM_HISTORICO_TERMINO_ENTREGA.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'HISTORICOTERMINOENTREGA',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_HISTORICO_TERMINO_ENTREGA'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_marca= BigQueryInsertJobOperator(
+    task_id="dm_marca",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/MARCA/DM_MARCA.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'MARCA',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_MARCA'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_proveedor= BigQueryInsertJobOperator(
+    task_id="dm_proveedor",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PROVEEDOR/DM_PROVEEDOR.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'PROVEEDOR',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_PROVEEDOR'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  
+  stg_refaccion_1= BigQueryInsertJobOperator(
+    task_id="stg_refaccion_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REFACCION/STG_REFACCION_1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'REFACCION',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'DEST_TABLE_NAME': 'STG_REFACCION_1'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  stg_refaccion_2= BigQueryInsertJobOperator(
+    task_id="stg_refaccion_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REFACCION/STG_REFACCION_2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'STG_REFACCION_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'DEST_TABLE_NAME': 'STG_REFACCION_2'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+
+  dm_refacion= BigQueryInsertJobOperator(
+    task_id="dm_refacion",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REFACCION/DM_REFACCION.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'STG_REFACCION_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_REFACCION'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_supervisor_integral= BigQueryInsertJobOperator(
+    task_id="dm_supervisor_integral",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SUPERVISOR_INTEGRAL/DM_SUPERVISOR_INTEGRAL.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'SUPERVISORINTEGRAL',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_SUPERVISOR_INTEGRAL'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  stg_talleres_1= BigQueryInsertJobOperator(
+    task_id="stg_talleres_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TALLERES/STG_TALLERES_1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TALLERES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'DEST_TABLE_NAME': 'STG_TALLERES_1'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  stg_talleres_2= BigQueryInsertJobOperator(
+    task_id="stg_talleres_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TALLERES/STG_TALLERES_2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'STG_TALLERES_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'DEST_TABLE_NAME': 'STG_TALLERES_2'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_talleres= BigQueryInsertJobOperator(
+    task_id="dm_talleres",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TALLERES/DM_TALLERES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'STG_TALLERES_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_TALLERES'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_vale= BigQueryInsertJobOperator(
+    task_id="dm_vale",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/VALE/DM_VALE.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'VALE',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_VALE'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_vale_historico= BigQueryInsertJobOperator(
+    task_id="dm_vale_historico",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/VALE_HISTORICO/DM_VALE_HISTORICO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'VALEHISTORICO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_VALE_HISTORICO'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  
+  dm_valuacion= BigQueryInsertJobOperator(
+    task_id="dm_valuacion",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/VALUACION/DM_VALUACION.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'VALUACION',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_VALUACION'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+
+
   rtl_pagos_proveedores  >> dm_pagos_proveedores
   rtl_coberturas_movimientos >> dm_coberturas_movimientos
   stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> rtl_etiqueta_siniestro >> dm_etiqueta_siniestro
@@ -1831,6 +2682,9 @@ def bq_elt():
   stg_valuaciones_1 >> stg_valuaciones_2 >> rtl_valuaciones >> dm_valuaciones
   stg_proveedores_1 >> stg_proveedores_2 >> dm_proveedores
   stg_apercab_1 >> stg_apercab_2 >> rtl_apercab >> dm_apercab
+
+  stg_refaccion_1 >> stg_refaccion_2 >> dm_refacion
+  stg_talleres_1 >> stg_talleres_2 >> dm_talleres
 
 
 
@@ -2225,6 +3079,353 @@ def injection():
     dag=dag
   )
   
+
+ 
+  #INJECTS VALUACIONES
+  
+  inject_dm_analista_cdr = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_analista_cdr",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_analista_cdr_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ANALISTA_CDR", "STG_ANALISTA_CDR", "DM_ANALISTA_CDR", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_causa_cambio_vale = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_causa_cambio_vale",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_causa_cambio_vale_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_CAUSA_CAMBIO_VALE", "STG_CAUSA_CAMBIO_VALE", "DM_CAUSA_CAMBIO_VALE", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_cerco = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_cerco",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_cerco_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_CERCO", "STG_CERCO", "DM_CERCO", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_color = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_color",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_color_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_COLOR", "STG_COLOR", "DM_COLOR", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_complemento = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_complemento",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_complemento_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_COMPLEMENTO", "STG_COMPLEMENTO", "DM_COMPLEMENTO", "L"),
+    dag=dag
+  )
+  
+  inject_dm_datos_vehiculo = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_datos_vehiculo",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_datos_vehiculo_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_DATOS_VEHICULO", "STG_DATOS_VEHICULO", "DM_DATOS_VEHICULO", "L"),
+    dag=dag
+  )
+  
+  inject_dm_envio_historico = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_envio_historico",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_envio_historico_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ENVIO_HISTORICO", "STG_ENVIO_HISTORICO", "DM_ENVIO_HISTORICO", "L"),
+    dag=dag
+  )
+  
+  
+  inject_dm_estado = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_estado",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_estado_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ESTADO", "STG_ESTADO", "DM_ESTADO", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_estatus = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_estatus",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_estatus_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ESTATUS", "STG_ESTATUS", "DM_ESTATUS", "L"),
+    dag=dag
+  )
+  
+  inject_dm_estatus_expendientes = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_estatus_expendientes",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_estatus_expendientes_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_ESTATUS_EXPEDIENTES", "STG_ESTATUS_EXPEDIENTES", "DM_ESTATUS_EXPEDIENTES", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_fechas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_fechas",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_fechas_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_FECHAS", "STG_FECHAS", "DM_FECHAS", "L"),
+    dag=dag
+  )
+  
+  inject_dm_historico_termino_entrega = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_historico_termino_entrega",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_historico_termino_entrega_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_HISTORICO_TERMINO_ENTREGA", "STG_HISTORICO_TERMINO_ENTREGA", "DM_HISTORICO_TERMINO_ENTREGA", "L"),
+    dag=dag
+  )
+  
+  inject_dm_marca = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_marca",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_marca_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_MARCA", "STG_MARCA", "DM_MARCA", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_proveedor = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_proveedor",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_proveedor_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_PROVEEDOR", "STG_PROVEEDOR", "DM_PROVEEDOR", "S"),
+    dag=dag
+  )
+  
+  inject_dm_refaccion = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_refaccion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_refaccion_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_REFACCION", "STG_REFACCION", "DM_REFACCION", "S"),
+    dag=dag
+  )
+  
+  inject_dm_supervisor_integral = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_supervisor_integral",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_supervisor_integral_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_SUPERVISOR_INTEGRAL", "STG_SUPERVISOR_INTEGRAL", "DM_SUPERVISOR_INTEGRAL", "XS"),
+    dag=dag
+  )
+  
+  inject_dm_talleres = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_talleres",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_talleres_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_TALLERES", "STG_TALLERES", "DM_TALLERES", "S"),
+    dag=dag
+  )
+  
+  
+  inject_dm_vale = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_vale",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_vale_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_VALE", "STG_VALE", "DM_VALE", "L"),
+    dag=dag
+  )
+  
+  inject_dm_vale_historico = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_vale_historico",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_vale_historico_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_VALE_HISTORICO", "STG_VALE_HISTORICO", "DM_VALE_HISTORICO", "L"),
+    dag=dag
+  )
+  
+  inject_dm_valuacion = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_valuacion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_valuacion_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_VALUACION", "STG_VALUACION", "DM_VALUACION", "XS"),
+    dag=dag
+  )
+
+  
   # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
   [ 
    inject_dm_estados
@@ -2246,6 +3447,26 @@ def injection():
    ,inject_dm_agentes
    ,inject_dm_gerentes
    ,inject_dm_apercab
+   ,inject_dm_analista_cdr
+   ,inject_dm_causa_cambio_vale
+   ,inject_dm_cerco
+   ,inject_dm_color
+   ,inject_dm_complemento
+   ,inject_dm_datos_vehiculo
+   ,inject_dm_envio_historico
+   ,inject_dm_estado
+   ,inject_dm_estatus
+   ,inject_dm_estatus_expendientes
+   ,inject_dm_fechas
+   ,inject_dm_historico_termino_entrega
+   ,inject_dm_marca
+   ,inject_dm_proveedor
+   ,inject_dm_refaccion
+   ,inject_dm_supervisor_integral
+   ,inject_dm_talleres
+   ,inject_dm_vale
+   ,inject_dm_vale_historico
+   ,inject_dm_valuacion
   ] >> inject_dm_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
@@ -2258,4 +3479,4 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_datos_generales()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
