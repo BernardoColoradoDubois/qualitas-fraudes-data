@@ -56,7 +56,6 @@ init_date = interval['init_date']
 final_date = interval['final_date']
 
 
-
 def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, insumos_table_name:str, size:str,init_date=None, final_date=None):
 
   if size == 'XS':
@@ -98,16 +97,24 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
       'init_date': init_date,
       'final_date': final_date
     })
-  
 
+  if size == 'L':
+    inject_runtime_args.update({
+      "spark:spark.yarn.am.cores": "2",
+      'spark.dynamicAllocation.enabled': 'true',
+      'spark.shuffle.service.enabled': 'true',
+      'spark.dynamicAllocation.minExecutors': '4',
+      'spark.dynamicAllocation.maxExecutors': '50',
+      'spark.dynamicAllocation.initialExecutors': '2',
+      'spark.dynamicAllocation.executorIdleTimeout': '60s',
+      'spark.dynamicAllocation.schedulerBacklogTimeout': '1s',
+      'spark:spark.yarn.am.memory': '2g'
 
-
+    })
+    
   return inject_runtime_args
 
-#FEC_CARGA BETWEEN TO_DATE('${init_date}','YYYY-MM-DD') AND TO_DATE('${final_date}','YYYY-MM-DD')
-#dataproc.cluster.name: verificaciones-dataproc
-#system.profile.name: USER:verificaciones-dataproc
-#TEMPORARY_BUCKET_NAME gcs-qlts-dev-mx-au-bro-verificaciones
+
 
 
 def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, final_date=None):
