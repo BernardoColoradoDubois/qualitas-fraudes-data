@@ -1,4 +1,3 @@
-o hay forma de entregar todo de insumos mañana temprano?
 BEGIN
    EXECUTE IMMEDIATE 'DROP TABLE SASPRVFRAP.STG_AGENTES CASCADE CONSTRAINTS';
 EXCEPTION
