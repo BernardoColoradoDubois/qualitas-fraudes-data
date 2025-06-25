@@ -74,6 +74,7 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
 
 
   inject_runtime_args={
+    'spark:spark.app.name': inject_table_name,
     'app.pipeline.overwriteConfig': 'true',
     'task.executor.system.resources.cores': executor_cores,
     'task.executor.system.resources.memory': executor_memory,
@@ -3089,7 +3090,8 @@ def injection():
 
  
   #INJECTS VALUACIONES
-  
+
+  '''  
   inject_dm_analista_cdr = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_analista_cdr",
     location=DATA_PROJECT_REGION,
@@ -3174,7 +3176,8 @@ def injection():
     runtime_args=get_datafusion_inject_runtime_args("DM_COMPLEMENTO", "STG_COMPLEMENTO", "DM_COMPLEMENTO", "L"),
     dag=dag
   )
-  
+  '''
+
   inject_dm_datos_vehiculo = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_datos_vehiculo",
     location=DATA_PROJECT_REGION,
@@ -3192,6 +3195,7 @@ def injection():
     dag=dag
   )
   
+  '''
   inject_dm_envio_historico = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_envio_historico",
     location=DATA_PROJECT_REGION,
@@ -3431,7 +3435,7 @@ def injection():
     runtime_args=get_datafusion_inject_runtime_args("DM_VALUACION", "STG_VALUACION", "DM_VALUACION", "XS"),
     dag=dag
   )
-
+  '''
   
   # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
   [ 
@@ -3454,26 +3458,26 @@ def injection():
    ,inject_dm_agentes
    ,inject_dm_gerentes
    ,inject_dm_apercab
-   ,inject_dm_analista_cdr
-   ,inject_dm_causa_cambio_vale
-   ,inject_dm_cerco
-   ,inject_dm_color
-   ,inject_dm_complemento
+#   ,inject_dm_analista_cdr
+#   ,inject_dm_causa_cambio_vale
+#   ,inject_dm_cerco
+#   ,inject_dm_color
+#   ,inject_dm_complemento
    ,inject_dm_datos_vehiculo
-   ,inject_dm_envio_historico
-   ,inject_dm_estado
-   ,inject_dm_estatus
-   ,inject_dm_estatus_expendientes
-   ,inject_dm_fechas
-   ,inject_dm_historico_termino_entrega
-   ,inject_dm_marca
-   ,inject_dm_proveedor
-   ,inject_dm_refaccion
-   ,inject_dm_supervisor_integral
-   ,inject_dm_talleres
-   ,inject_dm_vale
-   ,inject_dm_vale_historico
-   ,inject_dm_valuacion
+#   ,inject_dm_envio_historico
+#   ,inject_dm_estado
+#   ,inject_dm_estatus
+#   ,inject_dm_estatus_expendientes
+#   ,inject_dm_fechas
+#   ,inject_dm_historico_termino_entrega
+#   ,inject_dm_marca
+#   ,inject_dm_proveedor
+#   ,inject_dm_refaccion
+#   ,inject_dm_supervisor_integral
+#   ,inject_dm_talleres
+#   ,inject_dm_vale
+#   ,inject_dm_vale_historico
+#   ,inject_dm_valuacion
   ] >> inject_dm_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
