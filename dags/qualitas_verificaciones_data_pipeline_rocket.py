@@ -56,7 +56,6 @@ init_date = interval['init_date']
 final_date = interval['final_date']
 
 
-
 def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, insumos_table_name:str, size:str,init_date=None, final_date=None):
 
   if size == 'XS':
@@ -98,12 +97,22 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
       'init_date': init_date,
       'final_date': final_date
     })
-  
 
+  if size == 'L':
+    inject_runtime_args.update({
+      "spark:spark.yarn.am.cores": "2",
+      'spark.dynamicAllocation.enabled': 'true',
+      'spark.shuffle.service.enabled': 'true',
+      'spark.dynamicAllocation.minExecutors': '4',
+      'spark.dynamicAllocation.maxExecutors': '50',
+      'spark.dynamicAllocation.initialExecutors': '2',
+      'spark.dynamicAllocation.executorIdleTimeout': '60s',
+      'spark.dynamicAllocation.schedulerBacklogTimeout': '1s',
+      'spark:spark.yarn.am.memory': '2g'
 
+    })
 
   return inject_runtime_args
-
 
 
 def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, final_date=None):
@@ -175,19 +184,17 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'spark.dynamicAllocation.schedulerBacklogTimeout': '1s',
 }
 
-        
-    
   if init_date is not None and final_date is not None:
     base_args.update({
       'init_date': init_date,
       'final_date': final_date
     })
     
-
   return base_args
   
+
 default_args = {
-  'start_date': airflow.utils.dates.days_ago(0),
+  'start_date': airflow.utils.dates.days_ago(1),
   'retries': 4,
   'retry_delay': timedelta(minutes=5)
 }
@@ -196,7 +203,7 @@ dag = DAG(
   'qualitas_verificaciones_data_pipeline_rocket',
   default_args=default_args,
   description='liveness monitoring dag',
-  schedule_interval='0 0 1 1 *',
+  schedule_interval='0 7 * * *',
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
