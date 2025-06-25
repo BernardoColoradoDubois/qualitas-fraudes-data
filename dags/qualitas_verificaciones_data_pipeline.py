@@ -90,7 +90,8 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
     'INJECT_SCHEMA_NAME':APP_ORACLE_INJECT_SCHEMA_NAME,
     'INJECT_TABLE_NAME':inject_table_name,
     'INSUMOS_SCHEMA_NAME':APP_ORACLE_INSUMOS_SCHEMA_NAME,
-    'INSUMOS_TABLE_NAME':insumos_table_name
+    'INSUMOS_TABLE_NAME':insumos_table_name,
+    'spark:spark.app.name': APP_ORACLE_INJECT_SCHEMA_NAME,
   }
 
   if init_date is not None and final_date is not None:
@@ -3086,7 +3087,9 @@ def injection():
   )
   
   #INJECTS VALUACIONES
-  
+
+
+  """  
   inject_dm_analista_cdr = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_analista_cdr",
     location=DATA_PROJECT_REGION,
@@ -3172,6 +3175,8 @@ def injection():
     dag=dag
   )
   
+  """
+  
   inject_dm_datos_vehiculo = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_datos_vehiculo",
     location=DATA_PROJECT_REGION,
@@ -3188,6 +3193,8 @@ def injection():
     runtime_args=get_datafusion_inject_runtime_args("DM_DATOS_VEHICULO", "STG_DATOS_VEHICULO", "DM_DATOS_VEHICULO", "L"),
     dag=dag
   )
+ 
+  """ 
   
   inject_dm_envio_historico = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_envio_historico",
@@ -3429,7 +3436,7 @@ def injection():
     dag=dag
   )
   
-  
+  """
   
   
   
@@ -3455,26 +3462,26 @@ def injection():
    ,inject_dm_agentes
    ,inject_dm_gerentes
    ,inject_dm_apercab
-   ,inject_dm_analista_cdr
-   ,inject_dm_causa_cambio_vale
-   ,inject_dm_cerco
-   ,inject_dm_color
-   ,inject_dm_complemento
+   #,inject_dm_analista_cdr
+   #,inject_dm_causa_cambio_vale
+   #,inject_dm_cerco
+   #,inject_dm_color
+   #,inject_dm_complemento
    ,inject_dm_datos_vehiculo
-   ,inject_dm_envio_historico
-   ,inject_dm_estado
-   ,inject_dm_estatus
-   ,inject_dm_estatus_expendientes
-   ,inject_dm_fechas
-   ,inject_dm_historico_termino_entrega
-   ,inject_dm_marca
-   ,inject_dm_proveedor
-   ,inject_dm_refaccion
-   ,inject_dm_supervisor_integral
-   ,inject_dm_talleres
-   ,inject_dm_vale
-   ,inject_dm_vale_historico
-   ,inject_dm_valuacion
+   #,inject_dm_envio_historico
+   #,inject_dm_estado
+   #,inject_dm_estatus
+   #,inject_dm_estatus_expendientes
+   #,inject_dm_fechas
+   #,inject_dm_historico_termino_entrega
+   #,inject_dm_marca
+   #,inject_dm_proveedor
+   #,inject_dm_refaccion
+   #,inject_dm_supervisor_integral
+   #,inject_dm_talleres
+   #,inject_dm_vale
+   #,inject_dm_vale_historico
+   #,inject_dm_valuacion
   ] >> inject_dm_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
