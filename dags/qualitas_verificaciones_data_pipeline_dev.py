@@ -337,6 +337,7 @@ def landing_bsc_siniestros():
     dag=dag
   )
   
+  """
   load_pagosproveedores = CloudDataFusionStartPipelineOperator(
     task_id="load_pagosproveedores",
     location=DATA_PROJECT_REGION,
@@ -353,6 +354,7 @@ def landing_bsc_siniestros():
     runtime_args=get_datafusion_load_runtime_args('PAGOSPROVEEDORES',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
+  """
 
   load_prestadores = CloudDataFusionStartPipelineOperator(
     task_id="load_prestadores",
@@ -1058,7 +1060,6 @@ def bq_elt():
       'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
       'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'PAGOPROVE',
-      'SOURCE_SECOND_TABLE_NAME': 'PAGOSPROVEEDORES',
       'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
       'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
       'DEST_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
