@@ -1337,6 +1337,30 @@ def bq_elt():
 
     dag=dag 
   )
+  
+  dm_coberturas = BigQueryInsertJobOperator(
+    task_id="dm_coberturas",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/COBERTURAS/DM_COBERTURAS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TCOBER_BSC',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_COBERTURAS',
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
 
   stg_etiqueta_siniestro_1 = BigQueryInsertJobOperator(
     task_id="stg_etiqueta_siniestro_1",
@@ -2883,6 +2907,23 @@ def injection():
     runtime_args=get_datafusion_inject_runtime_args("DM_CAUSAS", "STG_CAUSAS", "DM_CAUSAS", "XS"),
     dag=dag
   )
+  
+  inject_dm_coberturas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_coberturas",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_coberturas',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
+    dag=dag
+  )
 
   inject_dm_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_etiqueta_siniestro",
@@ -3470,6 +3511,7 @@ def injection():
    ,inject_dm_proveedores
    ,inject_dm_tipos_proveedores
    ,inject_dm_causas
+   ,inject_dm_coberturas
    ,inject_dm_etiqueta_siniestro
    ,inject_dm_registro
    ,inject_dm_dua
