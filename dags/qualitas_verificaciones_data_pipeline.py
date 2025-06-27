@@ -462,6 +462,23 @@ def landing_bsc_siniestros():
     dag=dag
   )
   
+  load_tcober_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_tcober_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_tcober_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('TCOBER_BSC', size='XS'),
+    dag=dag
+  )  
+
   
 @task_group(group_id='landing_siniestros',dag=dag)
 def landing_siniestros():
@@ -1004,6 +1021,8 @@ def landing_valuaciones():
     runtime_args=get_datafusion_load_runtime_args('VALUACION', size='XS'),
     dag=dag
   )  
+  
+
   
 @task_group(group_id='end_landing',dag=dag)
 def end_landing():
