@@ -203,7 +203,7 @@ dag = DAG(
   'qualitas_verificaciones_data_pipeline_rocket',
   default_args=default_args,
   description='liveness monitoring dag',
-  schedule_interval='0 7 * * *',
+  schedule_interval='0 13 * * *',
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
