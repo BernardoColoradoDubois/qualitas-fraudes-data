@@ -203,7 +203,7 @@ dag = DAG(
   'qualitas_verificaciones_data_pipeline_rocket',
   default_args=default_args,
   description='liveness monitoring dag',
-  schedule_interval='0 13 * * *',
+  schedule_interval='0 12 * * *',
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
@@ -451,6 +451,23 @@ def landing_bsc_siniestros():
     dag=dag
   )
   
+  load_tcober_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_tcober_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_tcober_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('TCOBER_BSC', size='XS'),
+    dag=dag
+  )  
+  
   
 @task_group(group_id='landing_siniestros',dag=dag)
 def landing_siniestros():
@@ -634,8 +651,8 @@ def landing_dua():
   )
   
   
-@task_group(group_id='landing_datos_generales',dag=dag)
-def landing_datos_generales():
+@task_group(group_id='landing_valuaciones',dag=dag)
+def landing_valuaciones():
   
   load_datosgenerales = CloudDataFusionStartPipelineOperator(
     task_id="load_datosgenerales",
@@ -651,6 +668,23 @@ def landing_datos_generales():
     deferrable=True,
     poll_interval=30,
     runtime_args=get_datafusion_load_runtime_args('DATOSGENERALES', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_datosvehiculo = CloudDataFusionStartPipelineOperator(
+    task_id="load_datosvehiculo",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_datosvehiculo',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('DATOSVEHICULO', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )  
 
@@ -1819,6 +1853,27 @@ def bq_elt():
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
+  
+  dm_datos_vehiculo= BigQueryInsertJobOperator(
+    task_id="dm_datos_vehiculo",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/DATOS_VEHICULO/DM_DATOS_VEHICULO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'DATOSVEHICULO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_DATOS_VEHICULO'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
 
 
 
@@ -2228,6 +2283,41 @@ def injection():
     dag=dag
   )
   
+  inject_dm_datos_vehiculo = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_datos_vehiculo",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_datos_vehiculo',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_DATOS_VEHICULO", "STG_DATOS_VEHICULO", "DM_DATOS_VEHICULO", "L"),
+    dag=dag
+  )
+  
+  inject_dm_coberturas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_coberturas",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_coberturas',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
+    dag=dag
+  )
+
+  
   # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
   [ 
    inject_dm_estados
@@ -2249,6 +2339,8 @@ def injection():
    ,inject_dm_agentes
    ,inject_dm_gerentes
    ,inject_dm_apercab
+   ,inject_dm_datos_vehiculo
+   ,inject_dm_coberturas
   ] >> inject_dm_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
@@ -2261,4 +2353,4 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_datos_generales()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
