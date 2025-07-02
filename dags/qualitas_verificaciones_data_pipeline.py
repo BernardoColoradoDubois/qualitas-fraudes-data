@@ -2720,26 +2720,6 @@ def bq_elt():
     dag=dag 
   )
   
-  dm_coberturas= BigQueryInsertJobOperator(
-    task_id="dm_coberturas",
-    configuration={
-      "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/COBERTURAS/DM_COBERTURAS.sql'),
-        "useLegacySql": False,
-      }
-    },
-    params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'TCOBER_BSC',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_COBERTURAS'
-    },
-    location=VERIFICACIONES_PROJECT_REGION,
-    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
-    dag=dag 
-  )
   
   rtl_pagos_proveedores  >> dm_pagos_proveedores
   rtl_coberturas_movimientos >> dm_coberturas_movimientos
