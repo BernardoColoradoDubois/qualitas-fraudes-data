@@ -9,11 +9,6 @@ composer-update-workspaces:
 composer-update-all: composer-update-dags composer-update-workspaces
 
 qlts-composer-update-all:
-	gsutil cp ./dags/verificaciones_data_pipeline.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/verificaciones_data_pipeline.py;\
-	gsutil cp ./dags/verificaciones_data_pipeline_dataproc_custom.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/verificaciones_data_pipeline_dataproc_custom.py;\
-	gsutil cp ./dags/verificaciones_data_pipeline_custom_parallel.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/verificaciones_data_pipeline_custom_parallel.py;\
-	gsutil cp ./dags/verificaciones_elt.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/verificaciones_elt.py;\
-	gsutil cp ./dags/verificaciones_inject.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/verificaciones_inject.py;\
 	gsutil cp ./dags/create_cluster.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/create_cluster.py;\
 	gsutil cp ./dags/delete_cluster.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/delete_cluster.py;\
 	gsutil cp ./dags/create_calendar.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/create_calendar.py;\
