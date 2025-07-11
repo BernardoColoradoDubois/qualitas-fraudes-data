@@ -212,7 +212,7 @@ dag = DAG(
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
-  tags=['MX','AUTOS',DATA_DATAFUSION_NAMESPACE,'INSUMOS']
+  tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']
 )
 
 landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)

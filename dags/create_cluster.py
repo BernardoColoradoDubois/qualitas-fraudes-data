@@ -92,6 +92,7 @@ dag = DAG(
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=120),
+  tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']
 )
 
 create_cluster = DataprocCreateClusterOperator(
