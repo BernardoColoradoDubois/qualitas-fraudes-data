@@ -455,6 +455,25 @@ def landing_bsc_siniestros():
     runtime_args=get_datafusion_load_runtime_args('VALUACION_BSC',size='M', init_date=init_date, final_date=final_date),
     dag=dag
   )
+
+   
+  load_tcober_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_tcober_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_tcober_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('TCOBER_BSC', size='XS'),
+    dag=dag
+  )  
+  
   
   
 @task_group(group_id='landing_siniestros',dag=dag)
@@ -2677,6 +2696,27 @@ def bq_elt():
     dag=dag 
   )
 
+  dm_coberturas= BigQueryInsertJobOperator(
+    task_id="dm_coberturas",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/COBERTURAS/DM_COBERTURAS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TCOBER_BSC',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_COBERTURAS'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+
 
   rtl_pagos_proveedores  >> dm_pagos_proveedores
   rtl_coberturas_movimientos >> dm_coberturas_movimientos
@@ -3194,6 +3234,23 @@ def injection():
     runtime_args=get_datafusion_inject_runtime_args("DM_DATOS_VEHICULO", "STG_DATOS_VEHICULO", "DM_DATOS_VEHICULO", "L"),
     dag=dag
   )
+
+  inject_dm_coberturas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_coberturas",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='inject_dm_coberturas_dev',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
+    dag=dag
+  )
   
   '''
   inject_dm_envio_historico = CloudDataFusionStartPipelineOperator(
@@ -3478,6 +3535,7 @@ def injection():
 #   ,inject_dm_vale
 #   ,inject_dm_vale_historico
 #   ,inject_dm_valuacion
+   ,inject_dm_coberturas
   ] >> inject_dm_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
