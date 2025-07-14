@@ -2,16 +2,7 @@ import airflow
 from airflow import DAG
 from airflow.decorators import task
 from datetime import timedelta
-from airflow.operators.python import PythonOperator
-from airflow.operators.bash import BashOperator
 
-from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionStartPipelineOperator
-from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionGetInstanceOperator
-from airflow.providers.google.cloud.operators.datafusion import DataFusionPipelineType 
-
-from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobOperator
-
-from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
 from lib.utils import get_bucket_file_contents
