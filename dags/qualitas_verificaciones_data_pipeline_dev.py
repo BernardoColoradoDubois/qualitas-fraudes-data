@@ -199,7 +199,7 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
   return base_args
   
 default_args = {
-  'start_date': airflow.utils.dates.days_ago(0),
+  'start_date': airflow.utils.dates.days_ago(1),
   'retries': 4,
   'retry_delay': timedelta(minutes=5)
 }
@@ -208,7 +208,7 @@ dag = DAG(
   'qualitas_verificaciones_data_pipeline_dev',
   default_args=default_args,
   description='liveness monitoring dag',
-  schedule_interval='0 0 1 1 *',
+  schedule_interval='0 20 * * *',
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
