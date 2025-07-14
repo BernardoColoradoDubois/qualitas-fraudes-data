@@ -5,7 +5,6 @@ from datetime import timedelta
 
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
-from lib.utils import get_bucket_file_contents
 
 default_args = {
     'owner': 'airflow',

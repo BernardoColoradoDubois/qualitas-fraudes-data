@@ -5,8 +5,6 @@ from datetime import timedelta
 
 from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator
 
-from lib.utils import get_bucket_file_contents
-
 CLUSTER_CONFIG = {
   "gce_cluster_config": {
     "internal_ip_only": True,
