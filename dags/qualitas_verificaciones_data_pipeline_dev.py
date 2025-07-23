@@ -208,7 +208,7 @@ dag = DAG(
   'qualitas_verificaciones_data_pipeline_dev',
   default_args=default_args,
   description='liveness monitoring dag',
-  schedule_interval='0 20 * * *',
+  schedule_interval='0 15 * * *',
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
