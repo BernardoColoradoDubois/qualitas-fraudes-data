@@ -16,6 +16,6 @@ qlts-composer-update-all:
 	gsutil cp ./dags/qualitas_verificaciones_data_pipeline.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/qualitas_verificaciones_data_pipeline.py;\
 	gsutil cp ./dags/qualitas_verificaciones_data_pipeline_rocket.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/qualitas_verificaciones_data_pipeline_rocket.py;\
 	gsutil cp ./dags/qualitas_verificaciones_data_pipeline_dev.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/qualitas_verificaciones_data_pipeline_dev.py;\
+	gsutil cp ./dags/qualitas_verificaciones_data_pipeline_qa.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/qualitas_verificaciones_data_pipeline_qa.py;\
 	gsutil -m cp -r ./dags/lib/* gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/lib/;\
 	gsutil -m cp -r ./workspaces/* gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/workspaces/;
-
