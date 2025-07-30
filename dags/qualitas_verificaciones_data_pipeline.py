@@ -490,7 +490,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('ORDEN_BSC', size='S'),
+    runtime_args=get_datafusion_load_runtime_args('ORDEN_BSC', size='S',init_date=init_date, final_date=final_date),
     dag=dag
   )  
   
@@ -507,7 +507,7 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('PAGOSAUDITORIA_SISE', size='M'),
+    runtime_args=get_datafusion_load_runtime_args('PAGOSAUDITORIA_SISE', size='M',init_date=init_date, final_date=final_date),
     dag=dag
   )  
   
