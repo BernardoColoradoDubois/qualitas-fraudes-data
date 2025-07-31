@@ -6,7 +6,7 @@ from datetime import timedelta
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.decorators import task_group
-from lib.utils import get_bucket_file_contents,upload_storage_csv_to_bigquery
+from lib.utils import get_bucket_file_contents,upload_storage_csv_to_bigquery,merge_storage_csv
 
 
 default_args = {
@@ -29,10 +29,11 @@ init = BashOperator(task_id='init',bash_command='echo "Iniciando el DAG"',dag=da
 
 merge_control_de_agentes = PythonOperator(
   task_id='merge_control_de_agentes',
-  python_callable=get_bucket_file_contents,
+  python_callable=merge_storage_csv,
   op_kwargs={
     'bucket_name': 'bucket_verificaciones',
     'folder': 'CONTROL_DE_AGENTES/',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
   },
   dag=dag
 )

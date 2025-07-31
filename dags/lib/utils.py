@@ -5,6 +5,9 @@ from google.cloud import bigquery
 from google.cloud.exceptions import NotFound
 from datetime import datetime, timedelta
 import pytz
+import pandas as pd
+from io import StringIO
+
 
 #from airflow.providers.oracle.hooks.oracle import OracleHook
 from sqlalchemy import create_engine
@@ -31,16 +34,26 @@ def get_bucket_file_contents(path):
     return None
 
 
-def merge_storage_csv(bucket_name,folder,**kwargs):
+def merge_storage_csv(project_id,bucket_name,folder,**kwargs):
   
-  client = storage.Client()
+  client = storage.Client(project=project_id)
     
     # Obtener el bucket
   bucket = client.bucket(bucket_name)
     
   objects = bucket.list_blobs(prefix=folder)
   
-  print(f"Objects in bucket {bucket_name} with prefix {folder}:")
+  csv_files = [obj for obj in objects if obj.name.endswith('.csv')]
+  
+  for csv_file in csv_files:
+    
+    contenido_csv = csv_file.download_as_text(encoding='utf-8')
+    
+    df = pd.read_csv(StringIO(contenido_csv))
+    
+    print(df.head())
+
+
     
 
 def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_id,write_disposition="WRITE_TRUNCATE",skip_leading_rows=1,max_bad_records=0,**kwargs):
