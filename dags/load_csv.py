@@ -27,6 +27,16 @@ dag = DAG(
 
 init = BashOperator(task_id='init',bash_command='echo "Iniciando el DAG"',dag=dag)
 
+merge_control_de_agentes = PythonOperator(
+  task_id='merge_control_de_agentes',
+  python_callable=get_bucket_file_contents,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'CONTROL_DE_AGENTES/',
+  },
+  dag=dag
+)
+
 load_control_de_agentes = PythonOperator(
   task_id='load_control_de_agentes',
   python_callable=upload_storage_csv_to_bigquery,
@@ -40,4 +50,4 @@ load_control_de_agentes = PythonOperator(
   dag=dag
 )
 
-init >> load_control_de_agentes
+init >> merge_control_de_agentes >> load_control_de_agentes

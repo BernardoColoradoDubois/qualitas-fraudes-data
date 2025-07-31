@@ -31,6 +31,18 @@ def get_bucket_file_contents(path):
     return None
 
 
+def merge_storage_csv(bucket_name,folder,**kwargs):
+  
+  client = storage.Client()
+    
+    # Obtener el bucket
+  bucket = client.bucket(bucket_name)
+    
+  objects = bucket.list_blobs(prefix=folder)
+  
+  print(f"Objects in bucket {bucket_name} with prefix {folder}:")
+    
+
 def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_id,write_disposition="WRITE_TRUNCATE",skip_leading_rows=1,max_bad_records=0,**kwargs):
 
   client = bigquery.Client(project=project_id)
@@ -71,28 +83,6 @@ def execute_query_workflow(project_id,query,**kwargs):
   result = query_job.result()
   print(result.__dict__)  
   
-def execute_query_to_load_oracle_database(project_id,query,**kwargs):
-
-  client = bigquery.Client(project=project_id)
-  query_job = client.query(query)
-  result = query_job.result()
-  
-  df = result.to_dataframe()
-  dt = [tuple(x) for x in df.values]
-
-  os.environ["LD_LIBRARY_PATH"] = "/opt/oracle/instantclient_23_7"
-  os.environ["PATH"] = "/opt/oracle/instantclient_23_7"
-
-
-  conn_string = 'ADMIN/FqzJ3n3Kvwcftakshcmi@qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com:1521/ORCL'
-  connection = cx_Oracle.connect(conn_string)
-  cursor = connection.cursor()
-  cursor.execute('TRUNCATE TABLE INSUMOS.DM_CAUSAS')
-  sql='INSERT INTO INSUMOS.DM_CAUSAS VALUES(:1,:2,:3,:4,:5)'
-  cursor.executemany(sql, dt)
-  connection.commit()
-  cursor.close()
-
 
 def get_date_interval(project_id:str,period:str,**kwargs):
   
