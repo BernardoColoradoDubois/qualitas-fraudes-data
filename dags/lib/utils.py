@@ -71,7 +71,7 @@ def merge_storage_csv(project_id,bucket_name,folder,folder_his, destination_blob
 
 
     
-
+#['utf-8', 'latin-1', 'windows-1252', 'iso-8859-1']
 def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_id,write_disposition="WRITE_TRUNCATE",skip_leading_rows=1,max_bad_records=0,**kwargs):
 
   client = bigquery.Client(project=project_id)
