@@ -37,6 +37,7 @@ merge_control_de_agentes = PythonOperator(
     'folder_his': 'CONTROL_DE_AGENTES_HIS/',
     'destination_blob_name': 'CONTROL_DE_AGENTES_2025_HIS.csv',
     'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'iso-8859-1'
   },
   dag=dag
 )
@@ -63,6 +64,7 @@ merge_apertura_reporte = PythonOperator(
     'folder_his': 'APERTURA_REPORTE_HIS/',
     'destination_blob_name': 'APERTURA_REPORTE_HIS.csv',
     'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'iso-8859-1'
   },
   dag=dag
 )
@@ -89,6 +91,7 @@ merge_produccion1 = PythonOperator(
     'folder_his': 'PRODUCCION1_HIS/',
     'destination_blob_name': 'PRODUCCION1_HIS.csv',
     'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'iso-8859-1'
   },
   dag=dag
 )
@@ -115,6 +118,7 @@ merge_produccion2 = PythonOperator(
     'folder_his': 'PRODUCCION2_HIS/',
     'destination_blob_name': 'PRODUCCION2_HIS.csv',
     'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'iso-8859-1'
   },
   dag=dag
 )
@@ -141,6 +145,7 @@ merge_recuperaciones = PythonOperator(
     'folder_his': 'RECUPERACIONES_HIS/',
     'destination_blob_name': 'RECUPERACIONES_HIS.csv',
     'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'iso-8859-1'
   },
   dag=dag
 )

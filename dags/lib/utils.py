@@ -33,8 +33,8 @@ def get_bucket_file_contents(path):
     print(f"Error al leer el archivo: {e}")
     return None
 
-
-def merge_storage_csv(project_id,bucket_name,folder,folder_his, destination_blob_name,**kwargs):
+#['utf-8', 'latin-1', 'windows-1252', 'iso-8859-1']
+def merge_storage_csv(project_id,bucket_name,folder,folder_his, destination_blob_name,encoding='utf-8',**kwargs):
   
   client = storage.Client(project=project_id)
     
@@ -49,7 +49,7 @@ def merge_storage_csv(project_id,bucket_name,folder,folder_his, destination_blob
 
   for csv_file in csv_files:
 
-    contenido_csv = csv_file.download_as_text(encoding='iso-8859-1')
+    contenido_csv = csv_file.download_as_text(encoding=encoding)
     #df = pd.read_csv(StringIO(contenido_csv)) # it uses the headers as data
 
 
@@ -71,7 +71,6 @@ def merge_storage_csv(project_id,bucket_name,folder,folder_his, destination_blob
 
 
     
-#['utf-8', 'latin-1', 'windows-1252', 'iso-8859-1']
 def upload_storage_csv_to_bigquery(gcs_uri,dataset,table,schema_fields,project_id,write_disposition="WRITE_TRUNCATE",skip_leading_rows=1,max_bad_records=0,**kwargs):
 
   client = bigquery.Client(project=project_id)
