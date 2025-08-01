@@ -54,4 +54,112 @@ load_control_de_agentes = PythonOperator(
   dag=dag
 )
 
+merge_apertura_reporte = PythonOperator(
+  task_id='merge_apertura_reporte',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'APERTURA_REPORTE/',
+    'folder_his': 'APERTURA_REPORTE_HIS/',
+    'destination_blob_name': 'APERTURA_REPORTE_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+load_apertura_reporte = PythonOperator(
+  task_id='load_apertura_reporte',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/APERTURA_REPORTE_HIS/APERTURA_REPORTE_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'APERTURA_REPORTE',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.apertura_reporte.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+merge_produccion1 = PythonOperator(
+  task_id='merge_produccion1',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'PRODUCCION1/',
+    'folder_his': 'PRODUCCION1_HIS/',
+    'destination_blob_name': 'PRODUCCION1_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+load_produccion1 = PythonOperator(
+  task_id='load_produccion1',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/PRODUCCION1_HIS/PRODUCCION1_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'PRODUCCION1',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.produccion1.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+merge_produccion2 = PythonOperator(
+  task_id='merge_produccion2',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'PRODUCCION2/',
+    'folder_his': 'PRODUCCION2_HIS/',
+    'destination_blob_name': 'PRODUCCION2_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+load_produccion2 = PythonOperator(
+  task_id='load_produccion2',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/PRODUCCION2_HIS/PRODUCCION2_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'PRODUCCION2',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.produccion2.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+merge_recuperaciones = PythonOperator(
+  task_id='merge_recuperaciones',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'RECUPERACIONES/',
+    'folder_his': 'RECUPERACIONES_HIS/',
+    'destination_blob_name': 'RECUPERACIONES_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+load_recuperaciones = PythonOperator(
+  task_id='load_recuperaciones',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/RECUPERACIONES_HIS/RECUPERACIONES_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'RECUPERACIONES',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.recuperaciones.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
 init >> merge_control_de_agentes >> load_control_de_agentes
+init >> merge_apertura_reporte >> load_apertura_reporte
+init >> merge_produccion1 >> load_produccion1
+init >> merge_produccion2 >> load_produccion2
+init >> merge_recuperaciones >> load_recuperaciones

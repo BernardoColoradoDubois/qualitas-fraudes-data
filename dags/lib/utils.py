@@ -49,7 +49,7 @@ def merge_storage_csv(project_id,bucket_name,folder,folder_his, destination_blob
 
   for csv_file in csv_files:
 
-    contenido_csv = csv_file.download_as_text(encoding='utf-8')
+    contenido_csv = csv_file.download_as_text(encoding='iso-8859-1')
     #df = pd.read_csv(StringIO(contenido_csv)) # it uses the headers as data
 
 
