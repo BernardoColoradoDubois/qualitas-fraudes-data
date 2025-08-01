@@ -34,7 +34,7 @@ def get_bucket_file_contents(path):
     return None
 
 
-def merge_storage_csv(project_id,bucket_name,folder,**kwargs):
+def merge_storage_csv(project_id,bucket_name,folder,folder_his, destination_blob_name,**kwargs):
   
   client = storage.Client(project=project_id)
     
@@ -44,14 +44,30 @@ def merge_storage_csv(project_id,bucket_name,folder,**kwargs):
   objects = bucket.list_blobs(prefix=folder)
   
   csv_files = [obj for obj in objects if obj.name.endswith('.csv')]
-  
+
+  df_list = []
+
   for csv_file in csv_files:
-    
+
     contenido_csv = csv_file.download_as_text(encoding='utf-8')
-    
-    df = pd.read_csv(StringIO(contenido_csv))
-    
-    print(df.head())
+    #df = pd.read_csv(StringIO(contenido_csv)) # it uses the headers as data
+
+
+    #Assume all files have the same header
+    df = pd.read_csv(StringIO(contenido_csv), header=0, low_memory=False)
+
+    df_list.append(df)
+
+  merged_df = pd.concat(df_list, ignore_index=True)
+  print("Merged DataFrame shape:", merged_df.shape)
+  merged_csv = merged_df.to_csv(index=False)
+
+  # Upload merged CSV back to GCS
+  output_path = f"{folder_his.rstrip('/')}/{destination_blob_name}" if folder_his else destination_blob_name
+  out_blob = bucket.blob(output_path)
+  out_blob.upload_from_string(merged_csv, content_type='text/csv')
+
+  print(f"Uploaded merged CSV to gs://{bucket_name}/{output_path}")
 
 
     

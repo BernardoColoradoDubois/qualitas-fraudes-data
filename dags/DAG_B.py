@@ -2,8 +2,10 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from datetime import datetime
 
-def random_function(**kwargs):
-    print("DAG B has been triggered.")
+
+def downstream(**kwargs):
+    print("inside downstream...")
+    print("Received:", kwargs['dag_run'].conf.get('triggered_date'))
 
 with DAG(
     dag_id='DAG_B',
@@ -14,5 +16,5 @@ with DAG(
 ) as dag:
     run_this = PythonOperator(
         task_id='run_this',
-        python_callable=random_function,
+        python_callable=downstream,
     )

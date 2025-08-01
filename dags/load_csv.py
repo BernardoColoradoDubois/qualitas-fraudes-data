@@ -23,6 +23,7 @@ dag = DAG(
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=120),
+  tags=['VERIFICACIONES']
 )
 
 init = BashOperator(task_id='init',bash_command='echo "Iniciando el DAG"',dag=dag)
@@ -33,6 +34,8 @@ merge_control_de_agentes = PythonOperator(
   op_kwargs={
     'bucket_name': 'bucket_verificaciones',
     'folder': 'CONTROL_DE_AGENTES/',
+    'folder_his': 'CONTROL_DE_AGENTES_HIS/',
+    'destination_blob_name': 'CONTROL_DE_AGENTES_2025_HIS.csv',
     'project_id': 'qlts-dev-mx-au-bro-verificacio',
   },
   dag=dag
@@ -42,7 +45,7 @@ load_control_de_agentes = PythonOperator(
   task_id='load_control_de_agentes',
   python_callable=upload_storage_csv_to_bigquery,
   op_kwargs={
-    'gcs_uri': 'gs://bucket_verificaciones/CONTROL_DE_AGENTES/CONTROL_DE_AGENTES_202506_01.csv',
+    'gcs_uri': 'gs://bucket_verificaciones/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_2025_HIS.csv',
     'dataset': 'LAN_VERIFICACIONES',
     'table': 'CONTROL_DE_AGENTES',
     'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.control_de_agentes.json')),
