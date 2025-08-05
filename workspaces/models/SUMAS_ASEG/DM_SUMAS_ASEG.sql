@@ -1,0 +1,70 @@
+SELECT 
+  -- 1. RAMO
+  SAFE_CAST(SAFE_CAST(NULLIF(RAMO, '') AS FLOAT64) AS INT64) AS RAMO,
+  
+  -- 2. EJERCICIO
+  SAFE_CAST(SAFE_CAST(NULLIF(EJERCICIO, '') AS FLOAT64) AS INT64) AS EJERCICIO,
+  
+  -- 3. SINIESTRO
+  SAFE_CAST(SAFE_CAST(NULLIF(SINIESTRO, '') AS FLOAT64) AS INT64) AS SINIESTRO,
+  
+  -- 4. REPORTE
+  SAFE_CAST(SAFE_CAST(NULLIF(REPORTE, '') AS FLOAT64) AS INT64) AS REPORTE,
+  
+  -- 5. POLIZA
+  SAFE_CAST(SAFE_CAST(NULLIF(POLIZA, '') AS FLOAT64) AS INT64) AS POLIZA,
+  
+  -- 6. ENDOSO
+  SAFE_CAST(SAFE_CAST(NULLIF(ENDOSO, '') AS FLOAT64) AS INT64) AS ENDOSO,
+  
+  -- 7. INCISO
+  SAFE_CAST(SAFE_CAST(NULLIF(INCISO, '') AS FLOAT64) AS INT64) AS INCISO,
+  
+  -- 8. CAUSA_SINIESTRO
+  CAUSA_SINIESTRO,
+  
+  -- 9. FECHA_OCURRIDO (formato dd/MM/yyyy)
+  CASE 
+    WHEN FECHA_OCURRIDO IS NOT NULL AND FECHA_OCURRIDO != '' AND FECHA_OCURRIDO LIKE '%/%/%'
+    THEN SAFE.PARSE_DATE('%d/%m/%Y', FECHA_OCURRIDO)
+    ELSE NULL 
+  END AS FECHA_OCURRIDO,
+  
+  -- 10. FECHA_DEMANDA_LEGAL (formato dd/MM/yyyy si no está vacía)
+  CASE 
+    WHEN FECHA_DEMANDA_LEGAL IS NOT NULL AND FECHA_DEMANDA_LEGAL != '' AND FECHA_DEMANDA_LEGAL LIKE '%/%/%'
+    THEN SAFE.PARSE_DATE('%d/%m/%Y', FECHA_DEMANDA_LEGAL)
+    ELSE NULL 
+  END AS FECHA_DEMANDA_LEGAL,
+  
+  -- 11. SERIE
+  SERIE,
+  
+  -- 12. SUMA_ASEGURADA
+  SAFE_CAST(NULLIF(SUMA_ASEGURADA, '') AS FLOAT64) AS SUMA_ASEGURADA,
+  
+  -- 13. DEDUCIBLE_DM (mantener como STRING - contiene formatos como "5.00 %", "0,000")
+  DEDUCIBLE_DM,
+  
+  -- 14. DEDUCIBLE_RT (mantener como STRING - contiene formatos como "10.00 %", "4,000")
+  DEDUCIBLE_RT,
+  
+  -- 15. DEDUDIBLE_RC (mantener como STRING - contiene formatos como "0 Dias", "50 Dias", "100 Dias")
+  DEDUDIBLE_RC,
+  
+  -- 16. DEDUCIBLE_EE (mantener como STRING - contiene formatos como "25.00 %")
+  DEDUCIBLE_EE,
+  
+  -- 17. DEDUCIBLE_RCB (mantener como STRING - campo mayormente vacío)
+  DEDUCIBLE_RCB,
+  
+  -- 18. DEDUCIBLE_RCPER (mantener como STRING - campo mayormente vacío)
+  DEDUCIBLE_RCPER,
+  
+  -- 19. DEDUCIBLE_RCPAS (mantener como STRING - campo mayormente vacío)
+  DEDUCIBLE_RCPAS,
+  
+  -- 20. DEDUCIBLE_RCC (mantener como STRING - campo mayormente vacío)
+  DEDUCIBLE_RCC
+
+FROM `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.SUMAS_ASEG`;
