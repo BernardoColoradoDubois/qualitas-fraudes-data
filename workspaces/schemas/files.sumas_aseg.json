@@ -1,0 +1,22 @@
+[
+  {"name": "RAMO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "EJERCICIO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "SINIESTRO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "REPORTE", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "POLIZA", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "ENDOSO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "INCISO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "CAUSA_SINIESTRO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "FECHA_OCURRIDO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "FECHA_DEMANDA_LEGAL", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "SERIE", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "SUMA_ASEGURADA", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DEDUCIBLE_DM", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DEDUCIBLE_RT", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DEDUDIBLE_RC", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DEDUCIBLE_EE", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DEDUCIBLE_RCB", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DEDUCIBLE_RCPER", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DEDUCIBLE_RCPAS", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DEDUCIBLE_RCC", "type": "STRING", "mode": "NULLABLE"}
+]

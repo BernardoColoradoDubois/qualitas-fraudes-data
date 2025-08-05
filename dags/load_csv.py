@@ -163,8 +163,36 @@ load_recuperaciones = PythonOperator(
   dag=dag
 )
 
+merge_sumas_aseg = PythonOperator(
+  task_id='merge_sumas_aseg',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'SUMAS_ASEG/',
+    'folder_his': 'SUMAS_ASEG_HIS/',
+    'destination_blob_name': 'SUMAS_ASEG_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'iso-8859-1'
+  },
+  dag=dag
+)
+
+load_sumas_aseg = PythonOperator(
+  task_id='load_sumas_aseg',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/SUMAS_ASEG_HIS/SUMAS_ASEG_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'SUMAS_ASEG',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.sumas_aseg.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
 init >> merge_control_de_agentes >> load_control_de_agentes
 init >> merge_apertura_reporte >> load_apertura_reporte
 init >> merge_produccion1 >> load_produccion1
 init >> merge_produccion2 >> load_produccion2
 init >> merge_recuperaciones >> load_recuperaciones
+init >> merge_sumas_aseg >> load_sumas_aseg
