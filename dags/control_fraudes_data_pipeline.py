@@ -168,6 +168,31 @@ def bq_elt():
 
     dag=dag 
   )
+
+
+  dm_sumas_aseg = BigQueryInsertJobOperator(
+    task_id="dm_sumas_aseg",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SUMAS_ASEG/DM_SUMAS_ASEG.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': CONTROL_FRAUDES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': CONTROL_FRAUDES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'SUMAS_ASEG',
+      'DEST_PROJECT_ID': CONTROL_FRAUDES_PROJECT_ID,
+      'DEST_DATASET_NAME': CONTROL_FRAUDES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_SUMAS_ASEG',
+    },
+    location=CONTROL_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=CONTROL_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
   
 
 init >> bq_elt()
