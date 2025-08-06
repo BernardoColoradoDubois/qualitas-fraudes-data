@@ -44,28 +44,116 @@ SELECT
   -- 12. SUMA_ASEGURADA
   SAFE_CAST(NULLIF(SUMA_ASEGURADA, '') AS FLOAT64) AS SUMA_ASEGURADA,
   
-  -- 13. DEDUCIBLE_DM (mantener como STRING - contiene formatos como "5.00 %", "0,000")
-  DEDUCIBLE_DM,
+  -- 13. DEDUCIBLE_DM (extraer valor numérico de formatos como "5.00 %", "0,000")
+  CASE 
+    WHEN DEDUCIBLE_DM IS NOT NULL AND DEDUCIBLE_DM != '' THEN
+      SAFE_CAST(
+        REPLACE(
+          REPLACE(
+            REPLACE(DEDUCIBLE_DM, '%', ''),
+            ',', '.'
+          ), ' ', ''
+        ) AS FLOAT64
+      )
+    ELSE NULL 
+  END AS DEDUCIBLE_DM,
   
-  -- 14. DEDUCIBLE_RT (mantener como STRING - contiene formatos como "10.00 %", "4,000")
-  DEDUCIBLE_RT,
+  -- 14. DEDUCIBLE_RT (extraer valor numérico de formatos como "10.00 %", "4,000")
+  CASE 
+    WHEN DEDUCIBLE_RT IS NOT NULL AND DEDUCIBLE_RT != '' THEN
+      SAFE_CAST(
+        REPLACE(
+          REPLACE(
+            REPLACE(DEDUCIBLE_RT, '%', ''),
+            ',', '.'
+          ), ' ', ''
+        ) AS FLOAT64
+      )
+    ELSE NULL 
+  END AS DEDUCIBLE_RT,
   
-  -- 15. DEDUDIBLE_RC (mantener como STRING - contiene formatos como "0 Dias", "50 Dias", "100 Dias")
-  DEDUDIBLE_RC,
+  -- 15. DEDUDIBLE_RC (extraer valor numérico de formatos como "0 Dias", "50 Dias", "100 Dias")
+  CASE 
+    WHEN DEDUDIBLE_RC IS NOT NULL AND DEDUDIBLE_RC != '' THEN
+      SAFE_CAST(
+        TRIM(
+          REPLACE(
+            REPLACE(DEDUDIBLE_RC, 'Dias', ''),
+            'dias', ''
+          )
+        ) AS FLOAT64
+      )
+    ELSE NULL 
+  END AS DEDUDIBLE_RC,
   
-  -- 16. DEDUCIBLE_EE (mantener como STRING - contiene formatos como "25.00 %")
-  DEDUCIBLE_EE,
+  -- 16. DEDUCIBLE_EE (extraer valor numérico de formatos como "25.00 %")
+  CASE 
+    WHEN DEDUCIBLE_EE IS NOT NULL AND DEDUCIBLE_EE != '' THEN
+      SAFE_CAST(
+        REPLACE(
+          REPLACE(
+            REPLACE(DEDUCIBLE_EE, '%', ''),
+            ',', '.'
+          ), ' ', ''
+        ) AS FLOAT64
+      )
+    ELSE NULL 
+  END AS DEDUCIBLE_EE,
   
-  -- 17. DEDUCIBLE_RCB (mantener como STRING - campo mayormente vacío)
-  DEDUCIBLE_RCB,
+  -- 17. DEDUCIBLE_RCB (extraer valor numérico si existe)
+  CASE 
+    WHEN DEDUCIBLE_RCB IS NOT NULL AND DEDUCIBLE_RCB != '' THEN
+      SAFE_CAST(
+        REPLACE(
+          REPLACE(
+            REPLACE(DEDUCIBLE_RCB, '%', ''),
+            ',', '.'
+          ), ' ', ''
+        ) AS FLOAT64
+      )
+    ELSE NULL 
+  END AS DEDUCIBLE_RCB,
   
-  -- 18. DEDUCIBLE_RCPER (mantener como STRING - campo mayormente vacío)
-  DEDUCIBLE_RCPER,
+  -- 18. DEDUCIBLE_RCPER (extraer valor numérico si existe)
+  CASE 
+    WHEN DEDUCIBLE_RCPER IS NOT NULL AND DEDUCIBLE_RCPER != '' THEN
+      SAFE_CAST(
+        REPLACE(
+          REPLACE(
+            REPLACE(DEDUCIBLE_RCPER, '%', ''),
+            ',', '.'
+          ), ' ', ''
+        ) AS FLOAT64
+      )
+    ELSE NULL 
+  END AS DEDUCIBLE_RCPER,
   
-  -- 19. DEDUCIBLE_RCPAS (mantener como STRING - campo mayormente vacío)
-  DEDUCIBLE_RCPAS,
+  -- 19. DEDUCIBLE_RCPAS (extraer valor numérico si existe)
+  CASE 
+    WHEN DEDUCIBLE_RCPAS IS NOT NULL AND DEDUCIBLE_RCPAS != '' THEN
+      SAFE_CAST(
+        REPLACE(
+          REPLACE(
+            REPLACE(DEDUCIBLE_RCPAS, '%', ''),
+            ',', '.'
+          ), ' ', ''
+        ) AS FLOAT64
+      )
+    ELSE NULL 
+  END AS DEDUCIBLE_RCPAS,
   
-  -- 20. DEDUCIBLE_RCC (mantener como STRING - campo mayormente vacío)
-  DEDUCIBLE_RCC
+  -- 20. DEDUCIBLE_RCC (extraer valor numérico si existe)
+  CASE 
+    WHEN DEDUCIBLE_RCC IS NOT NULL AND DEDUCIBLE_RCC != '' THEN
+      SAFE_CAST(
+        REPLACE(
+          REPLACE(
+            REPLACE(DEDUCIBLE_RCC, '%', ''),
+            ',', '.'
+          ), ' ', ''
+        ) AS FLOAT64
+      )
+    ELSE NULL 
+  END AS DEDUCIBLE_RCC
 
 FROM `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.SUMAS_ASEG`;
