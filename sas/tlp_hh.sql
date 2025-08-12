@@ -1,0 +1,150 @@
+-- ======================================================================
+-- CREACIÓN DE TABLA USUARIOHOMOLOGADO (si no existe)
+-- ======================================================================
+
+-- Primero, crear la tabla USUARIOHOMOLOGADO si no existe
+-- Esta tabla debe contener la equivalencia entre usuarios base y usuarios homologados
+CREATE TABLE IF NOT EXISTS `LAN_VERIFICACIONES.USUARIOHOMOLOGADO`
+(
+  UsuarioBase STRING NOT NULL,
+  UsuarioHomologado STRING NOT NULL,
+  FechaRegistro DATETIME DEFAULT CURRENT_DATETIME(),
+  FechaActualizacion DATETIME DEFAULT CURRENT_DATETIME(),
+  Activo BOOLEAN DEFAULT TRUE
+);
+
+-- ======================================================================
+-- TABLA FINAL: TODASLASPIEZAS CON USUARIOHOMOLOGADO
+-- ======================================================================
+
+-- Creación de la tabla final TODASLASPIEZAS usando LEFT JOIN con USUARIOHOMOLOGADO
+CREATE OR REPLACE TABLE `DM_PREVENCION_FRAUDES.TODASLASPIEZAS` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    t1.EJERCICIO,
+    t1.NUMREPORTE,
+    t1.NUMSINIESTRO,
+    t1.ESTATUSEXPEDIENTE,
+    t1.ESTATUSVALUACION,
+    t1.MARCAVEHICULO,
+    t1.TIPOVEHICULO,
+    t1.MODELO,
+    t1.SERIE,
+    t1.CLAVETALLER,
+    t1.NOMBRECDR,
+    t1.TIPOCDR_PORTAL,
+    t1.IDREGIONGEOGRAFICA,
+    t1.CDRCOTIZADOR,
+    t1.CDRAUTOSURTIDO,
+    t1.ANALISTACDR,
+    t1.GERENCIAVALUACION,
+    t1.CERCO,
+    t1.CERCO_ANTERIOR,
+    t1.CODVALUADOR,
+    t1.FECVALUACION,
+    t1.FECTERMINADO,
+    t1.FECENTREGADO,
+    t1.VEHICULOTERMINADO,
+    t1.IDVALEHISTORICO,
+    t1.IDVALE,
+    t1.CODPROVEEDOR,
+    t1.NOMBREPROVEEDOR,
+    t1.TIPOPROVEEDOR_PORTAL,
+    t1.TIPOTOT,
+    t1.FOLIO,
+    t1.FECHAEXPEDICION,
+    t1.FECHAACTUALIZACION,
+    t1.ESTATUSVALE,
+    t1.USUARIO,
+    -- USUARIOHOMOLOGADO - Usando LEFT JOIN con tabla USUARIOHOMOLOGADO y lógica de fallback
+    CASE 
+        WHEN t1.USUARIO = t2.UsuarioBase THEN t2.UsuarioHomologado
+        WHEN t1.USUARIO IS NULL OR t1.USUARIO LIKE '%Valuador%' THEN SUBSTR(t1.USUARIO, 10, 5)
+        WHEN t1.USUARIO = 'AUT' THEN "AUTOMATICO"
+        WHEN t1.USUARIO LIKE '%AUT / ADMINREFC%' THEN SUBSTR(t1.USUARIO, 1, 17)
+        WHEN t1.USUARIO LIKE '%AUT / Adminrefc%' THEN SUBSTR(t1.USUARIO, 1, 17)
+        WHEN t1.USUARIO LIKE '%AUT / adminep%' THEN SUBSTR(t1.USUARIO, 1, 17)
+        WHEN t1.USUARIO LIKE '%ADMINEP08%' THEN "EDUARDO LOPEZ"
+        WHEN t1.USUARIO LIKE '%AUT / adminrefc18%' THEN "AUT/NADIA YADIRA RAMIREZ"
+        WHEN t1.USUARIO LIKE '%AUT / adminrefc23%' THEN "AUT/ULISES PEREZ"
+        WHEN t1.USUARIO = 'AUT / ASR4' THEN "AUT/ARGENIS URIEL REYES ADAME"
+        WHEN t1.USUARIO = 'AUT / ASR3_14' THEN "AUT/ADRIANA NAVARRO"
+        WHEN t1.USUARIO = 'AUT / ASR9_2' THEN "AUT/MARTINEZ CORANADO BLANCA"
+        WHEN t1.USUARIO = 'AUT / ASR5' THEN "AUT/OSCAR OMAR HERRERA BECERRIL"
+        WHEN t1.USUARIO = 'AUT / ASR3_6' THEN "AUT/FELIX ESCOBAR"
+        WHEN t1.USUARIO LIKE '%supsegq%' THEN t1.USUARIO
+        WHEN t1.USUARIO LIKE '%AUT / ASR%' THEN SUBSTR(t1.USUARIO, 1, 17)
+        WHEN t1.USUARIO LIKE '%AUT / ASR_COMP%' THEN SUBSTR(t1.USUARIO, 1, 17)
+        WHEN t1.USUARIO LIKE '%AUT / asr_comp%' THEN SUBSTR(t1.USUARIO, 1, 17)
+        ELSE " "
+    END AS USUARIOHOMOLOGADO,
+    t1.CAUSACAMBIOVALE,
+    t1.AUTORIZADOR,
+    t1.NUMPARTE,
+    t1.REFERENCIA,
+    t1.DESCRIPCIONREFACCION,
+    t1.LISTA,
+    t1.CLAVENAGS,
+    t1.BLINDAJE,
+    t1.MONTO,
+    t1.ORIGEN,
+    t1.IDCOSTO,
+    t1.TIPO AS TIPOCOSTO,
+    t1.FECENVIO,
+    t1.FECENTREGAREFACCIONARIA,
+    t1.FECRECEPCION,
+    t1.FECPROMESAENTREGA,
+    t1.PIEZAENTREGADA,
+    t1.TIEMPOENTREGA,
+    t1.TIEMPORECEPCION,
+    t1.ANIO_EXPEDICION,
+    t1.MESEXPEDICION,
+    t1.LLAVEPIEZA_FINAL AS LLAVEPIEZA,
+    t1.TIPOASIGNACION1,
+    t1.AUTOMATICO,
+    t1.MANUAL_CON_ALERTA AS MANUAL_CON_ALERTA,
+    t1.MANUAL_COMPRAS AS MANUAL_COMPRAS,
+    t1.MANUAL_SEGUIMIENTO AS MANUAL_SEGUIMIENTO,
+    t1.DIRECTA,
+    t1.AREAASIGNACION,
+    t1.PIEZAAUTOSURTIDO,
+    t1.MONTOCONVENIO
+FROM `STG_PREVENCION_FRAUDES.QUERY_FOR_TLP` t1
+LEFT JOIN `LAN_VERIFICACIONES.USUARIOHOMOLOGADO` t2 ON t1.USUARIO = t2.UsuarioBase AND t2.Activo = TRUE
+WHERE t1.FECVALUACION >= '2024-01-01 00:00:00';
+
+-- ======================================================================
+-- SCRIPT DE INSERCIÓN DE DATOS EJEMPLO PARA USUARIOHOMOLOGADO
+-- ======================================================================
+
+-- Si necesitas poblar la tabla USUARIOHOMOLOGADO con datos ejemplo:
+/*
+INSERT INTO `LAN_VERIFICACIONES.USUARIOHOMOLOGADO` (UsuarioBase, UsuarioHomologado) VALUES
+('AUT', 'AUTOMATICO'),
+('ADMINEP08', 'EDUARDO LOPEZ'),
+('AUT / adminrefc18', 'AUT/NADIA YADIRA RAMIREZ'),
+('AUT / adminrefc23', 'AUT/ULISES PEREZ'),
+('AUT / ASR4', 'AUT/ARGENIS URIEL REYES ADAME'),
+('AUT / ASR3_14', 'AUT/ADRIANA NAVARRO'),
+('AUT / ASR9_2', 'AUT/MARTINEZ CORANADO BLANCA'),
+('AUT / ASR5', 'AUT/OSCAR OMAR HERRERA BECERRIL'),
+('AUT / ASR3_6', 'AUT/FELIX ESCOBAR'),
+-- Agregar más mappings según sea necesario
+('usuario_ejemplo', 'USUARIO HOMOLOGADO EJEMPLO');
+*/
+
+-- ======================================================================
+-- CONSULTA DE VERIFICACIÓN
+-- ======================================================================
+
+-- Para verificar que la tabla se creó correctamente:
+/*
+SELECT 
+    COUNT(*) as total_registros,
+    COUNT(DISTINCT IDEXPEDIENTE) as expedientes_unicos,
+    COUNT(DISTINCT USUARIO) as usuarios_unicos,
+    COUNT(DISTINCT USUARIOHOMOLOGADO) as usuarios_homologados_unicos,
+    MIN(FECVALUACION) as fecha_min,
+    MAX(FECVALUACION) as fecha_max
+FROM `DM_PREVENCION_FRAUDES.TODASLASPIEZAS`;
+*/
