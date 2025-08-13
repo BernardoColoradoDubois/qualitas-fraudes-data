@@ -1191,6 +1191,24 @@ def landing_valuaciones():
     dag=dag
   )    
   
+  load_administradorrefacciones = CloudDataFusionStartPipelineOperator(
+    task_id="load_administradorrefacciones",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='load_expediente',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ADMINISTRADORREFACCIONES', size='XS'),
+    dag=dag
+  )    
+  
+  
 
   
 @task_group(group_id='end_landing',dag=dag)
