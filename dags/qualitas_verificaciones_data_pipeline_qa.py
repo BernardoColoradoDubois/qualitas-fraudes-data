@@ -1060,7 +1060,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_expediente',
+    pipeline_name='load_administradorrefacciones',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1071,7 +1071,7 @@ def landing_valuaciones():
     runtime_args=get_datafusion_load_runtime_args('ADMINISTRADORREFACCIONES', size='XS'),
     dag=dag
   )    
-
+  
   load_asignacioncdr = CloudDataFusionStartPipelineOperator(
     task_id="load_asignacioncdr",
     location=DATA_PROJECT_REGION,
