@@ -197,7 +197,7 @@ agentes_excel_to_csv = PythonOperator(
     'project_id':'qlts-dev-mx-au-bro-verificacio',
     'bucket_name': 'bucket_verificaciones',
     'folder': 'AGENTES_GERENTES',
-    'file_name': 'Agentes_Gerentes.xlsx',
+    'file_name': 'Agentes_Gerentes.xlsx'
   },
   dag=dag
 )

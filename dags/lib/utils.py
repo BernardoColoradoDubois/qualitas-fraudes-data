@@ -184,7 +184,6 @@ def agentes_to_csv(project_id,bucket_name,folder,file_name,**kwargs):
   # Descargar el archivo como bytes
   excel_data = blob.download_as_bytes()
   
-  
   sheet_name = 'Hoja1'
 
   column_names = [
@@ -201,13 +200,5 @@ def agentes_to_csv(project_id,bucket_name,folder,file_name,**kwargs):
     'agente': 'string',
   }
   
-  #df = pd.read_excel(excel_data,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+  df = pd.read_excel(BytesIO(excel_data),sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
 
-  df = pd.read_csv(skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
-  
-  print(f"DataFrame shape: {df.shape}")
-  print(df.head())
-
-  
-  
-  
