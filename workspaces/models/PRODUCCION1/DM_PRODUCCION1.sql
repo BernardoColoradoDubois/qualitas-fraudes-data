@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.DM_CONTROL_FRAUDES.DM_PRODUCCION1` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.DM_PREVENCION_FRAUDES.DM_PRODUCCION1` AS
 SELECT 
   -- 1. FEC_EMI (fecha Oracle formato ddMMMyyyy:hh:mm:ss)
   CASE 

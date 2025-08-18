@@ -1,3 +1,4 @@
+import json
 import airflow
 from airflow import DAG
 from airflow.decorators import task
@@ -16,7 +17,7 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
-from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator
+from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,upload_storage_csv_to_bigquery,merge_storage_csv,agentes_to_csv
 
 VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES", deserialize_json=True)
 
@@ -222,6 +223,8 @@ dag = DAG(
 landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)
 
 
+
+
 @task_group(group_id='init_landing',dag=dag)
 def init_landing():
   
@@ -286,6 +289,178 @@ def init_landing():
   )
   
   validate_date_interval>>select_cluster_creator>>[create_big_cluster,create_small_cluster] >> get_datafusion_instance
+  
+@task_group(group_id='load_files',dag=dag)
+def load_files():
+  
+  merge_control_de_agentes = PythonOperator(
+    task_id='merge_control_de_agentes',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'CONTROL_DE_AGENTES/',
+      'folder_his': 'CONTROL_DE_AGENTES_HIS/',
+      'destination_blob_name': 'CONTROL_DE_AGENTES_2025_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'iso-8859-1'
+    },
+    dag=dag
+  )
+
+  load_control_de_agentes = PythonOperator(
+    task_id='load_control_de_agentes',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_2025_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'CONTROL_DE_AGENTES',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.control_de_agentes.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    },
+    dag=dag
+  )
+
+  merge_apertura_reporte = PythonOperator(
+    task_id='merge_apertura_reporte',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'APERTURA_REPORTE/',
+      'folder_his': 'APERTURA_REPORTE_HIS/',
+      'destination_blob_name': 'APERTURA_REPORTE_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'iso-8859-1'
+    },
+    dag=dag
+  )
+
+  load_apertura_reporte = PythonOperator(
+    task_id='load_apertura_reporte',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/APERTURA_REPORTE_HIS/APERTURA_REPORTE_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'APERTURA_REPORTE',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.apertura_reporte.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    },
+    dag=dag
+  )
+
+  merge_produccion1 = PythonOperator(
+    task_id='merge_produccion1',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'PRODUCCION1/',
+      'folder_his': 'PRODUCCION1_HIS/',
+      'destination_blob_name': 'PRODUCCION1_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'iso-8859-1'
+    },
+    dag=dag
+  )
+
+  load_produccion1 = PythonOperator(
+    task_id='load_produccion1',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/PRODUCCION1_HIS/PRODUCCION1_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'PRODUCCION1',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.produccion1.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    },
+    dag=dag
+  )
+
+  merge_produccion2 = PythonOperator(
+    task_id='merge_produccion2',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'PRODUCCION2/',
+      'folder_his': 'PRODUCCION2_HIS/',
+      'destination_blob_name': 'PRODUCCION2_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'iso-8859-1'
+    },
+    dag=dag
+  )
+
+  load_produccion2 = PythonOperator(
+    task_id='load_produccion2',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/PRODUCCION2_HIS/PRODUCCION2_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'PRODUCCION2',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.produccion2.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    },
+    dag=dag
+  )
+
+  merge_recuperaciones = PythonOperator(
+    task_id='merge_recuperaciones',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'RECUPERACIONES/',
+      'folder_his': 'RECUPERACIONES_HIS/',
+      'destination_blob_name': 'RECUPERACIONES_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'iso-8859-1'
+    },
+    dag=dag
+  )
+
+  load_recuperaciones = PythonOperator(
+    task_id='load_recuperaciones',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/RECUPERACIONES_HIS/RECUPERACIONES_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'RECUPERACIONES',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.recuperaciones.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    },
+    dag=dag
+  )
+
+  merge_sumas_aseg = PythonOperator(
+    task_id='merge_sumas_aseg',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'SUMAS_ASEG/',
+      'folder_his': 'SUMAS_ASEG_HIS/',
+      'destination_blob_name': 'SUMAS_ASEG_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'iso-8859-1'
+    },
+    dag=dag
+  )
+
+  load_sumas_aseg = PythonOperator(
+    task_id='load_sumas_aseg',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/SUMAS_ASEG_HIS/SUMAS_ASEG_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'SUMAS_ASEG',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.sumas_aseg.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    },
+    dag=dag
+  )
+  
+  merge_control_de_agentes >> load_control_de_agentes
+  merge_apertura_reporte >> load_apertura_reporte
+  merge_produccion1 >> load_produccion1
+  merge_produccion2 >> load_produccion2
+  merge_recuperaciones >> load_recuperaciones
+  merge_sumas_aseg >> load_sumas_aseg
   
 @task_group(group_id='landing_bsc_siniestros',dag=dag)
 def landing_bsc_siniestros():
@@ -510,8 +685,6 @@ def landing_bsc_siniestros():
     runtime_args=get_datafusion_load_runtime_args('PAGOSAUDITORIA_SISE', size='M',init_date=init_date, final_date=final_date),
     dag=dag
   )  
-  
-
   
 @task_group(group_id='landing_siniestros',dag=dag)
 def landing_siniestros():
@@ -3816,4 +3989,4 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones(),load_files()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()

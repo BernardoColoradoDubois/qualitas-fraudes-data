@@ -6,7 +6,8 @@ from google.cloud.exceptions import NotFound
 from datetime import datetime, timedelta
 import pytz
 import pandas as pd
-from io import StringIO
+from io import StringIO,BytesIO
+#import openpyxl
 
 
 #from airflow.providers.oracle.hooks.oracle import OracleHook
@@ -167,4 +168,46 @@ def get_cluster_tipe_creator(init_date:str,final_date:str,small_cluster_label:st
     
   else:
     return  big_cluster_label
+  
+
+
+def agentes_to_csv(project_id,bucket_name,folder,file_name,**kwargs):
+  
+  client = storage.Client(project=project_id)
+    
+  # Obtener el bucket
+  bucket = client.bucket(bucket_name)
+    
+  # Obtener el blob (archivo)
+  blob = bucket.blob(f'{folder}/{file_name}')
+    
+  # Descargar el archivo como bytes
+  excel_data = blob.download_as_bytes()
+  
+  
+  sheet_name = 'Hoja1'
+
+  column_names = [
+    'codigo_oficina_oficina',
+    'codigo_gerente_gerente',
+    'codigo_agente',
+    'agente',
+  ]
+
+  dtypes = {
+    'codigo_oficina_oficina': 'string',
+    'codigo_gerente_gerente': 'string',
+    'codigo_agente': 'string',
+    'agente': 'string',
+  }
+  
+  #df = pd.read_excel(excel_data,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+
+  df = pd.read_csv(skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+  
+  print(f"DataFrame shape: {df.shape}")
+  print(df.head())
+
+  
+  
   
