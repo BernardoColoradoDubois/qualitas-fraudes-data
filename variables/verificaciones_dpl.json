@@ -19,8 +19,8 @@
 
   "APP_ORACLE_HOST":"qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com",
   "APP_ORACLE_SERVICE_NAME":"ORCL",
-  "APP_ORACLE_USER":"ADMIN",
-  "APP_ORACLE_PASSWORD":"FqzJ3n3Kvwcftakshcmi",   
+  "APP_ORACLE_USER":"${secure(oraclefrauapp-user-dev)}",
+  "APP_ORACLE_PASSWORD":"${secure(oraclefrauapp-pass-dev)}",   
   "APP_ORACLE_INJECT_SCHEMA_NAME":"RAW_INSUMOS",
   "APP_ORACLE_INSUMOS_SCHEMA_NAME":"INSUMOS"
 }
