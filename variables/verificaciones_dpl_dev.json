@@ -19,9 +19,10 @@
 
   "APP_ORACLE_HOST":"devracapp-scan.qualitas.com",
   "APP_ORACLE_SERVICE_NAME":"CNTNRDES",
-  "APP_ORACLE_USER":"SASPRVFRAP",
-  "APP_ORACLE_PASSWORD":"T70mp_gJ87",   
+  "APP_ORACLE_USER":"${secure(oraclefrauappdev-user-dev)}",
+  "APP_ORACLE_PASSWORD":"${secure(oraclefrauappdev-pass-dev)}",   
   "APP_ORACLE_INJECT_SCHEMA_NAME":"SASPRVFRAP",
   "APP_ORACLE_INSUMOS_SCHEMA_NAME":"SASVERFAP"
-}
 
+
+}
