@@ -1998,7 +1998,8 @@ def recreate_cluster():
   )
   
   select_cluster_creator >> [create_big_cluster,create_small_cluster] >> get_datafusion_instance
-  
+ 
+
 @task_group(group_id='injection',dag=dag)
 def injection():
   inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
@@ -2006,7 +2007,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_asegurados',
+    pipeline_name='descarga_qlts_au_ve_bq_cat_asegurados',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2023,7 +2024,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_coberturas_movimientos',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_coberturas_movimientos',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2040,7 +2041,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_estados',
+    pipeline_name='descarga_qlts_au_ve_bq_cat_estados',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2057,7 +2058,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_pagos_proveedores',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_pagos_proveedores',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2074,7 +2075,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_proveedores',
+    pipeline_name='descarga_qlts_au_ve_bq_cat_proveedores',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2091,7 +2092,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_tipos_proveedores',
+    pipeline_name='descarga_qlts_au_ve_bq_cat_tipos_proveedores',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2108,7 +2109,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_causas',
+    pipeline_name='descarga_qlts_au_ve_bq_cat_causas',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2119,13 +2120,30 @@ def injection():
     runtime_args=get_datafusion_inject_runtime_args("DM_CAUSAS", "STG_CAUSAS", "DM_CAUSAS", "XS"),
     dag=dag
   )
+  
+  inject_dm_coberturas = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_coberturas",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='descarga_qlts_au_ve_bq_cat_coberturas',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("DM_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
+    dag=dag
+  )
 
   inject_dm_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_etiqueta_siniestro",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_etiqueta_siniestro',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_etiqueta_siniestro',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2142,7 +2160,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_registro',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_registro',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2159,7 +2177,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_dua',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_dua',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2176,7 +2194,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_oficinas',
+    pipeline_name='descarga_qlts_au_ve_bq_cat_oficinas',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2193,7 +2211,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_polizas_vigentes',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_polizas_vigentes',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2210,7 +2228,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_pagos_polizas',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_pagos_polizas',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2227,7 +2245,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_incisos_polizas',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_incisos_polizas',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2244,7 +2262,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_valuaciones',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_valuaciones',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2261,7 +2279,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_datos_generales',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_datos_generales',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2278,7 +2296,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_agentes',
+    pipeline_name='descarga_qlts_au_ve_bq_cat_agentes',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2295,7 +2313,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_gerentes',
+    pipeline_name='descarga_qlts_au_ve_bq_cat_gerentes',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2312,7 +2330,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_apercab',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_apercab',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2330,7 +2348,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_siniestros',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_siniestros',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2347,7 +2365,7 @@ def injection():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_datos_vehiculo',
+    pipeline_name='descarga_qlts_au_ve_bq_tab_datos_vehiculo',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -2359,24 +2377,6 @@ def injection():
     dag=dag
   )
   
-  inject_dm_coberturas = CloudDataFusionStartPipelineOperator(
-    task_id="inject_dm_coberturas",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='inject_dm_coberturas',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
-    dag=dag
-  )
-
-  
   # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
   [ 
    inject_dm_estados
@@ -2386,6 +2386,7 @@ def injection():
    ,inject_dm_proveedores
    ,inject_dm_tipos_proveedores
    ,inject_dm_causas
+   ,inject_dm_coberturas
    ,inject_dm_etiqueta_siniestro
    ,inject_dm_registro
    ,inject_dm_dua
@@ -2399,9 +2400,9 @@ def injection():
    ,inject_dm_gerentes
    ,inject_dm_apercab
    ,inject_dm_datos_vehiculo
-   ,inject_dm_coberturas
   ] >> inject_dm_siniestros
   
+ 
 @task_group(group_id='end_injection',dag=dag)
 def end_injection():
   
