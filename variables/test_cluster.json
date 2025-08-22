@@ -61,5 +61,8 @@
   },
   "endpoint_config": {
     "enable_http_port_access": true
+  },
+ "lifecycle_config": {
+    "auto_delete_ttl" : "3600s"
   }
 }
