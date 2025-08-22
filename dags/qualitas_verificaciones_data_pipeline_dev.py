@@ -291,7 +291,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_apercab_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_apercab_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -308,7 +308,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_maseg_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_maseg_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -325,7 +325,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_pagoprove',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_pagoprove',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -342,7 +342,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_pagosproveedores',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_pagosproveedores',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -353,13 +353,13 @@ def landing_bsc_siniestros():
     runtime_args=get_datafusion_load_runtime_args('PAGOSPROVEEDORES',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
-
+  
   load_prestadores = CloudDataFusionStartPipelineOperator(
     task_id="load_prestadores",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_prestadores',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_prestadores',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -376,7 +376,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_reservas_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_reservas_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -393,7 +393,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_testado_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_testado_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -410,7 +410,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_tipoproveedor',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tipoproveedor',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -427,7 +427,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_tsuc_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tsuc_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -444,7 +444,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_valuacion_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_valuacion_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -455,14 +455,13 @@ def landing_bsc_siniestros():
     runtime_args=get_datafusion_load_runtime_args('VALUACION_BSC',size='M', init_date=init_date, final_date=final_date),
     dag=dag
   )
-
-   
+  
   load_tcober_bsc = CloudDataFusionStartPipelineOperator(
     task_id="load_tcober_bsc",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_tcober_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tcober_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -479,7 +478,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_orden_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_orden_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -491,13 +490,12 @@ def landing_bsc_siniestros():
     dag=dag
   )  
   
-  
   load_pagosauditoria_sise = CloudDataFusionStartPipelineOperator(
     task_id="load_pagosauditoria_sise",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_pagosauditoria_sise',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_pagosauditoria_sise',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -510,8 +508,7 @@ def landing_bsc_siniestros():
   )  
   
   
-  
-  
+
 @task_group(group_id='landing_siniestros',dag=dag)
 def landing_siniestros():
 
@@ -520,7 +517,7 @@ def landing_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_cat_causa',
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_cat_causa',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -537,7 +534,7 @@ def landing_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_cobranza',
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_cobranza',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -554,7 +551,7 @@ def landing_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_cobranza_hist',
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_cobranza_hist',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -570,7 +567,7 @@ def landing_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_sas_sinies',
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_sas_sinies',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -587,7 +584,7 @@ def landing_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_etiqueta_siniestro',
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_etiqueta_siniestro',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -604,7 +601,7 @@ def landing_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_registro',
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_registro',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -617,6 +614,7 @@ def landing_siniestros():
   )
   
 
+
 @task_group(group_id='landing_sise',dag=dag)
 def landing_sise():
 
@@ -625,7 +623,7 @@ def landing_sise():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_fraud_di',
+    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_di',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -642,7 +640,7 @@ def landing_sise():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_fraud_pv',
+    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_pv',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -659,7 +657,7 @@ def landing_sise():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_fraud_rp',
+    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_rp',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -672,9 +670,6 @@ def landing_sise():
   )
   
 
-
-
-  
 @task_group(group_id='landing_dua',dag=dag)
 def landing_dua():
   
@@ -683,7 +678,7 @@ def landing_dua():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_datos_dua',
+    pipeline_name='carga_qlts_au_ve_dua_ora_datos_dua',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -695,7 +690,8 @@ def landing_dua():
     dag=dag
   )
   
-
+  
+      
 @task_group(group_id='landing_valuaciones',dag=dag)
 def landing_valuaciones():
   
@@ -704,7 +700,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_datos_generales',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_datosgenerales',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -721,7 +717,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_analistacdr',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_analistacdr',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -738,7 +734,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_causacambiovale',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_causacambiovale',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -755,7 +751,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_cerco',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_cerco',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -772,7 +768,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_color',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_color',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -789,7 +785,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_complemento',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_complemento',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -806,7 +802,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_datosvehiculo',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_datosvehiculo',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -823,7 +819,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_enviohistorico',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_enviohistorico',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -840,7 +836,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_estado',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_estado',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -857,7 +853,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_estatus',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_estatus',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -874,7 +870,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_estatusexpedientes',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_estatusexpedientes',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -891,7 +887,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_fechas',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_fechas',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -908,7 +904,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_historicoterminoentrega',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_historicoterminoentrega',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -925,7 +921,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_marca',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_marca',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -942,7 +938,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_proveedor',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_proveedor',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -959,7 +955,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_refaccion',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_refaccion',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -976,7 +972,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_supervisorintegral',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_supervisorintegral',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -993,7 +989,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_talleres',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_talleres',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1010,7 +1006,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_vale',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_vale',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1027,7 +1023,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_valehistorico',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_valehistorico',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1044,7 +1040,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_valuacion',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_valuacion',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1061,7 +1057,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_valeestatus',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_valeestatus',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1078,7 +1074,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_vista_vale',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_vista_vale',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1096,7 +1092,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_valuador',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_valuador',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1113,7 +1109,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_categoria',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_categoria',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1130,7 +1126,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_tipotot',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_tipotot',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1147,7 +1143,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_relacioncdr_sicdr',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_relacioncdr_sicdr',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1164,7 +1160,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_costo',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_costo',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1181,7 +1177,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_expediente',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_expediente',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1192,13 +1188,13 @@ def landing_valuaciones():
     runtime_args=get_datafusion_load_runtime_args('EXPEDIENTE', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )    
-
+  
   load_administradorrefacciones = CloudDataFusionStartPipelineOperator(
     task_id="load_administradorrefacciones",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_administradorrefacciones',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_administradorrefacciones',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1209,13 +1205,13 @@ def landing_valuaciones():
     runtime_args=get_datafusion_load_runtime_args('ADMINISTRADORREFACCIONES', size='XS'),
     dag=dag
   )    
-
+  
   load_asignacioncdr = CloudDataFusionStartPipelineOperator(
     task_id="load_asignacioncdr",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_asignacioncdr',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_asignacioncdr',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1233,7 +1229,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_fechapromesarealanlcdr',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_fechapromesarealanlcdr',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1251,7 +1247,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_histoinvestigacion',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_histoinvestigacion',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1268,7 +1264,7 @@ def landing_valuaciones():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='load_unidad',
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_unidad',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -1281,10 +1277,6 @@ def landing_valuaciones():
   )
 
 
-  
-    
-
-  
 @task_group(group_id='end_landing',dag=dag)
 def end_landing():
   
