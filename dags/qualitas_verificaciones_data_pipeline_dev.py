@@ -50,7 +50,7 @@ VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPR
 VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
 VERIFICACIONES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
 
-interval = get_date_interval(project_id='qlts-dev-mx-au-bro-verificacio',period=VERIFICACIONES_LOAD_INTERVAL)
+interval = get_date_interval(project_id='qlts-dev-mx-au-bro-verificacio',dataset='DM_VERIFICACIONES',table='DM_CALENDARIO',period=VERIFICACIONES_LOAD_INTERVAL)
 
 init_date = interval['init_date']
 final_date = interval['final_date']

@@ -113,7 +113,7 @@ def execute_query_workflow(project_id,query,**kwargs):
   print(result.__dict__)  
   
 
-def get_date_interval(project_id:str,period:str,**kwargs):
+def get_date_interval(project_id:str,dataset,table,period:str,**kwargs):
   
   init_date = 'yyyy-mm-dd'
   final_date = 'yyyy-mm-dd'
@@ -140,7 +140,7 @@ def get_date_interval(project_id:str,period:str,**kwargs):
     client = bigquery.Client(project=project_id)
     query = f"""
         WITH dates AS ( 
-          SELECT DATE FROM `DM_VERIFICACIONES.DM_CALENDARIO` WHERE PERIOD_STRING = '{period}'
+          SELECT DATE FROM `{dataset}.{table}` WHERE PERIOD_STRING = '{period}'
         ) 
         SELECT MIN(DATE) AS init_date, MAX(DATE) AS final_date FROM dates WHERE DATE < CURRENT_DATE('-06')
       """

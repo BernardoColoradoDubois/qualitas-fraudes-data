@@ -131,6 +131,7 @@ CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.CAT_
 );
 CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.TAB_CALENDARIO`
 (
+  ID INT64,
   DATE DATE,
   DAY INT64,
   MONTH INT64,
@@ -907,6 +908,7 @@ CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.TAB_
   ID_VALUACION STRING,
   TIEMPO_PAGO INT64
 );
+
 CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.TAB_POLIZAS_VIGENTES`
 (
   ID STRING,
@@ -1117,7 +1119,6 @@ CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.TAB_
   FECHA_CARGA DATETIME
 );
 
-
 CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.CAT_PROVEEDORES`
 (
   ID STRING,
@@ -1182,6 +1183,7 @@ CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.TAB_
   FECHA_LOTE DATETIME,
   ID_USUARIO_SISTEMA STRING
 );
+
 CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.TAB_SINIESTROS`
 (
   ID STRING,
