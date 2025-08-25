@@ -1117,6 +1117,7 @@ CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.TAB_
   FECHA_CARGA DATETIME
 );
 
+
 CREATE TABLE `qlts-dev-mx-au-oro-verificacio.qlts_oro_op_verificaciones_dev.CAT_PROVEEDORES`
 (
   ID STRING,
