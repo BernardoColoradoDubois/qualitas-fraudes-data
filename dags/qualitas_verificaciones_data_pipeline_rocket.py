@@ -18,7 +18,7 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 
 from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator
 
-VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES", deserialize_json=True)
+VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES_ROCKET", deserialize_json=True)
 
 DATA_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_ID']
 DATA_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_REGION']

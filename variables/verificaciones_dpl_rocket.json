@@ -1,0 +1,27 @@
+{
+  "DATA_PROJECT_ID":"qlts-nonprod-data-tools",
+  "DATA_PROJECT_REGION":"us-central1",
+  "DATA_DATAFUSION_INSTANCE_NAME":"qlts-data-fusion-dev",
+  "DATA_DATAFUSION_TEMPORARY_BUCKET_NAME":"gcs-qlts-dev-mx-au-bro-verificaciones",
+  "DATA_DATAFUSION_NAMESPACE":"verificaciones",
+  "DATA_DATAPROC_CLUSTER_NAME":"verificaciones-dataproc",
+  "DATA_DATAPROC_PROFILE_NAME":"USER:verificaciones-dataproc",
+  "DATA_COMPOSER_WORKSPACE_BUCKET_NAME" : "us-central1-qlts-composer-d-cc034e9e-bucket",
+
+  "VERIFICACIONES_PROJECT_ID":"qlts-dev-mx-au-bro-verificacio",
+  "VERIFICACIONES_PROJECT_REGION":"us-central1",
+  "VERIFICACIONES_LAN_DATASET_NAME":"LAN_VERIFICACIONES",
+  "VERIFICACIONES_RTL_DATASET_NAME":"RTL_VERIFICACIONES",
+  "VERIFICACIONES_STG_DATASET_NAME":"STG_VERIFICACIONES",
+  "VERIFICACIONES_DM_DATASET_NAME":"DM_VERIFICACIONES",
+  "VERIFICACIONES_SEED_DATASET_NAME":"SEED_VERIFICACIONES",
+  "VERIFICACIONES_CONNECTION_DEFAULT":"google_cloud_default",
+
+  "APP_ORACLE_HOST":"qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com",
+  "APP_ORACLE_SERVICE_NAME":"ORCL",
+  "APP_ORACLE_USER":"${secure(oraclefrauapp-user-dev)}",
+  "APP_ORACLE_PASSWORD":"${secure(oraclefrauapp-pass-dev)}",   
+  "APP_ORACLE_INJECT_SCHEMA_NAME":"RAW_INSUMOS",
+  "APP_ORACLE_INSUMOS_SCHEMA_NAME":"INSUMOS"
+}
+
