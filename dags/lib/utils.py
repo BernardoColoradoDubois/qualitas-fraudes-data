@@ -128,14 +128,27 @@ def get_date_interval(project_id:str,dataset,table,period:str,**kwargs):
     
     init_date = string_date
     final_date = string_date
+        
+    return {
+      'init_date': init_date,
+      'final_date': final_date
+    }
     
-    print(f"YESTERDAY: {init_date}  {final_date}")
+  elif period == 'HISTORY':
+    
+    timezone = pytz.timezone('America/Mexico_City')
+    today = datetime.now(timezone)
+    yesterday = today - timedelta(days=1)
+    string_date = yesterday.strftime('%Y-%m-%d')
+    
+    init_date = '1970-01-01'
+    final_date = string_date
     
     return {
       'init_date': init_date,
       'final_date': final_date
     }
-
+    
   else:
     client = bigquery.Client(project=project_id)
     query = f"""
@@ -154,7 +167,6 @@ def get_date_interval(project_id:str,dataset,table,period:str,**kwargs):
     init_date = init_date.strftime('%Y-%m-%d')
     final_date = final_date.strftime('%Y-%m-%d')
     
-    print(f"PERIOD: {period}  {init_date}  {final_date}")
     return {
       'init_date': init_date,
       'final_date': final_date
