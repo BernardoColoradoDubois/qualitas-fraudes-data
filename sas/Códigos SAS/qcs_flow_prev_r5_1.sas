@@ -1,0 +1,23 @@
+%include 
+	"/qcs/projects/default/qcsrun/sas/macros/prevencion/macros_utility_prev.sas";
+%create_log(ruta_log=/qcs/projects/default/qcsrun/logs/prevencion/familia5/, 
+	nombre_log=qcs_flow_prev_r5_1);
+
+proc format;
+	picture dt_oracle other='%Y-%0m-%0d %0H:%0M:%0S' (datatype=datetime);
+run;   
+/*Se toma un intervalo de 12 meses a partir de la fecha en curso, manteniendo una historia de 12 meses*/
+/*%obtiene_periodo(fecha_especifica=, intervalo_mes=12, 
+	num_meses_hist=12);*/
+%include '/qcs/projects/default/qcsrun/sas/programs/prevencion/qcs_asigna_periodo_reglas.sas';
+
+/* obtiene fecha especifica 
+%obtiene_periodo(fecha_especifica=31/05/2022, intervalo_mes=12, num_meses_hist=12); 
+*/
+
+%include "/qcs/projects/default/qcsrun/sas/programs/prevencion/qcs_code_prev_prod_aseg_unico_r5_1.sas";
+%include "/qcs/projects/default/qcsrun/sas/programs/prevencion/qcs_code_prev_prod_serie_unico_r5_1.sas";
+%include "/qcs/projects/default/qcsrun/sas/programs/prevencion/qcs_code_prev_r5_1.sas";
+%include "/qcs/projects/default/qcsrun/sas/programs/prevencion/qcs_score_code_prev_r5_1.sas";
+%include "/qcs/projects/default/qcsrun/sas/programs/prevencion/qcs_cas_code_prev_r5_1.sas";
+%close_log();
