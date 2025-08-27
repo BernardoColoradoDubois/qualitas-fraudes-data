@@ -1,0 +1,36 @@
+/* Se hace una importacion de un archivo excel que se actualiza */
+
+DATA WORK.CLAVES_CTAS_ESPECIALES;
+    LENGTH
+        CUENTA           $ 18
+        'CVE AGENTE'n    $ 6
+        EJECUTIVA        $ 22 ;
+    FORMAT
+        CUENTA           $CHAR18.
+        'CVE AGENTE'n    $CHAR6.
+        EJECUTIVA        $CHAR22. ;
+    INFORMAT
+        CUENTA           $CHAR18.
+        'CVE AGENTE'n    $CHAR6.
+        EJECUTIVA        $CHAR22. ;
+    INFILE '/saswork/SAS_workC0EA000C6782_sasva1.qualitas.com/#LN00010'
+        LRECL=55
+        ENCODING="UTF-8"
+        TERMSTR=CRLF
+        DLM='7F'x
+        MISSOVER
+        DSD ;
+    INPUT
+        CUENTA           : $CHAR18.
+        'CVE AGENTE'n    : $CHAR6.
+        EJECUTIVA        : $CHAR22. ;
+RUN;
+
+PROC SQL;
+   CREATE TABLE CONVENB.EJECUTIVAS_SEG AS 
+   SELECT DISTINCT t1.CUENTA, 
+          t1.'CVE AGENTE'n, 
+          t1.EJECUTIVA
+      FROM WORK.CLAVES_CTAS_ESPECIALES t1;
+QUIT;
+
