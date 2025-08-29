@@ -1,0 +1,7 @@
+[
+  {"name": "NO_OF", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "OFICINA", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "ZONA_ATENCION", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DIRECTOR_GENERAL", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "SUBDIRECTOR_GENERAL", "type": "STRING", "mode": "NULLABLE"}
+]

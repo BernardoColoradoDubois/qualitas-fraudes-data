@@ -5,35 +5,35 @@ sheet_name = 'Hoja1'
 file = './files/Agentes_Gerentes.xlsx'
 
 column_names = [
-  'codigo_oficina_oficina',
-  'codigo_gerente_gerente',
-  'codigo_agente',
-  'agente',
+  'CODIGO_OFICINA_OFICINA',
+  'CODIGO_GERENTE_GERENTE',
+  'CODIGO_AGENTE',
+  'AGENTE',
 ]
 
 dtypes = {
-  'codigo_oficina_oficina': 'string',
-  'codigo_gerente_gerente': 'string',
-  'codigo_agente': 'string',
-  'agente': 'string',
+  'CODIGO_OFICINA_OFICINA': 'string',
+  'CODIGO_GERENTE_GERENTE': 'string',
+  'CODIGO_AGENTE': 'string',
+  'AGENTE': 'string',
 }
 
 df = pd.read_excel(file,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
 
-df[['codigo_oficina', 'oficina']] = df['codigo_oficina_oficina'].str.split(' ', n=1, expand=True)
-df[['codigo_gerente', 'gerente']] = df['codigo_gerente_gerente'].str.split(' ', n=1, expand=True)
+df[['CODIGO_OFICINA', 'OFICINA']] = df['CODIGO_OFICINA_OFICINA'].str.split(' ', n=1, expand=True)
+df[['CODIGO_GERENTE', 'GERENTE']] = df['CODIGO_GERENTE_GERENTE'].str.split(' ', n=1, expand=True)
 
-df = df.drop(columns=['codigo_oficina_oficina'])
-df = df.drop(columns=['codigo_gerente_gerente'])
+df = df.drop(columns=['CODIGO_OFICINA_OFICINA'])
+df = df.drop(columns=['CODIGO_GERENTE_GERENTE'])
 
-gerentes_df = df[['codigo_oficina' ,'codigo_gerente' ,'gerente']].copy().drop_duplicates(subset=['codigo_gerente'])
+gerentes_df = df[['CODIGO_OFICINA' ,'CODIGO_GERENTE' ,'GERENTE']].copy().drop_duplicates(subset=['CODIGO_GERENTE'])
 
-agentes_df = df[['codigo_oficina' ,'codigo_gerente' ,'codigo_agente' ,'agente']].copy().drop_duplicates(subset=['codigo_agente'])
+agentes_df = df[['CODIGO_OFICINA' ,'CODIGO_GERENTE' ,'CODIGO_AGENTE' ,'AGENTE']].copy().drop_duplicates(subset=['CODIGO_AGENTE'])
 
 
 print(gerentes_df.head())
 print(agentes_df.head())
 
 
-gerentes_df.to_csv('./csv/gerentes.csv', index=False, encoding='utf-8-sig')
-agentes_df.to_csv('./csv/agentes.csv', index=False, encoding='utf-8-sig')
+gerentes_df.to_csv('./csv/GERENTES.csv', index=False, encoding='utf-8-sig')
+agentes_df.to_csv('./csv/AGENTES.csv', index=False, encoding='utf-8-sig')

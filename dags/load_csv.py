@@ -217,6 +217,90 @@ load_claves_ctas_especiales = PythonOperator(
   dag=dag
 )
 
+merge_catalogo_direccion_comercial = PythonOperator(
+  task_id='merge_catalogo_direccion_comercial',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'CATALOGO_DIRECCION_COMERCIAL/',
+    'folder_his': 'CATALOGO_DIRECCION_COMERCIAL_HIS/',
+    'destination_blob_name': 'CATALOGO_DIRECCION_COMERCIAL_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'utf-8-sig'
+  },
+  dag=dag
+)
+
+load_catalogo_direccion_comercial = PythonOperator(
+  task_id='load_catalogo_direccion_comercial',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/CATALOGO_DIRECCION_COMERCIAL_HIS/CATALOGO_DIRECCION_COMERCIAL_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'CATALOGO_DIRECCION_COMERCIAL',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.catalogo_direccion_comercial.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+merge_agentes = PythonOperator(
+  task_id='merge_agentes',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'AGENTES/',
+    'folder_his': 'AGENTES_HIS/',
+    'destination_blob_name': 'AGENTES_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'utf-8-sig'
+  },
+  dag=dag
+)
+
+load_agentes = PythonOperator(
+  task_id='load_agentes',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/AGENTES_HIS/AGENTES_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'AGENTES',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.agentes.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+merge_gerentes = PythonOperator(
+  task_id='merge_gerentes',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'GERENTES/',
+    'folder_his': 'GERENTES_HIS/',
+    'destination_blob_name': 'GERENTES_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'utf-8-sig'
+  },
+  dag=dag
+)
+
+load_gerentes = PythonOperator(
+  task_id='load_gerentes',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/GERENTES_HIS/GERENTES_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'GERENTES',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.gerentes.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+
+
+
 #agentes_excel_to_csv = PythonOperator(
 #  task_id='agentes_excel_to_csv',
 #  python_callable=agentes_to_csv,
@@ -237,5 +321,8 @@ init >> merge_produccion2 >> load_produccion2
 init >> merge_recuperaciones >> load_recuperaciones
 init >> merge_sumas_aseg >> load_sumas_aseg
 init >> merge_claves_ctas_especiales >> load_claves_ctas_especiales
+init >> merge_catalogo_direccion_comercial >> load_catalogo_direccion_comercial
+init >> merge_agentes >> load_agentes
+init >> merge_gerentes >> load_gerentes
 
 #init >> agentes_excel_to_csv

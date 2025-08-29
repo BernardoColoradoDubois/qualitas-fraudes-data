@@ -1,0 +1,5 @@
+[
+  {"name": "CODIGO_OFICINA", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "CODIGO_GERENTE", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "GERENTE", "type": "STRING", "mode": "NULLABLE"}
+]
