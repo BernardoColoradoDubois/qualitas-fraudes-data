@@ -2274,7 +2274,7 @@ def bq_elt():
       'SOURCE_TABLE_NAME': 'TAB_PAGOS_POLIZAS_RTL',
       'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
       'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
-      'DEST_TABLE_NAME': 'TAB_PAGOS_POLIZAS_RTL',
+      'DEST_TABLE_NAME': 'TAB_PAGOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },

@@ -1,0 +1,5 @@
+[
+  {"name": "CUENTA", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "CVE_AGENTE", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "EJECUTIVA", "type": "STRING", "mode": "NULLABLE"}
+]
