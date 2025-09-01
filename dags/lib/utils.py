@@ -183,7 +183,7 @@ def get_cluster_tipe_creator(init_date:str,final_date:str,small_cluster_label:st
   
 
 
-def agentes_to_csv(project_id,bucket_name,folder,file_name,**kwargs):
+def agentes_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
   
   client = storage.Client(project=project_id)
     
@@ -191,7 +191,7 @@ def agentes_to_csv(project_id,bucket_name,folder,file_name,**kwargs):
   bucket = client.bucket(bucket_name)
     
   # Obtener el blob (archivo)
-  blob = bucket.blob(f'{folder}/{file_name}')
+  blob = bucket.blob(f'{folder}/{file}')
     
   # Descargar el archivo como bytes
   excel_data = blob.download_as_bytes()
@@ -199,18 +199,156 @@ def agentes_to_csv(project_id,bucket_name,folder,file_name,**kwargs):
   sheet_name = 'Hoja1'
 
   column_names = [
-    'codigo_oficina_oficina',
-    'codigo_gerente_gerente',
-    'codigo_agente',
-    'agente',
+    'CODIGO_OFICINA_OFICINA',
+    'CODIGO_GERENTE_GERENTE',
+    'CODIGO_AGENTE',
+    'AGENTE',
   ]
 
   dtypes = {
-    'codigo_oficina_oficina': 'string',
-    'codigo_gerente_gerente': 'string',
-    'codigo_agente': 'string',
-    'agente': 'string',
+    'CODIGO_OFICINA_OFICINA': 'string',
+    'CODIGO_GERENTE_GERENTE': 'string',
+    'CODIGO_AGENTE': 'string',
+    'AGENTE': 'string',
+  }
+
+  df = pd.read_excel(excel_data,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+
+  df[['CODIGO_OFICINA', 'OFICINA']] = df['CODIGO_OFICINA_OFICINA'].str.split(' ', n=1, expand=True)
+  df[['CODIGO_GERENTE', 'GERENTE']] = df['CODIGO_GERENTE_GERENTE'].str.split(' ', n=1, expand=True)
+
+  df = df.drop(columns=['CODIGO_OFICINA_OFICINA'])
+  df = df.drop(columns=['CODIGO_GERENTE_GERENTE'])
+
+
+  df = df[['CODIGO_OFICINA' ,'CODIGO_GERENTE' ,'CODIGO_AGENTE' ,'AGENTE']].copy().drop_duplicates(subset=['CODIGO_AGENTE'])
+
+  csv = df.to_csv(index=False)
+
+
+  output_path = f"{dest_folder}/{dest_file}"
+  out_blob = bucket.blob(output_path)
+  out_blob.upload_from_string(csv, content_type='text/csv')
+  
+  
+  
+def gerentes_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
+    
+  client = storage.Client(project=project_id)
+    
+  # Obtener el bucket
+  bucket = client.bucket(bucket_name)
+    
+  # Obtener el blob (archivo)
+  blob = bucket.blob(f'{folder}/{file}')
+    
+  # Descargar el archivo como bytes
+  excel_data = blob.download_as_bytes()
+  
+  sheet_name = 'Hoja1'
+
+  column_names = [
+    'CODIGO_OFICINA_OFICINA',
+    'CODIGO_GERENTE_GERENTE',
+    'CODIGO_AGENTE',
+    'AGENTE',
+  ]
+
+  dtypes = {
+    'CODIGO_OFICINA_OFICINA': 'string',
+    'CODIGO_GERENTE_GERENTE': 'string',
+    'CODIGO_AGENTE': 'string',
+    'AGENTE': 'string',
   }
   
-  df = pd.read_excel(BytesIO(excel_data),sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+  df = pd.read_excel(excel_data,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
 
+  df[['CODIGO_OFICINA', 'OFICINA']] = df['CODIGO_OFICINA_OFICINA'].str.split(' ', n=1, expand=True)
+  df[['CODIGO_GERENTE', 'GERENTE']] = df['CODIGO_GERENTE_GERENTE'].str.split(' ', n=1, expand=True)
+
+  df = df.drop(columns=['CODIGO_OFICINA_OFICINA'])
+  df = df.drop(columns=['CODIGO_GERENTE_GERENTE'])
+  
+  df = df[['CODIGO_OFICINA' ,'CODIGO_GERENTE' ,'GERENTE']].copy().drop_duplicates(subset=['CODIGO_GERENTE'])
+
+  csv = df.to_csv(index=False)
+
+  output_path = f"{dest_folder}/{dest_file}"
+  out_blob = bucket.blob(output_path)
+  out_blob.upload_from_string(csv, content_type='text/csv')
+  
+  
+def claves_ctas_especiales_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
+  
+  client = storage.Client(project=project_id)
+    
+  # Obtener el bucket
+  bucket = client.bucket(bucket_name)
+    
+  # Obtener el blob (archivo)
+  blob = bucket.blob(f'{folder}/{file}')
+    
+  # Descargar el archivo como bytes
+  excel_data = blob.download_as_bytes()
+  
+  sheet_name = 'Hoja1'
+
+  column_names = [
+    'CUENTA'
+    ,'CVE_AGENTE'
+    ,'EJECUTIVA'
+  ]
+
+  dtypes = {
+    'CUENTA': 'string',
+    'CVE_AGENTE': 'string',
+    'EJECUTIVA': 'string',
+  }
+  
+  df = pd.read_excel(excel_data,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+
+
+  csv = df.to_csv(index=False)
+
+  output_path = f"{dest_folder}/{dest_file}"
+  out_blob = bucket.blob(output_path)
+  out_blob.upload_from_string(csv, content_type='text/csv')
+  
+def catalogo_direccion_comercial_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
+
+  client = storage.Client(project=project_id)
+    
+  # Obtener el bucket
+  bucket = client.bucket(bucket_name)
+    
+  # Obtener el blob (archivo)
+  blob = bucket.blob(f'{folder}/{file}')
+    
+  # Descargar el archivo como bytes
+  excel_data = blob.download_as_bytes()
+  
+  sheet_name = 'CAT_OFICINAS'
+
+  column_names = [
+    'NO_OF'
+    ,'OFICINA'
+    ,'ZONA_ATENCION'
+    ,'DIRECTOR_GENERAL'
+    ,'SUBDIRECTOR_GENERAL'
+  ]
+
+  dtypes = {
+    'NO_OF': 'string',
+    'OFICINA': 'string',
+    'ZONA_ATENCION': 'string',
+    'DIRECTOR_GENERAL': 'string',
+    'SUBDIRECTOR_GENERAL': 'string',
+  }
+  
+  df = pd.read_excel(excel_data,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+
+  csv = df.to_csv(index=False)
+
+  output_path = f"{dest_folder}/{dest_file}"
+  out_blob = bucket.blob(output_path)
+  out_blob.upload_from_string(csv, content_type='text/csv')
