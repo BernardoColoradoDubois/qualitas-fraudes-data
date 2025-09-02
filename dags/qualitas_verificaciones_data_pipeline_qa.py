@@ -6,6 +6,7 @@ from airflow.operators.python import PythonOperator,BranchPythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.decorators import task_group
 from airflow.models import Variable
+import json
 
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionStartPipelineOperator
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionGetInstanceOperator
@@ -16,7 +17,8 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
-from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator
+from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,merge_storage_csv,upload_storage_csv_to_bigquery
+from lib.utils import agentes_to_csv,gerentes_to_csv
 
 VERIFICACIONES_CONFIG_VARIABLES_QA = Variable.get("VERIFICACIONES_CONFIG_VARIABLES_QA", deserialize_json=True)
 
@@ -31,12 +33,12 @@ DATA_COMPOSER_WORKSPACE_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES_QA['DATA_C
 
 VERIFICACIONES_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_PROJECT_ID']
 VERIFICACIONES_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_PROJECT_REGION']
+VERIFICACIONES_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_BUCKET_NAME']
 VERIFICACIONES_LAN_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_LAN_DATASET_NAME']
 VERIFICACIONES_RTL_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_RTL_DATASET_NAME']
 VERIFICACIONES_STG_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_STG_DATASET_NAME']
 VERIFICACIONES_DM_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_DM_DATASET_NAME']
 VERIFICACIONES_SEED_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_SEED_DATASET_NAME']
-VERIFICACIONES_CONNECTION_DEFAULT = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_CONNECTION_DEFAULT']
 VERIFICACIONES_CONNECTION_DEFAULT = VERIFICACIONES_CONFIG_VARIABLES_QA['VERIFICACIONES_CONNECTION_DEFAULT']
 
 APP_ORACLE_HOST = VERIFICACIONES_CONFIG_VARIABLES_QA['APP_ORACLE_HOST']
@@ -283,6 +285,96 @@ def init_landing():
   
   validate_date_interval>>select_cluster_creator>>[create_big_cluster,create_small_cluster] >> get_datafusion_instance
   
+
+@task_group(group_id='load_files',dag=dag)
+def load_files():
+
+  agentes_excel_to_csv = PythonOperator(
+    task_id='agentes_excel_to_csv',
+    python_callable=agentes_to_csv,
+    op_kwargs={
+      'project_id':VERIFICACIONES_PROJECT_ID,
+      'bucket_name': VERIFICACIONES_BUCKET_NAME,
+      'folder': 'AGENTES_GERENTES',
+      'file': 'Agentes_Gerentes.xlsx',
+      'dest_folder': 'AGENTES',
+      'dest_file': 'AGENTES.csv',
+    },
+    dag=dag
+  )
+
+  merge_agentes = PythonOperator(
+    task_id='merge_agentes',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BUCKET_NAME,
+      'folder': 'AGENTES/',
+      'folder_his': 'AGENTES_HIS/',
+      'destination_blob_name': 'AGENTES_HIS.csv',
+      'project_id': VERIFICACIONES_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_agentes = PythonOperator(
+    task_id='load_agentes',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BUCKET_NAME}/AGENTES_HIS/AGENTES_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'AGENTES',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.agentes.json')),
+      'project_id': VERIFICACIONES_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  gerentes_excel_to_csv = PythonOperator(
+    task_id='gerentes_excel_to_csv',
+    python_callable=gerentes_to_csv,
+    op_kwargs={
+      'project_id':VERIFICACIONES_PROJECT_ID,
+      'bucket_name': VERIFICACIONES_BUCKET_NAME,
+      'folder': 'AGENTES_GERENTES',
+      'file': 'Agentes_Gerentes.xlsx',
+      'dest_folder': 'GERENTES',
+      'dest_file': 'GERENTES.csv',
+    },
+    dag=dag
+  )
+
+  merge_gerentes = PythonOperator(
+    task_id='merge_gerentes',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BUCKET_NAME,
+      'folder': 'GERENTES/',
+      'folder_his': 'GERENTES_HIS/',
+      'destination_blob_name': 'GERENTES_HIS.csv',
+      'project_id': VERIFICACIONES_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_gerentes = PythonOperator(
+    task_id='load_gerentes',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BUCKET_NAME}/GERENTES_HIS/GERENTES_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'GERENTES',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.gerentes.json')),
+      'project_id': VERIFICACIONES_PROJECT_ID,
+    },
+    dag=dag
+  )
+  
+  agentes_excel_to_csv >> merge_agentes >> load_agentes
+  gerentes_excel_to_csv >> merge_gerentes >> load_gerentes
+
+
   
 @task_group(group_id='landing_bsc_siniestros',dag=dag)
 def landing_bsc_siniestros():
@@ -1308,6 +1400,54 @@ def end_landing():
 
 @task_group(group_id='bq_elt',dag=dag)
 def bq_elt():
+
+  dm_agentes = BigQueryInsertJobOperator(
+    task_id="dm_agentes",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/AGENTES/DM_AGENTES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'AGENTES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_AGENTES',
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  dm_gerentes = BigQueryInsertJobOperator(
+    task_id="dm_gerentes",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/GERENTES/DM_GERENTES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'GERENTES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
+      'DEST_TABLE_NAME': 'DM_GERENTES',
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
 
   # ASEGURADO
   dm_asegurados = BigQueryInsertJobOperator(
@@ -2979,4 +3119,4 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> [load_files(),landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()

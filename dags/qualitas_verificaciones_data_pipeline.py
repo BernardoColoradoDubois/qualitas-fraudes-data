@@ -17,7 +17,8 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
-from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,upload_storage_csv_to_bigquery,merge_storage_csv,agentes_to_csv
+from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,upload_storage_csv_to_bigquery,merge_storage_csv
+from lib.utils import agentes_to_csv,gerentes_to_csv,catalogo_direccion_comercial_to_csv,claves_ctas_especiales_to_csv
 
 VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES", deserialize_json=True)
 
@@ -32,6 +33,7 @@ DATA_COMPOSER_WORKSPACE_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_COMP
 
 VERIFICACIONES_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_ID']
 VERIFICACIONES_BRO_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BRO_PROJECT_ID']
+VERIFICACIONES_BRO_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BRO_BUCKET_NAME']
 VERIFICACIONES_PLA_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PLA_PROJECT_ID']
 VERIFICACIONES_ORO_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_ORO_PROJECT_ID']
 VERIFICACIONES_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_REGION']
@@ -292,16 +294,16 @@ def init_landing():
   
 @task_group(group_id='load_files',dag=dag)
 def load_files():
-  
+
   merge_control_de_agentes = PythonOperator(
     task_id='merge_control_de_agentes',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
       'folder': 'CONTROL_DE_AGENTES/',
       'folder_his': 'CONTROL_DE_AGENTES_HIS/',
       'destination_blob_name': 'CONTROL_DE_AGENTES_2025_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -311,11 +313,11 @@ def load_files():
     task_id='load_control_de_agentes',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_2025_HIS.csv',
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_2025_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'CONTROL_DE_AGENTES',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.control_de_agentes.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.control_de_agentes.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -324,11 +326,11 @@ def load_files():
     task_id='merge_apertura_reporte',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
       'folder': 'APERTURA_REPORTE/',
       'folder_his': 'APERTURA_REPORTE_HIS/',
       'destination_blob_name': 'APERTURA_REPORTE_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -338,11 +340,11 @@ def load_files():
     task_id='load_apertura_reporte',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/APERTURA_REPORTE_HIS/APERTURA_REPORTE_HIS.csv',
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/APERTURA_REPORTE_HIS/APERTURA_REPORTE_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'APERTURA_REPORTE',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.apertura_reporte.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.apertura_reporte.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -351,11 +353,11 @@ def load_files():
     task_id='merge_produccion1',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
       'folder': 'PRODUCCION1/',
       'folder_his': 'PRODUCCION1_HIS/',
       'destination_blob_name': 'PRODUCCION1_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -365,11 +367,11 @@ def load_files():
     task_id='load_produccion1',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/PRODUCCION1_HIS/PRODUCCION1_HIS.csv',
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/PRODUCCION1_HIS/PRODUCCION1_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'PRODUCCION1',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.produccion1.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.produccion1.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -378,11 +380,11 @@ def load_files():
     task_id='merge_produccion2',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
       'folder': 'PRODUCCION2/',
       'folder_his': 'PRODUCCION2_HIS/',
       'destination_blob_name': 'PRODUCCION2_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -392,11 +394,11 @@ def load_files():
     task_id='load_produccion2',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/PRODUCCION2_HIS/PRODUCCION2_HIS.csv',
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/PRODUCCION2_HIS/PRODUCCION2_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'PRODUCCION2',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.produccion2.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.produccion2.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -405,11 +407,11 @@ def load_files():
     task_id='merge_recuperaciones',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
       'folder': 'RECUPERACIONES/',
       'folder_his': 'RECUPERACIONES_HIS/',
       'destination_blob_name': 'RECUPERACIONES_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -419,11 +421,11 @@ def load_files():
     task_id='load_recuperaciones',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/RECUPERACIONES_HIS/RECUPERACIONES_HIS.csv',
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/RECUPERACIONES_HIS/RECUPERACIONES_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'RECUPERACIONES',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.recuperaciones.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.recuperaciones.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -432,11 +434,11 @@ def load_files():
     task_id='merge_sumas_aseg',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
       'folder': 'SUMAS_ASEG/',
       'folder_his': 'SUMAS_ASEG_HIS/',
       'destination_blob_name': 'SUMAS_ASEG_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -446,21 +448,194 @@ def load_files():
     task_id='load_sumas_aseg',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/SUMAS_ASEG_HIS/SUMAS_ASEG_HIS.csv',
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/SUMAS_ASEG_HIS/SUMAS_ASEG_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'SUMAS_ASEG',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.sumas_aseg.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.sumas_aseg.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
     },
     dag=dag
   )
-  
+
+  claves_ctas_especiales_excel_to_csv = PythonOperator(
+    task_id='claves_ctas_especiales_excel_to_csv',
+    python_callable=claves_ctas_especiales_to_csv,
+    op_kwargs={
+      'project_id':VERIFICACIONES_BRO_PROJECT_ID,
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'CLAVES_CTAS_ESPECIALES_EXCEL',
+      'file': 'CLAVES_CTAS_ESPECIALES 3.xlsx',
+      'dest_folder': 'CLAVES_CTAS_ESPECIALES',
+      'dest_file': 'CLAVES_CTAS_ESPECIALES.csv',
+    },
+    dag=dag
+  )
+
+  merge_claves_ctas_especiales = PythonOperator(
+    task_id='merge_claves_ctas_especiales',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'CLAVES_CTAS_ESPECIALES/',
+      'folder_his': 'CLAVES_CTAS_ESPECIALES_HIS/',
+      'destination_blob_name': 'CLAVES_CTAS_ESPECIALES_HIS.csv',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_claves_ctas_especiales = PythonOperator(
+    task_id='load_claves_ctas_especiales',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CLAVES_CTAS_ESPECIALES_HIS/CLAVES_CTAS_ESPECIALES_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'CLAVES_CTAS_ESPECIALES',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.claves_ctas_especiales.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  catalogo_direccion_comercial_excel_to_csv = PythonOperator(
+    task_id='catalogo_direccion_comercial_excel_to_csv',
+    python_callable=catalogo_direccion_comercial_to_csv,
+    op_kwargs={
+      'project_id':VERIFICACIONES_BRO_PROJECT_ID,
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'CIENCIA_DATOS/CATALOGO_DIRECCION_COMERCIAL',
+      'file': 'Catalogo_direccion_comercial.xlsx',
+      'dest_folder': 'CATALOGO_DIRECCION_COMERCIAL',
+      'dest_file': 'CATALOGO_DIRECCION_COMERCIAL.csv',
+    },
+    dag=dag
+  )
+
+  merge_catalogo_direccion_comercial = PythonOperator(
+    task_id='merge_catalogo_direccion_comercial',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'CATALOGO_DIRECCION_COMERCIAL/',
+      'folder_his': 'CATALOGO_DIRECCION_COMERCIAL_HIS/',
+      'destination_blob_name': 'CATALOGO_DIRECCION_COMERCIAL_HIS.csv',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_catalogo_direccion_comercial = PythonOperator(
+    task_id='load_catalogo_direccion_comercial',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CATALOGO_DIRECCION_COMERCIAL_HIS/CATALOGO_DIRECCION_COMERCIAL_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'CATALOGO_DIRECCION_COMERCIAL',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.catalogo_direccion_comercial.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  agentes_excel_to_csv = PythonOperator(
+    task_id='agentes_excel_to_csv',
+    python_callable=agentes_to_csv,
+    op_kwargs={
+      'project_id':VERIFICACIONES_BRO_PROJECT_ID,
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'AGENTES_GERENTES',
+      'file': 'Agentes_Gerentes.xlsx',
+      'dest_folder': 'AGENTES',
+      'dest_file': 'AGENTES.csv',
+    },
+    dag=dag
+  )
+
+  merge_agentes = PythonOperator(
+    task_id='merge_agentes',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'AGENTES/',
+      'folder_his': 'AGENTES_HIS/',
+      'destination_blob_name': 'AGENTES_HIS.csv',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_agentes = PythonOperator(
+    task_id='load_agentes',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/AGENTES_HIS/AGENTES_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'AGENTES',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.agentes.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  gerentes_excel_to_csv = PythonOperator(
+    task_id='gerentes_excel_to_csv',
+    python_callable=gerentes_to_csv,
+    op_kwargs={
+      'project_id':VERIFICACIONES_BRO_PROJECT_ID,
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'AGENTES_GERENTES',
+      'file': 'Agentes_Gerentes.xlsx',
+      'dest_folder': 'GERENTES',
+      'dest_file': 'GERENTES.csv',
+    },
+    dag=dag
+  )
+
+  merge_gerentes = PythonOperator(
+    task_id='merge_gerentes',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'GERENTES/',
+      'folder_his': 'GERENTES_HIS/',
+      'destination_blob_name': 'GERENTES_HIS.csv',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_gerentes = PythonOperator(
+    task_id='load_gerentes',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/GERENTES_HIS/GERENTES_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'GERENTES',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.gerentes.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+
+
   merge_control_de_agentes >> load_control_de_agentes
   merge_apertura_reporte >> load_apertura_reporte
   merge_produccion1 >> load_produccion1
   merge_produccion2 >> load_produccion2
   merge_recuperaciones >> load_recuperaciones
   merge_sumas_aseg >> load_sumas_aseg
+  claves_ctas_especiales_excel_to_csv >> merge_claves_ctas_especiales >> load_claves_ctas_especiales
+  catalogo_direccion_comercial_excel_to_csv >> merge_catalogo_direccion_comercial >> load_catalogo_direccion_comercial
+  agentes_excel_to_csv >> merge_agentes >> load_agentes
+  gerentes_excel_to_csv >> merge_gerentes >> load_gerentes
+  
+  
+  
   
 @task_group(group_id='landing_bsc_siniestros',dag=dag)
 def landing_bsc_siniestros():
@@ -1488,6 +1663,54 @@ def end_landing():
 
 @task_group(group_id='bq_elt',dag=dag)
 def bq_elt():
+  
+  dm_agentes = BigQueryInsertJobOperator(
+    task_id="dm_agentes",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/AGENTES/DM_AGENTES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'AGENTES',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_AGENTES',
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  dm_gerentes = BigQueryInsertJobOperator(
+    task_id="dm_gerentes",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/GERENTES/DM_GERENTES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'GERENTES',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_GERENTES',
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
 
   # ASEGURADO
   dm_asegurados = BigQueryInsertJobOperator(
