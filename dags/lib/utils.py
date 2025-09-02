@@ -55,8 +55,8 @@ def merge_storage_csv(project_id,bucket_name,folder,folder_his, destination_blob
 
 
     #Assume all files have the same header
-    df = pd.read_csv(StringIO(contenido_csv), header=0, low_memory=False)
-
+    df = pd.read_csv(StringIO(contenido_csv), header=0, low_memory=False, dtype=str)
+    
     df_list.append(df)
 
   merged_df = pd.concat(df_list, ignore_index=True)

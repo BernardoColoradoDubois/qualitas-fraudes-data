@@ -354,6 +354,33 @@ load_gerentes = PythonOperator(
   dag=dag
 )
 
+merge_estados_mexico = PythonOperator(
+  task_id='merge_estados_mexico',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'ESTADOS_MEXICO/',
+    'folder_his': 'ESTADOS_MEXICO_HIS/',
+    'destination_blob_name': 'ESTADOS_MEXICO_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'utf-8-sig'
+  },
+  dag=dag
+)
+
+load_estados_mexico = PythonOperator(
+  task_id='load_estados_mexico',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/ESTADOS_MEXICO_HIS/ESTADOS_MEXICO_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'ESTADOS_MEXICO',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.estados_mexico.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
 
 
 init >> merge_control_de_agentes >> load_control_de_agentes
@@ -366,3 +393,4 @@ init >> claves_ctas_especiales_excel_to_csv >> merge_claves_ctas_especiales >> l
 init >> catalogo_direccion_comercial_excel_to_csv >> merge_catalogo_direccion_comercial >> load_catalogo_direccion_comercial
 init >> agentes_excel_to_csv >> merge_agentes >> load_agentes
 init >> gerentes_excel_to_csv >> merge_gerentes >> load_gerentes
+init >> merge_estados_mexico >> load_estados_mexico

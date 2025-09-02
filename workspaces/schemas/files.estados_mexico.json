@@ -1,0 +1,4 @@
+[
+  {"name": "CODIGO_ESTADO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "ESTADO", "type": "STRING", "mode": "NULLABLE"}
+]
