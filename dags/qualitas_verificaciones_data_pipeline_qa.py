@@ -509,7 +509,7 @@ def landing_bsc_siniestros():
   )  
   
   load_tcausa_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_pagosauditoria_sise",
+    task_id="load_tcausa_bsc",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
