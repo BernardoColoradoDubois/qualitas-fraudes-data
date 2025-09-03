@@ -322,7 +322,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BUCKET_NAME}/AGENTES_HIS/AGENTES_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_LAN_DATASET_NAME,
       'table': 'AGENTES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.agentes.json')),
       'project_id': VERIFICACIONES_PROJECT_ID,
@@ -363,17 +363,47 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BUCKET_NAME}/GERENTES_HIS/GERENTES_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_LAN_DATASET_NAME,
       'table': 'GERENTES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.gerentes.json')),
       'project_id': VERIFICACIONES_PROJECT_ID,
     },
     dag=dag
   )
+
+
+  merge_estados_mexico = PythonOperator(
+    task_id='merge_estados_mexico',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BUCKET_NAME,
+      'folder': 'ESTADOS_MEXICO/',
+      'folder_his': 'ESTADOS_MEXICO_HIS/',
+      'destination_blob_name': 'ESTADOS_MEXICO_HIS.csv',
+      'project_id': VERIFICACIONES_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_estados_mexico = PythonOperator(
+    task_id='load_estados_mexico',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BUCKET_NAME}/ESTADOS_MEXICO_HIS/ESTADOS_MEXICO_HIS.csv',
+      'dataset': VERIFICACIONES_LAN_DATASET_NAME,
+      'table': 'ESTADOS_MEXICO',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.estados_mexico.json')),
+      'project_id': VERIFICACIONES_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+
   
   agentes_excel_to_csv >> merge_agentes >> load_agentes
   gerentes_excel_to_csv >> merge_gerentes >> load_gerentes
-
+  merge_estados_mexico >> load_estados_mexico
 
   
 @task_group(group_id='landing_bsc_siniestros',dag=dag)

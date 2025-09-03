@@ -314,7 +314,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_2025_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'CONTROL_DE_AGENTES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.control_de_agentes.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -341,7 +341,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/APERTURA_REPORTE_HIS/APERTURA_REPORTE_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'APERTURA_REPORTE',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.apertura_reporte.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -368,7 +368,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/PRODUCCION1_HIS/PRODUCCION1_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'PRODUCCION1',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.produccion1.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -395,7 +395,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/PRODUCCION2_HIS/PRODUCCION2_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'PRODUCCION2',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.produccion2.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -422,7 +422,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/RECUPERACIONES_HIS/RECUPERACIONES_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'RECUPERACIONES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.recuperaciones.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -449,7 +449,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/SUMAS_ASEG_HIS/SUMAS_ASEG_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'SUMAS_ASEG',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.sumas_aseg.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -490,7 +490,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CLAVES_CTAS_ESPECIALES_HIS/CLAVES_CTAS_ESPECIALES_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'CLAVES_CTAS_ESPECIALES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.claves_ctas_especiales.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -531,7 +531,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CATALOGO_DIRECCION_COMERCIAL_HIS/CATALOGO_DIRECCION_COMERCIAL_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'CATALOGO_DIRECCION_COMERCIAL',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.catalogo_direccion_comercial.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -572,7 +572,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/AGENTES_HIS/AGENTES_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'AGENTES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.agentes.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
@@ -613,13 +613,42 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/GERENTES_HIS/GERENTES_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
       'table': 'GERENTES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.gerentes.json')),
       'project_id': VERIFICACIONES_BRO_PROJECT_ID,
     },
     dag=dag
   )
+
+
+  merge_estados_mexico = PythonOperator(
+    task_id='merge_estados_mexico',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'ESTADOS_MEXICO/',
+      'folder_his': 'ESTADOS_MEXICO_HIS/',
+      'destination_blob_name': 'ESTADOS_MEXICO_HIS.csv',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_estados_mexico = PythonOperator(
+    task_id='load_estados_mexico',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/ESTADOS_MEXICO_HIS/ESTADOS_MEXICO_HIS.csv',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'table': 'ESTADOS_MEXICO',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.estados_mexico.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
 
 
 
@@ -633,6 +662,7 @@ def load_files():
   catalogo_direccion_comercial_excel_to_csv >> merge_catalogo_direccion_comercial >> load_catalogo_direccion_comercial
   agentes_excel_to_csv >> merge_agentes >> load_agentes
   gerentes_excel_to_csv >> merge_gerentes >> load_gerentes
+  merge_estados_mexico >> load_estados_mexico
   
   
   
