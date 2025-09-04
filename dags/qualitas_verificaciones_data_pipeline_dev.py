@@ -634,7 +634,7 @@ def landing_bsc_siniestros():
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_tcausa_bsc',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tcausa_bsc',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -645,6 +645,41 @@ def landing_bsc_siniestros():
     runtime_args=get_datafusion_load_runtime_args('TCAUSA_BSC', size='XS'),
     dag=dag
   )
+  
+  load_valuaciones = CloudDataFusionStartPipelineOperator(
+    task_id="load_valuaciones",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_valuacion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALUACIONES', size='M', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+  
+  load_apercab_reing = CloudDataFusionStartPipelineOperator(
+    task_id="load_apercab_reing",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_apercab_reing',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('APERCAB_REING', size='M', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+  
   
   
 
