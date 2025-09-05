@@ -1,4 +1,4 @@
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ANALISTACDR`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.ANALISTACDR`
 (
   IDANALISTACDR STRING NOT NULL,
   CLAVEANALISTA STRING NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ANAL
   CONSULTA BIGNUMERIC
 );
 
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ASIGNACIONCDR`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.ASIGNACIONCDR`
 (
   IDASIGNACIONCDR STRING NOT NULL,
   IDANALISTACDR STRING NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ASIG
   FECHAASIGNACION DATETIME NOT NULL,
   FECHACAMBIO DATETIME
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.CATEGORIA`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.CATEGORIA`
 (
   IDCATEGORIA STRING NOT NULL,
   NOMBRE STRING,
@@ -32,7 +32,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.CATE
   NOMBREALTERNATIVO STRING,
   RANGO STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.COLOR`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.COLOR`
 (
   IDCOLOR STRING NOT NULL,
   DESCRIPCION STRING,
@@ -40,7 +40,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.COLO
   ACTUALIZACION DATETIME,
   USUARIOACTUALIZA STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.COMPLEMENTO`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.COMPLEMENTO`
 (
   IDCOMPLEMENTO STRING,
   IDEXPEDIENTE NUMERIC,
@@ -90,7 +90,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.COMP
   IDCAUSACANCELARPIEZA STRING,
   FECHACANCELACION DATETIME
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.COSTO`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.COSTO`
 (
   IDCOSTO NUMERIC NOT NULL,
   IDEXPEDIENTE NUMERIC,
@@ -138,7 +138,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.COST
   IDCAUSACANCELARPIEZA STRING,
   FECHACANCELACION DATETIME
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.DATOSGENERALES`
 (
   IDDATOSGENERALES NUMERIC NOT NULL,
   IDEXPEDIENTE NUMERIC,
@@ -250,7 +250,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATO
   DEDUADMIN STRING,
   FOTOSDIGITALPRO STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSVEHICULO`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.DATOSVEHICULO`
 (
   IDDATOSVEHICULO STRING,
   IDEXPEDIENTE STRING,
@@ -271,7 +271,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATO
   IDUNIDAD STRING,
   IDMARCATALLER STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ENVIOHISTORICO`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.ENVIOHISTORICO`
 (
   IDENVIOHISTORICO STRING,
   IDEXPEDIENTE STRING,
@@ -283,14 +283,14 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ENVI
   AUTORIZADOAUTOMATICO BIGNUMERIC,
   CODVALUADORCOMPLEMENTO STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ESTADO`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.ESTADO`
 (
   IDESTADO STRING NOT NULL,
   NOMBRE STRING,
   IDREGIONGEOGRAFICA BIGNUMERIC,
   ACTIVO BIGNUMERIC
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ESTATUS`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.ESTATUS`
 (
   IDESTATUS STRING,
   IDEXPEDIENTE STRING,
@@ -332,7 +332,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ESTA
   ISPIEZASCANCELADAS STRING,
   XNUUP BIGNUMERIC
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ESTATUSEXPEDIENTES`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.ESTATUSEXPEDIENTES`
 (
   IDESTATUSEXPEDIENTE STRING NOT NULL,
   DESCRIPCION STRING,
@@ -340,12 +340,12 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.ESTA
   ACTUALIZACION DATETIME,
   USUARIOACTUALIZA STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.EXPEDIENTE`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.EXPEDIENTE`
 (
   IDEXPEDIENTE NUMERIC NOT NULL,
   NUMEXPEDIENTE STRING NOT NULL
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.FECHAPROMESAREALANLCDR`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.FECHAPROMESAREALANLCDR`
 (
   ID_FECPROMREALANLCDR STRING NOT NULL,
   IDANALISTACDR STRING NOT NULL,
@@ -359,7 +359,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.FECH
   IS_VIGENTE STRING NOT NULL,
   FECHAESTENTSS1 DATETIME
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.FECHAS`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.FECHAS`
 (
   IDFECHAS STRING,
   IDEXPEDIENTE STRING,
@@ -397,7 +397,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.FECH
   SEMANAESTENT STRING,
   ESTIMADAENVIOCRM DATETIME
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.HISTOINVESTIGACION`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.HISTOINVESTIGACION`
 (
   IDHISTOINVESTIGACION BIGNUMERIC NOT NULL,
   IDEXPEDIENTE BIGNUMERIC,
@@ -405,14 +405,14 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.HIST
   FECHAACTUALIZACION DATETIME,
   USUARIOACTUALIZASISE STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.HISTORICOTERMINOENTREGA`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.HISTORICOTERMINOENTREGA`
 (
   IDHISTORICOTERMINOENTREGA STRING,
   IDEXPEDIENTE STRING,
   TIPOFECHA STRING,
   FECHA DATETIME
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.MARCA`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.MARCA`
 (
   IDMARCA STRING NOT NULL,
   DESCRIPCION STRING,
@@ -440,7 +440,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.MARC
   ALTAESPECIALIZADOMM DATETIME,
   ALTAESPECIALIZADO DATETIME
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.PRESTADORES`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.PRESTADORES`
 (
   Id STRING NOT NULL,
   Nombre STRING,
@@ -485,7 +485,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.PRES
   TBODY STRING,
   NUM_EMPL STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.RELACIONCDR_SICDR`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.RELACIONCDR_SICDR`
 (
   IDRELACIONCDRSICDR STRING NOT NULL,
   IDSICDR STRING NOT NULL,
@@ -493,7 +493,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.RELA
   USUARIOREGISTRO STRING NOT NULL,
   FECHAASIGNACION DATETIME NOT NULL
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.SUPERVISORINTEGRAL`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.SUPERVISORINTEGRAL`
 (
   IDSUPERVISORINTEGRAL STRING NOT NULL,
   CLAVESUPERVISOR STRING NOT NULL,
@@ -506,7 +506,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.SUPE
   FECHAACTUALIZACION DATETIME NOT NULL,
   USUARIOREGISTRO STRING NOT NULL
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TALLERES`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.TALLERES`
 (
   IDTALLER NUMERIC NOT NULL,
   IDOFICINA STRING,
@@ -564,7 +564,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TALL
   IDTIPOTALLER STRING,
   ACTIVAXNUUP NUMERIC
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TESTADO_BSC`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.TESTADO_BSC`
 (
   Z_ID STRING,
   EDOPOB STRING,
@@ -575,14 +575,14 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TEST
   EDO_ESTANDAR STRING,
   EDOPOB2 STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TIPOPROVEEDOR`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.TIPOPROVEEDOR`
 (
   id STRING,
   tipo_proveedor STRING,
   Grupo STRING,
   nombre_grupo STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.UNIDAD`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.UNIDAD`
 (
   IDUNIDAD STRING NOT NULL,
   DESCRIPCION STRING,
@@ -591,7 +591,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.UNID
   USUARIOACTUALIZA STRING,
   EP BIGNUMERIC NOT NULL
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.VALE`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.VALE`
 (
   IDVALE STRING,
   IDEXPEDIENTE STRING,
@@ -615,7 +615,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.VALE
   DEVUELTO STRING NOT NULL,
   ESTATUSACTUALSISE STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.VALEHISTORICO`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.VALEHISTORICO`
 (
   IDVALEHISTORICO STRING,
   CONCEPTO STRING,
@@ -644,7 +644,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.VALE
   IDCAUSACANCELARPIEZA STRING
 );
 
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.VALUACION`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.VALUACION`
 (
   IDVALUACION STRING NOT NULL,
   DESCRIPCION STRING,
@@ -652,7 +652,7 @@ CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.VALU
   ACTUALIZACION DATETIME,
   USUARIOACTUALIZA STRING
 );
-CREATE TABLE `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.VALUADOR`
+CREATE TABLE `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.VALUADOR`
 (
   CODVALUADOR STRING NOT NULL,
   IDESTATUSVALUADOR STRING,
