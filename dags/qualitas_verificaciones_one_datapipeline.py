@@ -1,3 +1,4 @@
+import json
 import airflow
 from airflow import DAG
 from airflow.decorators import task
@@ -6,7 +7,6 @@ from airflow.operators.python import PythonOperator,BranchPythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.decorators import task_group
 from airflow.models import Variable
-import json
 
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionStartPipelineOperator
 from airflow.providers.google.cloud.operators.datafusion import CloudDataFusionGetInstanceOperator
@@ -17,10 +17,11 @@ from airflow.providers.google.cloud.operators.bigquery import BigQueryInsertJobO
 from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClusterOperator
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
-from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,merge_storage_csv,upload_storage_csv_to_bigquery
-from lib.utils import agentes_to_csv,gerentes_to_csv
+from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,upload_storage_csv_to_bigquery,merge_storage_csv
+from lib.utils import agentes_to_csv,gerentes_to_csv,catalogo_direccion_comercial_to_csv,claves_ctas_especiales_to_csv
+from lib.utils import continue_to_verificaciones,select_bq_elt,select_datafusion_load,select_datafusion_inject
 
-VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES_ROCKET", deserialize_json=True)
+VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES", deserialize_json=True)
 
 DATA_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_ID']
 DATA_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_REGION']
@@ -32,14 +33,14 @@ DATA_DATAPROC_PROFILE_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAPROC_PROF
 DATA_COMPOSER_WORKSPACE_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_COMPOSER_WORKSPACE_BUCKET_NAME']
 
 VERIFICACIONES_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_ID']
+VERIFICACIONES_BRO_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BRO_PROJECT_ID']
+VERIFICACIONES_BRO_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BRO_BUCKET_NAME']
+VERIFICACIONES_PLA_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PLA_PROJECT_ID']
+VERIFICACIONES_ORO_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_ORO_PROJECT_ID']
 VERIFICACIONES_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_REGION']
-VERIFICACIONES_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BUCKET_NAME']
-VERIFICACIONES_LAN_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_LAN_DATASET_NAME']
-VERIFICACIONES_RTL_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_RTL_DATASET_NAME']
-VERIFICACIONES_STG_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_STG_DATASET_NAME']
-VERIFICACIONES_DM_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_DM_DATASET_NAME']
-VERIFICACIONES_SEED_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_SEED_DATASET_NAME']
-VERIFICACIONES_CONNECTION_DEFAULT = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_CONNECTION_DEFAULT']
+VERIFICACIONES_BRO_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BRO_DATASET_NAME']
+VERIFICACIONES_PLA_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PLA_DATASET_NAME']
+VERIFICACIONES_ORO_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_ORO_DATASET_NAME']
 VERIFICACIONES_CONNECTION_DEFAULT = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_CONNECTION_DEFAULT']
 
 APP_ORACLE_HOST = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_HOST']
@@ -53,10 +54,11 @@ VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPR
 VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
 VERIFICACIONES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
 
-interval = get_date_interval(project_id=VERIFICACIONES_PROJECT_ID,dataset='DM_VERIFICACIONES',table='DM_CALENDARIO',period=VERIFICACIONES_LOAD_INTERVAL)
+interval = get_date_interval(project_id='qlts-dev-mx-au-oro-verificacio',dataset='qlts_oro_op_verificaciones_dev',table='TAB_CALENDARIO',period=VERIFICACIONES_LOAD_INTERVAL)
 
 init_date = interval['init_date']
 final_date = interval['final_date']
+
 
 
 def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, insumos_table_name:str, size:str,init_date=None, final_date=None):
@@ -87,12 +89,13 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
     'APP_ORACLE_USER':APP_ORACLE_USER,
     'APP_ORACLE_PASSWORD':APP_ORACLE_PASSWORD,     
     'TEMPORARY_BUCKET_NAME':DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
-    'DATASET_NAME':VERIFICACIONES_DM_DATASET_NAME,
+    'DATASET_NAME':VERIFICACIONES_ORO_DATASET_NAME,
     'TABLE_NAME':table_name,
     'INJECT_SCHEMA_NAME':APP_ORACLE_INJECT_SCHEMA_NAME,
     'INJECT_TABLE_NAME':inject_table_name,
     'INSUMOS_SCHEMA_NAME':APP_ORACLE_INSUMOS_SCHEMA_NAME,
-    'INSUMOS_TABLE_NAME':insumos_table_name
+    'INSUMOS_TABLE_NAME':insumos_table_name,
+    'spark:spark.app.name': APP_ORACLE_INJECT_SCHEMA_NAME,
   }
 
   if init_date is not None and final_date is not None:
@@ -115,7 +118,12 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
 
     })
 
+  
+
+
+
   return inject_runtime_args
+
 
 
 def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, final_date=None):
@@ -127,7 +135,7 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
     'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
     'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
     'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
-    'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+    'DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
     'TABLE_NAME': table_name,  
   }
   
@@ -139,7 +147,7 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
       'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
       'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
-      'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'TABLE_NAME': table_name,
     }
   elif size == 'S':
@@ -150,7 +158,7 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
       'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
       'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
-      'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'TABLE_NAME': table_name,
     } 
   elif size == 'M':
@@ -161,7 +169,7 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
       'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
       'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
-      'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'TABLE_NAME': table_name,
     }   
   elif size == 'L':
@@ -172,7 +180,7 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
       'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
       'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
-      'DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'TABLE_NAME': table_name,
       'spark.sql.adaptive.enabled': 'true',
       'spark.sql.adaptive.skewJoin.enabled': 'true',
@@ -187,33 +195,39 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
       'spark.dynamicAllocation.schedulerBacklogTimeout': '1s',
 }
 
+        
+    
   if init_date is not None and final_date is not None:
     base_args.update({
       'init_date': init_date,
       'final_date': final_date
     })
     
+
   return base_args
   
-
 default_args = {
-  'start_date': airflow.utils.dates.days_ago(1),
+  'start_date': airflow.utils.dates.days_ago(0),
   'retries': 4,
   'retry_delay': timedelta(minutes=5)
 }
 
 dag = DAG(
-  'qualitas_verificaciones_data_pipeline_rocket',
+  'qualitas_verificaciones_one_datapipeline',
   default_args=default_args,
   description='liveness monitoring dag',
-  schedule_interval='0 17 * * *',
+  schedule_interval='0 0 1 1 *',
   max_active_runs=2,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
   tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']
 )
 
+
+
 landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)
+
+
 
 
 @task_group(group_id='init_landing',dag=dag)
@@ -237,15 +251,7 @@ def init_landing():
     dag=dag 
   )
 
-  create_big_cluster = DataprocCreateClusterOperator(
-    task_id="create_big_cluster",
-    project_id=DATA_PROJECT_ID,
-    cluster_config=VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG,
-    region=DATA_PROJECT_REGION,
-    cluster_name=DATA_DATAPROC_CLUSTER_NAME,
-    num_retries_if_resource_is_not_ready=3,
-    dag=dag
-  )
+
   
   create_small_cluster = DataprocCreateClusterOperator(
     task_id="create_small_cluster",
@@ -257,18 +263,7 @@ def init_landing():
     dag=dag
   )
   
-  select_cluster_creator = BranchPythonOperator(
-    task_id="select_cluster_creator",
-    python_callable=get_cluster_tipe_creator,
-    op_kwargs={
-      'init_date':init_date,
-      'final_date':final_date,
-      'small_cluster_label': 'init_landing.create_small_cluster',
-      'big_cluster_label': 'init_landing.create_big_cluster'
-    },
-    provide_context=True,
-    dag=dag
-  )  
+ 
   
   get_datafusion_instance = CloudDataFusionGetInstanceOperator(
     task_id="get_datafusion_instance",
@@ -279,129 +274,38 @@ def init_landing():
     dag=dag,
   )
   
-  validate_date_interval>>select_cluster_creator>>[create_big_cluster,create_small_cluster] >> get_datafusion_instance
+  validate_date_interval >> create_small_cluster >> get_datafusion_instance
   
-@task_group(group_id='load_files',dag=dag)
-def load_files():
 
-  agentes_excel_to_csv = PythonOperator(
-    task_id='agentes_excel_to_csv',
-    python_callable=agentes_to_csv,
-    op_kwargs={
-      'project_id':VERIFICACIONES_PROJECT_ID,
-      'bucket_name': VERIFICACIONES_BUCKET_NAME,
-      'folder': 'AGENTES_GERENTES',
-      'file': 'Agentes_Gerentes.xlsx',
-      'dest_folder': 'AGENTES',
-      'dest_file': 'AGENTES.csv',
-    },
-    dag=dag
-  )
-
-  merge_agentes = PythonOperator(
-    task_id='merge_agentes',
-    python_callable=merge_storage_csv,
-    op_kwargs={
-      'bucket_name': VERIFICACIONES_BUCKET_NAME,
-      'folder': 'AGENTES/',
-      'folder_his': 'AGENTES_HIS/',
-      'destination_blob_name': 'AGENTES_HIS.csv',
-      'project_id': VERIFICACIONES_PROJECT_ID,
-      'encoding': 'utf-8-sig'
-    },
-    dag=dag
-  )
-
-  load_agentes = PythonOperator(
-    task_id='load_agentes',
-    python_callable=upload_storage_csv_to_bigquery,
-    op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BUCKET_NAME}/AGENTES_HIS/AGENTES_HIS.csv',
-      'dataset': VERIFICACIONES_LAN_DATASET_NAME,
-      'table': 'AGENTES',
-      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.agentes.json')),
-      'project_id': VERIFICACIONES_PROJECT_ID,
-    },
-    dag=dag
-  )
-
-  gerentes_excel_to_csv = PythonOperator(
-    task_id='gerentes_excel_to_csv',
-    python_callable=gerentes_to_csv,
-    op_kwargs={
-      'project_id':VERIFICACIONES_PROJECT_ID,
-      'bucket_name': VERIFICACIONES_BUCKET_NAME,
-      'folder': 'AGENTES_GERENTES',
-      'file': 'Agentes_Gerentes.xlsx',
-      'dest_folder': 'GERENTES',
-      'dest_file': 'GERENTES.csv',
-    },
-    dag=dag
-  )
-
-  merge_gerentes = PythonOperator(
-    task_id='merge_gerentes',
-    python_callable=merge_storage_csv,
-    op_kwargs={
-      'bucket_name': VERIFICACIONES_BUCKET_NAME,
-      'folder': 'GERENTES/',
-      'folder_his': 'GERENTES_HIS/',
-      'destination_blob_name': 'GERENTES_HIS.csv',
-      'project_id': VERIFICACIONES_PROJECT_ID,
-      'encoding': 'utf-8-sig'
-    },
-    dag=dag
-  )
-
-  load_gerentes = PythonOperator(
-    task_id='load_gerentes',
-    python_callable=upload_storage_csv_to_bigquery,
-    op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BUCKET_NAME}/GERENTES_HIS/GERENTES_HIS.csv',
-      'dataset': VERIFICACIONES_LAN_DATASET_NAME,
-      'table': 'GERENTES',
-      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.gerentes.json')),
-      'project_id': VERIFICACIONES_PROJECT_ID,
-    },
-    dag=dag
-  )
-
-
-  merge_estados_mexico = PythonOperator(
-    task_id='merge_estados_mexico',
-    python_callable=merge_storage_csv,
-    op_kwargs={
-      'bucket_name': VERIFICACIONES_BUCKET_NAME,
-      'folder': 'ESTADOS_MEXICO/',
-      'folder_his': 'ESTADOS_MEXICO_HIS/',
-      'destination_blob_name': 'ESTADOS_MEXICO_HIS.csv',
-      'project_id': VERIFICACIONES_PROJECT_ID,
-      'encoding': 'utf-8-sig'
-    },
-    dag=dag
-  )
-
-  load_estados_mexico = PythonOperator(
-    task_id='load_estados_mexico',
-    python_callable=upload_storage_csv_to_bigquery,
-    op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BUCKET_NAME}/ESTADOS_MEXICO_HIS/ESTADOS_MEXICO_HIS.csv',
-      'dataset': VERIFICACIONES_LAN_DATASET_NAME,
-      'table': 'ESTADOS_MEXICO',
-      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.estados_mexico.json')),
-      'project_id': VERIFICACIONES_PROJECT_ID,
-    },
-    dag=dag
-  )
-
-
+@task_group(group_id='one_landing',dag=dag)
+def one_landing():
   
-  agentes_excel_to_csv >> merge_agentes >> load_agentes
-  gerentes_excel_to_csv >> merge_gerentes >> load_gerentes
-  merge_estados_mexico >> load_estados_mexico
+  select_load = BranchPythonOperator(
+    task_id="select_load",
+    python_callable=select_datafusion_load,
+    op_kwargs={
+      'table':'table',
+    },
+    provide_context=True,
+    dag=dag
+  )  
   
-@task_group(group_id='landing_bsc_siniestros',dag=dag)
-def landing_bsc_siniestros():
+  load_valuacion_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_valuacion_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_valuacion_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALUACION_BSC',size='M', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
   
   load_apercab_bsc = CloudDataFusionStartPipelineOperator(
     task_id="load_apercab_bsc",
@@ -419,13 +323,13 @@ def landing_bsc_siniestros():
     runtime_args=get_datafusion_load_runtime_args('APERCAB_BSC',size='L',init_date=init_date, final_date=final_date),
     dag=dag
   )
-
-  load_maseg_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_maseg_bsc",
+  
+  load_cat_causa = CloudDataFusionStartPipelineOperator(
+    task_id="load_cat_causa",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_maseg_bsc',
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_cat_causa',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -433,10 +337,205 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('MASEG_BSC',size='M'),
+    runtime_args=get_datafusion_load_runtime_args('CAT_CAUSA', size='XS'),
+    dag=dag
+  )
+  
+  load_tcober_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_tcober_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tcober_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('TCOBER_BSC', size='XS'),
+    dag=dag
+  )  
+  
+  load_reservas_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_reservas_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_reservas_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('RESERVAS_BSC',size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+  
+  load_datosgenerales = CloudDataFusionStartPipelineOperator(
+    task_id="load_datosgenerales",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_datosgenerales',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('DATOSGENERALES', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_datosvehiculo = CloudDataFusionStartPipelineOperator(
+    task_id="load_datosvehiculo",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_datosvehiculo',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('DATOSVEHICULO', size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )  
+  
+  load_datos_dua = CloudDataFusionStartPipelineOperator(
+    task_id="load_datos_dua",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_dua_ora_datos_dua',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('DATOS_DUA', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
+  load_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
+    task_id="load_etiqueta_siniestro",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_etiqueta_siniestro',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('ETIQUETA_SINIESTRO', size='M', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+  
+  load_fraud_di = CloudDataFusionStartPipelineOperator(
+    task_id="load_fraud_di",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_di',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('FRAUD_DI',size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+  
+
+  gerentes_excel_to_csv = PythonOperator(
+    task_id='gerentes_excel_to_csv',
+    python_callable=gerentes_to_csv,
+    op_kwargs={
+      'project_id':VERIFICACIONES_BRO_PROJECT_ID,
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'AGENTES_GERENTES',
+      'file': 'Agentes_Gerentes.xlsx',
+      'dest_folder': 'GERENTES',
+      'dest_file': 'GERENTES.csv',
+    },
+    dag=dag
+  )
+
+  merge_gerentes = PythonOperator(
+    task_id='merge_gerentes',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'GERENTES/',
+      'folder_his': 'GERENTES_HIS/',
+      'destination_blob_name': 'GERENTES_HIS.csv',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_gerentes = PythonOperator(
+    task_id='load_gerentes',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/GERENTES_HIS/GERENTES_HIS.csv',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'table': 'GERENTES',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.gerentes.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+  
+  load_fraud_rp = CloudDataFusionStartPipelineOperator(
+    task_id="load_fraud_rp",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_rp',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('FRAUD_RP',size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+  
+  load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_tsuc_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tsuc_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('TSUC_BSC',size='XS'),
+    dag=dag
+  )
+  
   load_pagoprove = CloudDataFusionStartPipelineOperator(
     task_id="load_pagoprove",
     location=DATA_PROJECT_REGION,
@@ -487,13 +586,13 @@ def landing_bsc_siniestros():
     runtime_args=get_datafusion_load_runtime_args('PRESTADORES',size='S'),
     dag=dag
   )
-
-  load_reservas_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_reservas_bsc",
+  
+  load_fraud_pv = CloudDataFusionStartPipelineOperator(
+    task_id="load_fraud_pv",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_reservas_bsc',
+    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_pv',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -501,219 +600,10 @@ def landing_bsc_siniestros():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('RESERVAS_BSC',size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-
-  load_testado_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_testado_bsc",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_testado_bsc',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('TESTADO_BSC',size='XS'),
-    dag=dag
-  )
-
-  load_tipoproveedor = CloudDataFusionStartPipelineOperator(
-    task_id="load_tipoproveedor",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tipoproveedor',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('TIPOPROVEEDOR',size='XS'),
-    dag=dag
-  )
-
-  load_tsuc_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_tsuc_bsc",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tsuc_bsc',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('TSUC_BSC',size='XS'),
+    runtime_args=get_datafusion_load_runtime_args('FRAUD_PV',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
   
-  load_valuacion_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_valuacion_bsc",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_valuacion_bsc',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('VALUACION_BSC',size='M', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-  
-  load_tcober_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_tcober_bsc",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tcober_bsc',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('TCOBER_BSC', size='XS'),
-    dag=dag
-  )  
-  
-  load_orden_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_orden_bsc",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_orden_bsc',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('ORDEN_BSC', size='S',init_date=init_date, final_date=final_date),
-    dag=dag
-  )  
-  
-  load_pagosauditoria_sise = CloudDataFusionStartPipelineOperator(
-    task_id="load_pagosauditoria_sise",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_pagosauditoria_sise',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('PAGOSAUDITORIA_SISE', size='M',init_date=init_date, final_date=final_date),
-    dag=dag
-  )  
-  
-  
- 
-  
-@task_group(group_id='landing_siniestros',dag=dag)
-def landing_siniestros():
-
-  load_cat_causa = CloudDataFusionStartPipelineOperator(
-    task_id="load_cat_causa",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_cat_causa',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('CAT_CAUSA', size='XS'),
-    dag=dag
-  )
-
-  load_cobranza = CloudDataFusionStartPipelineOperator(
-    task_id="load_cobranza",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_cobranza',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('COBRANZA', size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-
-  load_cobranza_hist = CloudDataFusionStartPipelineOperator(
-    task_id="load_cobranza_hist",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_cobranza_hist',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('COBRANZA_HIST',size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )  
-  load_sas_sinies = CloudDataFusionStartPipelineOperator(
-    task_id="load_sas_sinies",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_sas_sinies',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('SAS_SINIES', size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )  
-  
-  load_etiqueta_siniestro = CloudDataFusionStartPipelineOperator(
-    task_id="load_etiqueta_siniestro",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_etiqueta_siniestro',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('ETIQUETA_SINIESTRO', size='M', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-
   load_registro = CloudDataFusionStartPipelineOperator(
     task_id="load_registro",
     location=DATA_PROJECT_REGION,
@@ -731,16 +621,12 @@ def landing_siniestros():
     dag=dag
   )
   
- 
-@task_group(group_id='landing_sise',dag=dag)
-def landing_sise():
-
-  load_fraud_di = CloudDataFusionStartPipelineOperator(
-    task_id="load_fraud_di",
+  load_sas_sinies = CloudDataFusionStartPipelineOperator(
+    task_id="load_sas_sinies",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_di',
+    pipeline_name='carga_qtls_au_ve_sasmxpro_srv_ora_sas_sinies',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -748,94 +634,16 @@ def landing_sise():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('FRAUD_DI',size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-
-  load_fraud_pv = CloudDataFusionStartPipelineOperator(
-    task_id="load_fraud_pv",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_pv',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('FRAUD_PV',size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-
-  load_fraud_rp = CloudDataFusionStartPipelineOperator(
-    task_id="load_fraud_rp",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_rp',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('FRAUD_RP',size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-  
-  
-  
-@task_group(group_id='landing_dua',dag=dag)
-def landing_dua():
-  
-  load_datos_dua = CloudDataFusionStartPipelineOperator(
-    task_id="load_datos_dua",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_dua_ora_datos_dua',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('DATOS_DUA', size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
- 
- 
-
-@task_group(group_id='landing_valuaciones',dag=dag)
-def landing_valuaciones():
-  
-  load_datosgenerales = CloudDataFusionStartPipelineOperator(
-    task_id="load_datosgenerales",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_datosgenerales',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('DATOSGENERALES', size='L', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('SAS_SINIES', size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )  
   
-  load_datosvehiculo = CloudDataFusionStartPipelineOperator(
-    task_id="load_datosvehiculo",
+  load_tipoproveedor = CloudDataFusionStartPipelineOperator(
+    task_id="load_tipoproveedor",
     location=DATA_PROJECT_REGION,
     instance_name=DATA_DATAFUSION_INSTANCE_NAME,
     namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_datosvehiculo',
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_tipoproveedor',
     project_id=DATA_PROJECT_ID,
     pipeline_type = DataFusionPipelineType.BATCH,
     success_states=["COMPLETED"],
@@ -843,10 +651,120 @@ def landing_valuaciones():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('DATOSVEHICULO', size='L', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('TIPOPROVEEDOR',size='XS'),
     dag=dag
-  )  
+  )
+  
+  load_testado_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_testado_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_testado_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('TESTADO_BSC',size='XS'),
+    dag=dag
+  )
+  
+  merge_estados_mexico = PythonOperator(
+    task_id='merge_estados_mexico',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'ESTADOS_MEXICO/',
+      'folder_his': 'ESTADOS_MEXICO_HIS/',
+      'destination_blob_name': 'ESTADOS_MEXICO_HIS.csv',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
 
+  load_estados_mexico = PythonOperator(
+    task_id='load_estados_mexico',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/ESTADOS_MEXICO_HIS/ESTADOS_MEXICO_HIS.csv',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'table': 'ESTADOS_MEXICO',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.estados_mexico.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+  
+
+  agentes_excel_to_csv = PythonOperator(
+    task_id='agentes_excel_to_csv',
+    python_callable=agentes_to_csv,
+    op_kwargs={
+      'project_id':VERIFICACIONES_BRO_PROJECT_ID,
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'AGENTES_GERENTES',
+      'file': 'Agentes_Gerentes.xlsx',
+      'dest_folder': 'AGENTES',
+      'dest_file': 'AGENTES.csv',
+    },
+    dag=dag
+  )
+
+  merge_agentes = PythonOperator(
+    task_id='merge_agentes',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'folder': 'AGENTES/',
+      'folder_his': 'AGENTES_HIS/',
+      'destination_blob_name': 'AGENTES_HIS.csv',
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_agentes = PythonOperator(
+    task_id='load_agentes',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/AGENTES_HIS/AGENTES_HIS.csv',
+      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'table': 'AGENTES',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.agentes.json')),
+      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+  
+  end_load = BashOperator(task_id='end_load',bash_command='echo end loading',trigger_rule='one_success',dag=dag)
+
+  select_load >> merge_estados_mexico >> load_estados_mexico >> load_testado_bsc >> end_load
+  select_load >> load_pagoprove >> load_pagosproveedores >> end_load
+  select_load >> gerentes_excel_to_csv >> merge_gerentes >> load_gerentes >> end_load
+  select_load >> agentes_excel_to_csv >> merge_agentes >> load_agentes >> end_load
+  select_load >> load_valuacion_bsc >> end_load
+  select_load >> load_apercab_bsc >> end_load
+  select_load >> load_cat_causa >> end_load
+  select_load >> load_datos_dua >> end_load
+  select_load >> load_datosgenerales >> end_load
+  select_load >> load_datosvehiculo >> end_load
+  select_load >> load_etiqueta_siniestro >> end_load
+  select_load >> load_fraud_di >> end_load
+  select_load >> load_fraud_rp >> end_load
+  select_load >> load_fraud_pv >> end_load
+  select_load >> load_prestadores >> end_load
+  select_load >> load_registro >> end_load
+  select_load >> load_reservas_bsc >> end_load
+  select_load >> load_sas_sinies >> end_load
+  select_load >> load_tcober_bsc >> end_load
+  select_load >> load_tipoproveedor >> end_load
+  select_load >> load_tsuc_bsc >> end_load
+  
   
 @task_group(group_id='end_landing',dag=dag)
 def end_landing():
@@ -860,11 +778,37 @@ def end_landing():
 
 
 
+select_verificaciones = BranchPythonOperator(
+    task_id="select_verificaciones",
+    python_callable=continue_to_verificaciones,
+    op_kwargs={
+      'table':'table',
+    },
+    provide_context=True,
+    dag=dag
+)  
+
+
+init_elt = BashOperator(task_id='init_elt',bash_command='echo init landing',dag=dag)
+
+end = BashOperator(task_id='end',bash_command='echo init landing',dag=dag)
+
+
 
 
 @task_group(group_id='bq_elt',dag=dag)
 def bq_elt():
-
+  
+  select_elt = BranchPythonOperator(
+    task_id="select_elt",
+    python_callable=select_bq_elt,
+    op_kwargs={
+      'table':'table',
+    },
+    provide_context=True,
+    dag=dag
+  )  
+  
   dm_agentes = BigQueryInsertJobOperator(
     task_id="dm_agentes",
     configuration={
@@ -874,12 +818,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'AGENTES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_AGENTES',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_AGENTES',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -898,12 +842,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'GERENTES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_GERENTES',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_GERENTES',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -913,6 +857,7 @@ def bq_elt():
     dag=dag 
   )
 
+  # ASEGURADO
   dm_asegurados = BigQueryInsertJobOperator(
     task_id="dm_asegurados",
     configuration={
@@ -922,12 +867,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'MASEG_BSC',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_ASEGURADOS',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_ASEGURADOS',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -947,13 +892,13 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'PAGOPROVE',
       'SOURCE_SECOND_TABLE_NAME': 'PAGOSPROVEEDORES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_PAGOS_PROVEEDORES_RTL',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -972,12 +917,12 @@ def bq_elt():
       },
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_PAGOS_PROVEEDORES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_PAGOS_PROVEEDORES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_PAGOS_PROVEEDORES_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_PAGOS_PROVEEDORES',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1000,12 +945,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'PRESTADORES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_PROVEEDORES_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_PROVEEDORES_1',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1024,12 +969,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_PROVEEDORES_1',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_PROVEEDORES_2',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CAT_PROVEEDORES_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_PROVEEDORES_2',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1048,12 +993,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_PROVEEDORES_2',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_PROVEEDORES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CAT_PROVEEDORES_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_PROVEEDORES',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1072,12 +1017,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'RESERVAS_BSC',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS'
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_COBERTURAS_MOVIMIENTOS_RTL'
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1096,12 +1041,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_COBERTURAS_MOVIMIENTOS',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_COBERTURAS_MOVIMIENTOS',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_COBERTURAS_MOVIMIENTOS_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_COBERTURAS_MOVIMIENTOS',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1122,13 +1067,13 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'TESTADO_BSC',
       'SOURCE_SECOND_TABLE_NAME': 'ESTADOS_MEXICO',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_ESTADOS',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_ESTADOS',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1147,12 +1092,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'TSUC_BSC',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_OFICINAS',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_OFICINAS',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1171,12 +1116,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'TIPOPROVEEDOR',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_TIPOS_PROVEEDORES',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_TIPOS_PROVEEDORES',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1195,12 +1140,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'CAT_CAUSA',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_CAUSAS',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_CAUSAS',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1219,12 +1164,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'ETIQUETA_SINIESTRO',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO_1',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1243,12 +1188,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_1',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO_2',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1267,12 +1212,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_2',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO_3',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1290,12 +1235,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_ETIQUETA_SINIESTRO_3',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_ETIQUETA_SINIESTRO',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO_3',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO_RTL',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1313,12 +1258,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_ETIQUETA_SINIESTRO',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_ETIQUETA_SINIESTRO',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_ETIQUETA_SINIESTRO',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1338,12 +1283,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'REGISTRO',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_REGISTRO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_REGISTRO',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1359,12 +1304,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_REGISTRO',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_REGISTRO',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_REGISTRO',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_REGISTRO_RTL',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1380,12 +1325,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_REGISTRO',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_REGISTRO',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_REGISTRO_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_REGISTRO',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1403,12 +1348,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'SAS_SINIES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_SINIESTROS'
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_SINIESTROS'
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1424,12 +1369,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_SINIESTROS',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_SINIESTROS'
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_SINIESTROS',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_SINIESTROS_RTL',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1445,12 +1390,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_SINIESTROS',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_SINIESTROS',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_SINIESTROS_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_SINIESTROS',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1468,12 +1413,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'DATOS_DUA',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_DUA',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_DUA',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1489,12 +1434,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_DUA',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_DUA',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_DUA',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_DUA_RTL',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1510,12 +1455,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_DUA',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_DUA',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_DUA_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_DUA',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1533,12 +1478,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'FRAUD_PV',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_1',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1556,12 +1501,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_2',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1577,12 +1522,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_2',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_3',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1598,12 +1543,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_3',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_3',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_4',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1619,12 +1564,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_POLIZAS_VIGENTES_4',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_4',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_RTL',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1640,12 +1585,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_POLIZAS_VIGENTES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_POLIZAS_VIGENTES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_POLIZAS_VIGENTES_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_POLIZAS_VIGENTES',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1663,12 +1608,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'FRAUD_RP',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_PAGOS_POLIZAS',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_PAGOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1686,12 +1631,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_PAGOS_POLIZAS',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_PAGOS_POLIZAS',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_PAGOS_POLIZAS',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_PAGOS_POLIZAS_RTL',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1709,12 +1654,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_PAGOS_POLIZAS',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_PAGOS_POLIZAS',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_PAGOS_POLIZAS_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_PAGOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1732,12 +1677,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'FRAUD_DI',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_INCISOS_POLIZAS_1',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1755,12 +1700,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_INCISOS_POLIZAS_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_INCISOS_POLIZAS_2',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1778,12 +1723,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_2',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_3',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_INCISOS_POLIZAS_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_INCISOS_POLIZAS_3',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1801,12 +1746,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_3',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_4',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_INCISOS_POLIZAS_3',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_INCISOS_POLIZAS_4',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1824,12 +1769,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_INCISOS_POLIZAS_4',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_INCISOS_POLIZAS',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_INCISOS_POLIZAS_4',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_INCISOS_POLIZAS_RTL',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1847,12 +1792,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_INCISOS_POLIZAS',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_INCISOS_POLIZAS',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_INCISOS_POLIZAS_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_INCISOS_POLIZAS',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1870,12 +1815,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'VALUACION_BSC',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_VALUACIONES_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_VALUACIONES_1',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1893,12 +1838,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_VALUACIONES_1',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_VALUACIONES_2',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_VALUACIONES_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_VALUACIONES_2',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1916,12 +1861,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_VALUACIONES_2',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_VALUACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_VALUACIONES_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_VALUACIONES_RTL',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1939,12 +1884,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_VALUACIONES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_VALUACIONES',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_VALUACIONES_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_VALUACIONES',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -1962,12 +1907,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'DATOSGENERALES',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_DATOS_GENERALES'
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_DATOS_GENERALES'
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -1983,12 +1928,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'APERCAB_BSC',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_APERCAB_1'
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_APERCAB_1'
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -2004,12 +1949,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_APERCAB_1',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'DEST_TABLE_NAME': 'STG_APERCAB_2'
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_APERCAB_1',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_APERCAB_2'
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -2025,12 +1970,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'STG_APERCAB_2',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'DEST_TABLE_NAME': 'RTL_APERCAB'
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_APERCAB_2',
+      'DEST_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_APERCAB_RTL',
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -2046,12 +1991,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_RTL_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'RTL_APERCAB',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_APERCAB',
+      'SOURCE_PROJECT_ID': VERIFICACIONES_PLA_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_PLA_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'TAB_APERCAB_RTL',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_APERCAB',
       'init_date':init_date,
       'final_date':final_date
     },
@@ -2059,7 +2004,7 @@ def bq_elt():
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
-  
+
   dm_datos_vehiculo= BigQueryInsertJobOperator(
     task_id="dm_datos_vehiculo",
     configuration={
@@ -2069,12 +2014,12 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'DATOSVEHICULO',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_DATOS_VEHICULO'
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_DATOS_VEHICULO'
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
@@ -2091,61 +2036,49 @@ def bq_elt():
       }
     },
     params={
-      'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
       'SOURCE_TABLE_NAME': 'TCOBER_BSC',
-      'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
-      'DEST_DATASET_NAME': VERIFICACIONES_DM_DATASET_NAME,
-      'DEST_TABLE_NAME': 'DM_COBERTURAS'
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_COBERTURAS'
     },
     location=VERIFICACIONES_PROJECT_REGION,
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
+  
+  end_elt = BashOperator(task_id='end_elt', bash_command='echo "End ELT Qualitas Verificaciones DAG"',trigger_rule='one_success', dag=dag)
 
 
-  rtl_pagos_proveedores  >> dm_pagos_proveedores
-  rtl_coberturas_movimientos >> dm_coberturas_movimientos
-  stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> rtl_etiqueta_siniestro >> dm_etiqueta_siniestro
-  stg_registro >> rtl_registro >> dm_registro
-  stg_siniestros >> rtl_siniestros >> dm_siniestros
-  stg_dua >> rtl_dua >> dm_dua
-  stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> stg_polizas_vigentes_3 >> stg_polizas_vigentes_4 >> rtl_polizas_vigentes >> dm_polizas_vigentes
-  stg_pagos_polizas >> rtl_pagos_polizas >> dm_pagos_polizas
-  stg_incisos_polizas_1 >> stg_incisos_polizas_2 >> stg_incisos_polizas_3 >> stg_incisos_polizas_4 >> rtl_incisos_polizas >> dm_incisos_polizas
-  stg_valuaciones_1 >> stg_valuaciones_2 >> rtl_valuaciones >> dm_valuaciones
-  stg_proveedores_1 >> stg_proveedores_2 >> dm_proveedores
-  stg_apercab_1 >> stg_apercab_2 >> rtl_apercab >> dm_apercab
+  select_elt >> rtl_pagos_proveedores  >> dm_pagos_proveedores >> end_elt
+  select_elt >> rtl_coberturas_movimientos >> dm_coberturas_movimientos >> end_elt
+  select_elt >> stg_etiqueta_siniestro_1 >> stg_etiqueta_siniestro_2 >> stg_etiqueta_siniestro_3 >> rtl_etiqueta_siniestro >> dm_etiqueta_siniestro >> end_elt
+  select_elt >> stg_registro >> rtl_registro >> dm_registro >> end_elt
+  select_elt >> stg_siniestros >> rtl_siniestros >> dm_siniestros >> end_elt
+  select_elt >> stg_dua >> rtl_dua >> dm_dua >> end_elt
+  select_elt >> stg_polizas_vigentes_1 >> stg_polizas_vigentes_2 >> stg_polizas_vigentes_3 >> stg_polizas_vigentes_4 >> rtl_polizas_vigentes >> dm_polizas_vigentes >> end_elt
+  select_elt >> stg_pagos_polizas >> rtl_pagos_polizas >> dm_pagos_polizas >> end_elt
+  select_elt >> stg_incisos_polizas_1 >> stg_incisos_polizas_2 >> stg_incisos_polizas_3 >> stg_incisos_polizas_4 >> rtl_incisos_polizas >> dm_incisos_polizas >> end_elt
+  select_elt >> stg_valuaciones_1 >> stg_valuaciones_2 >> rtl_valuaciones >> dm_valuaciones >> end_elt
+  select_elt >> stg_proveedores_1 >> stg_proveedores_2 >> dm_proveedores >> end_elt
+  select_elt >> stg_apercab_1 >> stg_apercab_2 >> rtl_apercab >> dm_apercab >> end_elt
+  select_elt >> dm_agentes >> end_elt
+  select_elt >> dm_asegurados >> end_elt
+  select_elt >> dm_causas >> end_elt
+  select_elt >> dm_coberturas >> end_elt
+  select_elt >> dm_datos_generales >> end_elt
+  select_elt >> dm_datos_vehiculo >> end_elt
+  select_elt >> dm_estados >> end_elt
+  select_elt >> dm_gerentes >> end_elt
+  select_elt >> dm_oficinas >> end_elt
+  select_elt >> dm_tipos_proveedores >> end_elt
 
 
 
 @task_group(group_id='recreate_cluster',dag=dag)
 def recreate_cluster():
-
-  
-  select_cluster_creator = BranchPythonOperator(
-    task_id="select_cluster_creator",
-    python_callable=get_cluster_tipe_creator,
-    op_kwargs={
-      'init_date':init_date,
-      'final_date':final_date,
-      'small_cluster_label': 'recreate_cluster.create_small_cluster',
-      'big_cluster_label': 'recreate_cluster.create_big_cluster'
-    },
-    provide_context=True,
-    dag=dag
-  )  
-  
-  create_big_cluster = DataprocCreateClusterOperator(
-    task_id="create_big_cluster",
-    project_id=DATA_PROJECT_ID,
-    cluster_config=VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG,
-    region=DATA_PROJECT_REGION,
-    cluster_name=DATA_DATAPROC_CLUSTER_NAME,
-    num_retries_if_resource_is_not_ready=3,
-    dag=dag
-  )
-  
+    
   create_small_cluster = DataprocCreateClusterOperator(
     task_id="create_small_cluster",
     project_id=DATA_PROJECT_ID,
@@ -2165,11 +2098,21 @@ def recreate_cluster():
     dag=dag,
   )
   
-  select_cluster_creator >> [create_big_cluster,create_small_cluster] >> get_datafusion_instance
- 
-
+  create_small_cluster >> get_datafusion_instance
+  
 @task_group(group_id='injection',dag=dag)
 def injection():
+  
+  select_inject = BranchPythonOperator(
+    task_id="select_inject",
+    python_callable=select_datafusion_inject,
+    op_kwargs={
+      'table':'table',
+    },
+    provide_context=True,
+    dag=dag
+  )  
+  
   inject_dm_asegurados = CloudDataFusionStartPipelineOperator(
     task_id="inject_dm_asegurados",
     location=DATA_PROJECT_REGION,
@@ -2183,7 +2126,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_ASEGURADOS", "STG_ASEGURADOS", "DM_ASEGURADOS", "M"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_ASEGURADOS", "STG_ASEGURADOS", "DM_ASEGURADOS", "M"),
     dag=dag
   )
 
@@ -2200,7 +2143,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_COBERTURAS_MOVIMIENTOS", "STG_COBERTURAS_MOVIMIENTOS", "DM_COBERTURAS_MOVIMIENTOS", "L", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_COBERTURAS_MOVIMIENTOS", "STG_COBERTURAS_MOVIMIENTOS", "DM_COBERTURAS_MOVIMIENTOS", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -2217,7 +2160,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_ESTADOS", "STG_ESTADOS", "DM_ESTADOS", "XS"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_ESTADOS", "STG_ESTADOS", "DM_ESTADOS", "XS"),
     dag=dag
   )
   
@@ -2234,7 +2177,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_PAGOS_PROVEEDORES", "STG_PAGOS_PROVEEDORES", "DM_PAGOS_PROVEEDORES", "L", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_PAGOS_PROVEEDORES", "STG_PAGOS_PROVEEDORES", "DM_PAGOS_PROVEEDORES", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -2251,7 +2194,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_PROVEEDORES", "STG_PROVEEDORES", "DM_PROVEEDORES", "L"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_PROVEEDORES", "STG_PROVEEDORES", "DM_PROVEEDORES", "L"),
     dag=dag
   )
 
@@ -2268,7 +2211,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_TIPOS_PROVEEDORES", "STG_TIPOS_PROVEEDORES", "DM_TIPOS_PROVEEDORES", "XS"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_TIPOS_PROVEEDORES", "STG_TIPOS_PROVEEDORES", "DM_TIPOS_PROVEEDORES", "XS"),
     dag=dag
   )
   
@@ -2285,7 +2228,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_CAUSAS", "STG_CAUSAS", "DM_CAUSAS", "XS"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_CAUSAS", "STG_CAUSAS", "DM_CAUSAS", "XS"),
     dag=dag
   )
   
@@ -2302,7 +2245,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
     dag=dag
   )
 
@@ -2319,7 +2262,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_ETIQUETA_SINIESTRO", "STG_ETIQUETA_SINIESTRO", "DM_ETIQUETA_SINIESTRO", "M", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_ETIQUETA_SINIESTRO", "STG_ETIQUETA_SINIESTRO", "DM_ETIQUETA_SINIESTRO", "M", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -2336,7 +2279,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_REGISTRO", "STG_REGISTRO", "DM_REGISTRO", "S", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_REGISTRO", "STG_REGISTRO", "DM_REGISTRO", "S", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -2353,7 +2296,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_DUA", "STG_DUA", "DM_DUA", "L", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_DUA", "STG_DUA", "DM_DUA", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -2370,7 +2313,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_OFICINAS", "STG_OFICINAS", "DM_OFICINAS", "M"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_OFICINAS", "STG_OFICINAS", "DM_OFICINAS", "M"),
     dag=dag
   )
   
@@ -2387,7 +2330,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_POLIZAS_VIGENTES", "STG_POLIZAS_VIGENTES", "DM_POLIZAS_VIGENTES", "L", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_POLIZAS_VIGENTES", "STG_POLIZAS_VIGENTES", "DM_POLIZAS_VIGENTES", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2404,7 +2347,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_PAGOS_POLIZAS", "STG_PAGOS_POLIZAS", "DM_PAGOS_POLIZAS", "L", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_PAGOS_POLIZAS", "STG_PAGOS_POLIZAS", "DM_PAGOS_POLIZAS", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2421,7 +2364,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_INCISOS_POLIZAS", "STG_INCISOS_POLIZAS", "DM_INCISOS_POLIZAS", "L", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_INCISOS_POLIZAS", "STG_INCISOS_POLIZAS", "DM_INCISOS_POLIZAS", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2438,7 +2381,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_VALUACIONES", "STG_VALUACIONES", "DM_VALUACIONES", "M", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_VALUACIONES", "STG_VALUACIONES", "DM_VALUACIONES", "M", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2455,7 +2398,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_DATOS_GENERALES", "STG_DATOS_GENERALES", "DM_DATOS_GENERALES", "L", init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_DATOS_GENERALES", "STG_DATOS_GENERALES", "DM_DATOS_GENERALES", "L", init_date=init_date, final_date=final_date),
     dag=dag
   )
   
@@ -2472,7 +2415,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_AGENTES", "STG_AGENTES", "DM_AGENTES", "XS"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_AGENTES", "STG_AGENTES", "DM_AGENTES", "XS"),
     dag=dag
   )
   
@@ -2489,7 +2432,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_GERENTES", "STG_GERENTES", "DM_GERENTES", "XS"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_GERENTES", "STG_GERENTES", "DM_GERENTES", "XS"),
     dag=dag
   )
   
@@ -2506,7 +2449,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_APERCAB", "STG_APERCAB", "DM_APERCAB", "M", init_date=init_date, final_date=final_date ),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_APERCAB", "STG_APERCAB", "DM_APERCAB", "M", init_date=init_date, final_date=final_date ),
     dag=dag
   )
   
@@ -2524,7 +2467,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_SINIESTROS", "STG_SINIESTROS", "DM_SINIESTROS", "L", init_date=init_date, final_date=final_date ),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_SINIESTROS", "STG_SINIESTROS", "DM_SINIESTROS", "L", init_date=init_date, final_date=final_date ),
     dag=dag
   )
   
@@ -2541,12 +2484,14 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("DM_DATOS_VEHICULO", "STG_DATOS_VEHICULO", "DM_DATOS_VEHICULO", "L"),
+    runtime_args=get_datafusion_inject_runtime_args("TAB_DATOS_VEHICULO", "STG_DATOS_VEHICULO", "DM_DATOS_VEHICULO", "L"),
     dag=dag
   )
   
+  end_inject = BashOperator(task_id='end_inject', bash_command='echo "End Injection Qualitas Verificaciones DAG"',trigger_rule='one_success', dag=dag)
+  
   # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
-  [ 
+  select_inject >> [ 
    inject_dm_estados
    ,inject_dm_asegurados
    ,inject_dm_coberturas_movimientos
@@ -2567,10 +2512,10 @@ def injection():
    ,inject_dm_agentes
    ,inject_dm_gerentes
    ,inject_dm_apercab
-   ,inject_dm_datos_vehiculo
-  ] >> inject_dm_siniestros
+   ,inject_dm_datos_vehiculo,
+   inject_dm_siniestros
+  ] >> end_inject
   
- 
 @task_group(group_id='end_injection',dag=dag)
 def end_injection():
   
@@ -2581,4 +2526,5 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> [load_files(),landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> one_landing() >> end_landing() >> select_verificaciones >> [init_elt,end] 
+init_elt >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()

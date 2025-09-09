@@ -257,6 +257,20 @@ def agentes_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kw
   out_blob.upload_from_string(csv, content_type='text/csv')
   
   
+def select_datafusion_load(table,**kwargs):
+  return ''
+  
+def continue_to_verificaciones(table,**kwargs):
+  return ''
+  
+  
+def select_bq_elt(table,**kwargs):
+  return ''
+
+
+def select_datafusion_inject(table,**kwargs):
+  return ''
+
   
 def gerentes_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
     
