@@ -58,6 +58,22 @@ validate_date_interval = BigQueryInsertJobOperator(
   dag=dag 
 )
 
+def print_date_interval(init_date, final_date, **kwargs):
+  print(f'init_date:{init_date}, final_date: {final_date}')
+
+print_range = PythonOperator(
+    task_id="print_range",
+    python_callable=print_date_interval,
+    op_kwargs={
+      'init_date': init_date,
+      'final_date': final_date,
+    },
+    dag=dag
+)
+
+
+
+
 select_cluster_creator = BranchPythonOperator(
   task_id="select_cluster_creator",
   python_callable=get_cluster_tipe_creator,
@@ -77,5 +93,5 @@ create_big_cluster = BashOperator(task_id="create_big_cluster",bash_command="ech
 
 start_pipeline = BashOperator(task_id="start_pipeline",trigger_rule='one_success',bash_command="echo 'Starting pipeline'",dag=dag)
 
-validate_date_interval >> select_cluster_creator
+print_range >> validate_date_interval >> select_cluster_creator
 select_cluster_creator >> [create_small_cluster,create_big_cluster] >> start_pipeline

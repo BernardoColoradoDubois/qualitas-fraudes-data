@@ -1,0 +1,22 @@
+Every 10.0s: gcloud dataproc clusters list --region=us-central1                                               SAULs-MacBook-Air.local: 17:47:19
+                                                                                                                                  in 0.895s (0)
+NAME                     PLATFORM  PRIMARY_WORKER_COUNT  SECONDARY_WORKER_COUNT  STATUS   ZONE           SCHEDULED_DELETE  SCHEDULED_STOP      
+composer-dataproc        GCE       2                     1                       RUNNING  us-central1-c                                        
+verificaciones-dataproc  GCE       20                                            RUNNING  us-central1-f  enabled                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               
+                                                                                                                                               

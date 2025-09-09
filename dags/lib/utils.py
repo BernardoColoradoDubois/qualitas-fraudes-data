@@ -148,7 +148,33 @@ def get_date_interval(project_id:str,dataset,table,period:str,**kwargs):
       'init_date': init_date,
       'final_date': final_date
     }
+  
+  elif 'RANGE:' in period:
+
+    ## RANGE:(yyyy-mm-dd - yyyy-mm-dd)
+    wrapped_range = period.strip('RANGE:')
+    range = wrapped_range.strip(')').strip('(')
+    init_date = range.split(' - ')[0]
+    final_date = range.split(' - ')[1]
+
+    init_date_number = int(init_date.replace('-', ''))
+    final_date_number = int(final_date.replace('-', ''))
+
+
+    if final_date_number >= init_date_number:
+
+      return {
+        'init_date': init_date,
+        'final_date': final_date
+      }
     
+    else:
+
+      return {
+        'init_date': 'init_date',
+        'final_date': 'final_date'
+      }
+      
   else:
     client = bigquery.Client(project=project_id)
     query = f"""
