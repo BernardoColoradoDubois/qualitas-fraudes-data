@@ -41,8 +41,8 @@
       "spark:spark.dynamicAllocation.minExecutors": "8",
       "spark:spark.dynamicAllocation.maxExecutors": "36",
       "spark:spark.dynamicAllocation.initialExecutors": "18",
-      "yarn:yarn.nodemanager.resource.memory-mb": "38672",
-      "yarn:yarn.scheduler.maximum-allocation-mb": "38672",
+      "yarn:yarn.nodemanager.resource.memory-mb": "45672",
+      "yarn:yarn.scheduler.maximum-allocation-mb": "45672",
       "capacity-scheduler:yarn.scheduler.capacity.resource-calculator": "org.apache.hadoop.yarn.util.resource.DefaultResourceCalculator",
       "spark:spark.sql.execution.arrow.maxRecordsPerBatch": "10000",
       "spark:spark.sql.sources.parallelPartitionDiscovery.threshold": "32",
@@ -56,7 +56,11 @@
       "spark:spark.shuffle.service.enabled": "true",
       "dataproc:dataproc.conscrypt.provider.enable": "false",
       "spark:spark.sql.adaptive.enabled": "true",
-      "spark:spark.sql.adaptive.coalescePartitions.enabled": "true"
+      "spark:spark.sql.adaptive.coalescePartitions.enabled": "true",
+      "yarn:yarn.app.mapreduce.am.resource.mb": "4000",
+      "spark:spark.driver.stopOnSuccess.enabled": "true",
+      "spark:spark.submit.deployMode": "cluster"
+    
     }
   },
   "endpoint_config": {
