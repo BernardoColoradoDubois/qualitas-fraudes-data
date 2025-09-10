@@ -784,8 +784,8 @@ def end_landing():
   )
 
 
-@task_group(group_id='bq_elt',dag=dag)
-def bq_elt():
+@task_group(group_id='single_bq_elt',dag=dag)
+def single_bq_elt():
   
   select_elt = BranchPythonOperator(
     task_id="select_elt",
@@ -2089,8 +2089,8 @@ def recreate_cluster():
   
 
 
-@task_group(group_id='injection',dag=dag)
-def injection():
+@task_group(group_id='single_injection',dag=dag)
+def single_injection():
   
   select_inject = BranchPythonOperator(
     task_id="select_inject",
@@ -2515,4 +2515,4 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> single_landing() >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> single_landing() >> end_landing() >> single_bq_elt() >> recreate_cluster() >> single_injection() >> end_injection()

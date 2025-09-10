@@ -260,181 +260,181 @@ def agentes_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kw
 def select_datafusion_load(table,**kwargs):
 
   if table == 'VALUACIONES':
-    return 'one_landing.load_valuacion_bsc'
+    return 'single_landing.load_valuacion_bsc'
   
   elif table == 'AGENTES':
-    return 'one_landing.agentes_excel_to_csv'
+    return 'single_landing.agentes_excel_to_csv'
   
   elif table == 'APERCAB':
-    return 'one_landing.load_apercab_bsc'
+    return 'single_landing.load_apercab_bsc'
   
   elif table == 'ASEGURADOS':
-    return 'one_landing.load_maseg_bsc'
+    return 'single_landing.load_maseg_bsc'
   
   elif table == 'CAUSAS':
-    return 'one_landing.load_cat_causa'
+    return 'single_landing.load_cat_causa'
   
   elif table == 'COBERTURAS_MOVIMIENTOS':
-    return 'one_landing.load_reservas_bsc'
+    return 'single_landing.load_reservas_bsc'
   
   elif table == 'DATOS_GENERALES':
-    return 'one_landing.load_datosgenerales'
+    return 'single_landing.load_datosgenerales'
   
   elif table == 'DUA':
-    return 'one_landing.load_datos_dua'
+    return 'single_landing.load_datos_dua'
   
   elif table == 'DATOS_VEHICULO':
-    return 'one_landing.load_datosvehiculo'
+    return 'single_landing.load_datosvehiculo'
   
   elif table == 'ESTADOS':
-    return 'one_landing.merge_estados_mexico'
+    return 'single_landing.merge_estados_mexico'
   
   elif table == 'ETIQUETA_SINIESTRO':
-    return 'one_landing.load_etiqueta_siniestro'
+    return 'single_landing.load_etiqueta_siniestro'
   
   elif table == 'GERENTES':
-    return 'one_landing.gerentes_excel_to_csv'
+    return 'single_landing.gerentes_excel_to_csv'
   
   elif table == 'INCISOS_POLIZAS':
-    return 'one_landing.load_fraud_di'
+    return 'single_landing.load_fraud_di'
   
   elif table == 'OFICINAS':
-    return 'one_landing.load_valuacion_bsc'
+    return 'single_landing.load_valuacion_bsc'
   
   elif table == 'PAGOS_POLIZAS':
-    return 'one_landing.load_fraud_rp'
+    return 'single_landing.load_fraud_rp'
   
   elif table == 'PAGOS_PROVEEDORES':
-    return 'one_landing.load_pagoprove'
+    return 'single_landing.load_pagoprove'
   
   elif table == 'PROVEEDORES':
-    return 'one_landing.load_prestadores'
+    return 'single_landing.load_prestadores'
   
   elif table == 'SINIESTROS':
-    return 'one_landing.load_sas_sinies'
+    return 'single_landing.load_sas_sinies'
   
   elif table == 'TIPOS_PROVEEDORES':
-    return 'one_landing.load_tipoproveedor'
+    return 'single_landing.load_tipoproveedor'
   
   
 def select_bq_elt(table,**kwargs):
   
   if table == 'VALUACIONES':
-    return 'bq_elt.load_valuacion_bsc'
+    return 'single_bq_elt.load_valuacion_bsc'
   
   elif table == 'AGENTES':
-    return 'bq_elt.agentes_excel_to_csv'
+    return 'single_bq_elt.agentes_excel_to_csv'
   
   elif table == 'APERCAB':
-    return 'bq_elt.load_apercab_bsc'
+    return 'single_bq_elt.load_apercab_bsc'
   
   elif table == 'ASEGURADOS':
-    return 'bq_elt.load_maseg_bsc'
+    return 'single_bq_elt.load_maseg_bsc'
   
   elif table == 'CAUSAS':
-    return 'bq_elt.load_cat_causa'
+    return 'single_bq_elt.load_cat_causa'
   
   elif table == 'COBERTURAS_MOVIMIENTOS':
-    return 'bq_elt.load_reservas_bsc'
+    return 'single_bq_elt.load_reservas_bsc'
   
   elif table == 'DATOS_GENERALES':
-    return 'bq_elt.load_datosgenerales'
+    return 'single_bq_elt.load_datosgenerales'
   
   elif table == 'DUA':
-    return 'bq_elt.load_datos_dua'
+    return 'single_bq_elt.load_datos_dua'
   
   elif table == 'DATOS_VEHICULO':
-    return 'bq_elt.load_datosvehiculo'
+    return 'single_bq_elt.load_datosvehiculo'
   
   elif table == 'ESTADOS':
-    return 'bq_elt.merge_estados_mexico'
+    return 'single_bq_elt.merge_estados_mexico'
   
   elif table == 'ETIQUETA_SINIESTRO':
-    return 'bq_elt.load_etiqueta_siniestro'
+    return 'single_bq_elt.load_etiqueta_siniestro'
   
   elif table == 'GERENTES':
-    return 'bq_elt.gerentes_excel_to_csv'
+    return 'single_bq_elt.gerentes_excel_to_csv'
   
   elif table == 'INCISOS_POLIZAS':
-    return 'bq_elt.load_fraud_di'
+    return 'single_bq_elt.load_fraud_di'
   
   elif table == 'OFICINAS':
-    return 'bq_elt.load_valuacion_bsc'
+    return 'single_bq_elt.load_valuacion_bsc'
   
   elif table == 'PAGOS_POLIZAS':
-    return 'bq_elt.load_fraud_rp'
+    return 'single_bq_elt.load_fraud_rp'
   
   elif table == 'PAGOS_PROVEEDORES':
-    return 'bq_elt.load_pagoprove'
+    return 'single_bq_elt.load_pagoprove'
   
   elif table == 'PROVEEDORES':
-    return 'bq_elt.load_prestadores'
+    return 'single_bq_elt.load_prestadores'
   
   elif table == 'SINIESTROS':
-    return 'bq_elt.load_sas_sinies'
+    return 'single_bq_elt.load_sas_sinies'
   
   elif table == 'TIPOS_PROVEEDORES':
-    return 'bq_elt.load_tipoproveedor'
+    return 'single_bq_elt.load_tipoproveedor'
   
 
 def select_datafusion_inject(table,**kwargs):
   
   if table == 'VALUACIONES':
-    return 'injection.inject_dm_valuaciones'
+    return 'single_injection.inject_dm_valuaciones'
   
   elif table == 'AGENTES':
-    return 'injection.inject_dm_agentes'
+    return 'single_injection.inject_dm_agentes'
   
   elif table == 'APERCAB':
-    return 'injection.inject_dm_apercab'
+    return 'single_injection.inject_dm_apercab'
   
   elif table == 'ASEGURADOS':
-    return 'injection.inject_dm_asegurados'
+    return 'single_injection.inject_dm_asegurados'
   
   elif table == 'CAUSAS':
-    return 'injection.inject_dm_causas'
+    return 'single_injection.inject_dm_causas'
   
   elif table == 'COBERTURAS_MOVIMIENTOS':
-    return 'injection.inject_dm_coberturas_movimientos'
+    return 'single_injection.inject_dm_coberturas_movimientos'
   
   elif table == 'DATOS_GENERALES':
-    return 'injection.inject_dm_datos_generales'
+    return 'single_injection.inject_dm_datos_generales'
   
   elif table == 'DUA':
-    return 'injection.inject_dm_dua'
+    return 'single_injection.inject_dm_dua'
   
   elif table == 'DATOS_VEHICULO':
-    return 'injection.inject_dm_datos_vehiculo'
+    return 'single_injection.inject_dm_datos_vehiculo'
   
   elif table == 'ESTADOS':
-    return 'injection.inject_dm_estados'
+    return 'single_injection.inject_dm_estados'
   
   elif table == 'ETIQUETA_SINIESTRO':
-    return 'injection.inject_dm_etiqueta_siniestro'
+    return 'single_injection.inject_dm_etiqueta_siniestro'
   
   elif table == 'GERENTES':
-    return 'injection.inject_dm_gerentes'
+    return 'single_injection.inject_dm_gerentes'
   
   elif table == 'INCISOS_POLIZAS':
-    return 'injection.inject_dm_incisos_polizas'
+    return 'single_injection.inject_dm_incisos_polizas'
   
   elif table == 'OFICINAS':
-    return 'injection.inject_dm_oficinas'
+    return 'single_injection.inject_dm_oficinas'
   
   elif table == 'PAGOS_POLIZAS':
-    return 'injection.inject_dm_pagos_polizas'
+    return 'single_injection.inject_dm_pagos_polizas'
   
   elif table == 'PAGOS_PROVEEDORES':
-    return 'injection.inject_dm_pagos_proveedores'
+    return 'single_injection.inject_dm_pagos_proveedores'
   
   elif table == 'PROVEEDORES':
-    return 'injection.inject_dm_proveedores'
+    return 'single_injection.inject_dm_proveedores'
   
   elif table == 'SINIESTROS':
-    return 'injection.inject_dm_siniestros'
+    return 'single_injection.inject_dm_siniestros'
   
   elif table == 'TIPOS_PROVEEDORES':
-    return 'injection.inject_dm_tipos_proveedores'
+    return 'single_injection.inject_dm_tipos_proveedores'
   
   
 def gerentes_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
