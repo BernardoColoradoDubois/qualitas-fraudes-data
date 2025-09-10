@@ -207,7 +207,7 @@ default_args = {
 }
 
 dag = DAG(
-  'qualitas_verificaciones_one_datapipeline',
+  'qualitas_verificaciones_single_load_data_pipeline',
   default_args=default_args,
   description='liveness monitoring dag',
   schedule_interval='0 0 1 1 *',
@@ -217,11 +217,7 @@ dag = DAG(
   tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']
 )
 
-
-
 landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)
-
-
 
 
 @task_group(group_id='init_landing',dag=dag)
