@@ -19,7 +19,7 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 
 from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,upload_storage_csv_to_bigquery,merge_storage_csv
 from lib.utils import agentes_to_csv,gerentes_to_csv,catalogo_direccion_comercial_to_csv,claves_ctas_especiales_to_csv
-from lib.utils import continue_to_verificaciones,select_bq_elt,select_datafusion_load,select_datafusion_inject
+from lib.utils import select_bq_elt,select_datafusion_load,select_datafusion_inject
 
 VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES", deserialize_json=True)
 
@@ -50,15 +50,13 @@ APP_ORACLE_PASSWORD = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_PASSWORD']
 APP_ORACLE_INJECT_SCHEMA_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_INJECT_SCHEMA_NAME']
 APP_ORACLE_INSUMOS_SCHEMA_NAME = VERIFICACIONES_CONFIG_VARIABLES['APP_ORACLE_INSUMOS_SCHEMA_NAME']
 
-VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG", deserialize_json=True)
 VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
-VERIFICACIONES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
+VERIFICACIONES_SINGLE_LOAD_CONFIG = Variable.get("VERIFICACIONES_SINGLE_LOAD_CONFIG", deserialize_json=True)
 
-interval = get_date_interval(project_id='qlts-dev-mx-au-oro-verificacio',dataset='qlts_oro_op_verificaciones_dev',table='TAB_CALENDARIO',period=VERIFICACIONES_LOAD_INTERVAL)
 
-init_date = interval['init_date']
-final_date = interval['final_date']
-
+table = VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG['table']
+init_date = VERIFICACIONES_SINGLE_LOAD_CONFIG['init_date']
+final_date = VERIFICACIONES_SINGLE_LOAD_CONFIG['final_date']
 
 
 def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, insumos_table_name:str, size:str,init_date=None, final_date=None):
@@ -117,10 +115,6 @@ def get_datafusion_inject_runtime_args(table_name:str, inject_table_name:str, in
       'spark:spark.yarn.am.memory': '2g'
 
     })
-
-  
-
-
 
   return inject_runtime_args
 
@@ -740,6 +734,23 @@ def one_landing():
     },
     dag=dag
   )
+
+  load_maseg_bsc = CloudDataFusionStartPipelineOperator(
+    task_id="load_maseg_bsc",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_maseg_bsc',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('MASEG_BSC',size='M'),
+    dag=dag
+  )
   
   end_load = BashOperator(task_id='end_load',bash_command='echo end loading',trigger_rule='one_success',dag=dag)
 
@@ -764,7 +775,7 @@ def one_landing():
   select_load >> load_tcober_bsc >> end_load
   select_load >> load_tipoproveedor >> end_load
   select_load >> load_tsuc_bsc >> end_load
-  
+  select_load >> load_maseg_bsc >> end_load
   
 @task_group(group_id='end_landing',dag=dag)
 def end_landing():
@@ -775,25 +786,6 @@ def end_landing():
     cluster_name=DATA_DATAPROC_CLUSTER_NAME,
     region=DATA_PROJECT_REGION,
   )
-
-
-
-select_verificaciones = BranchPythonOperator(
-    task_id="select_verificaciones",
-    python_callable=continue_to_verificaciones,
-    op_kwargs={
-      'table':'table',
-    },
-    provide_context=True,
-    dag=dag
-)  
-
-
-init_elt = BashOperator(task_id='init_elt',bash_command='echo init landing',dag=dag)
-
-end = BashOperator(task_id='end',bash_command='echo init landing',dag=dag)
-
-
 
 
 @task_group(group_id='bq_elt',dag=dag)
@@ -2075,7 +2067,6 @@ def bq_elt():
   select_elt >> dm_tipos_proveedores >> end_elt
 
 
-
 @task_group(group_id='recreate_cluster',dag=dag)
 def recreate_cluster():
     
@@ -2100,6 +2091,8 @@ def recreate_cluster():
   
   create_small_cluster >> get_datafusion_instance
   
+
+
 @task_group(group_id='injection',dag=dag)
 def injection():
   
@@ -2526,5 +2519,4 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> one_landing() >> end_landing() >> select_verificaciones >> [init_elt,end] 
-init_elt >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> one_landing() >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
