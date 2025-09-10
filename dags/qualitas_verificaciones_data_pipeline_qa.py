@@ -211,7 +211,7 @@ dag = DAG(
   default_args=default_args,
   description='liveness monitoring dag',
   schedule_interval='0 12 * * *',
-  max_active_runs=2,
+  max_active_runs=1,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
   tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']

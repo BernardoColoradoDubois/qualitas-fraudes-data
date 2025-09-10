@@ -54,7 +54,7 @@ VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATA
 VERIFICACIONES_SINGLE_LOAD_CONFIG = Variable.get("VERIFICACIONES_SINGLE_LOAD_CONFIG", deserialize_json=True)
 
 
-table = VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG['table']
+table = VERIFICACIONES_SINGLE_LOAD_CONFIG['table']
 init_date = VERIFICACIONES_SINGLE_LOAD_CONFIG['init_date']
 final_date = VERIFICACIONES_SINGLE_LOAD_CONFIG['final_date']
 
@@ -211,7 +211,7 @@ dag = DAG(
   default_args=default_args,
   description='liveness monitoring dag',
   schedule_interval='0 0 1 1 *',
-  max_active_runs=2,
+  max_active_runs=1,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
   tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']
@@ -267,8 +267,8 @@ def init_landing():
   validate_date_interval >> create_small_cluster >> get_datafusion_instance
   
 
-@task_group(group_id='one_landing',dag=dag)
-def one_landing():
+@task_group(group_id='single_landing',dag=dag)
+def single_landing():
   
   select_load = BranchPythonOperator(
     task_id="select_load",
@@ -2515,4 +2515,4 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> one_landing() >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+landing >> init_landing() >> single_landing() >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
