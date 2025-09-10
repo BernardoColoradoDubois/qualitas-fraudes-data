@@ -36,7 +36,7 @@ dag = DAG(
   default_args=default_args,
   description='liveness monitoring dag',
   schedule_interval='0 0 1 1 *',
-  max_active_runs=2,
+  max_active_runs=1,
   catchup=False,
   dagrun_timeout=timedelta(minutes=120),
   tags=['AUTOS','MX','PREVENCION-FRAUDES']
