@@ -274,7 +274,7 @@ def single_landing():
     task_id="select_load",
     python_callable=select_datafusion_load,
     op_kwargs={
-      'table':'table',
+      'table':table,
     },
     provide_context=True,
     dag=dag
@@ -791,7 +791,7 @@ def single_bq_elt():
     task_id="select_elt",
     python_callable=select_bq_elt,
     op_kwargs={
-      'table':'table',
+      'table':table,
     },
     provide_context=True,
     dag=dag
@@ -2096,7 +2096,7 @@ def single_injection():
     task_id="select_inject",
     python_callable=select_datafusion_inject,
     op_kwargs={
-      'table':'table',
+      'table':table,
     },
     provide_context=True,
     dag=dag

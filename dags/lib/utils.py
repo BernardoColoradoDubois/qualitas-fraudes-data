@@ -299,7 +299,7 @@ def select_datafusion_load(table,**kwargs):
     return 'single_landing.load_fraud_di'
   
   elif table == 'OFICINAS':
-    return 'single_landing.load_valuacion_bsc'
+    return 'single_landing.load_tsuc_bsc'
   
   elif table == 'PAGOS_POLIZAS':
     return 'single_landing.load_fraud_rp'
