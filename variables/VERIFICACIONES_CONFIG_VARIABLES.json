@@ -15,7 +15,6 @@
   "VERIFICACIONES_ORO_PROJECT_ID":"qlts-dev-mx-au-oro-verificacio",
   "VERIFICACIONES_PROJECT_REGION":"us-central1",
 
-  
   "VERIFICACIONES_BRO_DATASET_NAME":"qlts_bro_op_verificaciones_dev",
   "VERIFICACIONES_PLA_DATASET_NAME":"qlts_pla_op_verificaciones_dev",
   "VERIFICACIONES_ORO_DATASET_NAME":"qlts_oro_op_verificaciones_dev",
