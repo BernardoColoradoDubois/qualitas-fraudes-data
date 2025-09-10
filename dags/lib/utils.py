@@ -320,61 +320,61 @@ def select_datafusion_load(table,**kwargs):
 def select_bq_elt(table,**kwargs):
   
   if table == 'VALUACIONES':
-    return 'single_bq_elt.load_valuacion_bsc'
+    return 'single_bq_elt.stg_valuaciones_1'
   
   elif table == 'AGENTES':
-    return 'single_bq_elt.agentes_excel_to_csv'
+    return 'single_bq_elt.dm_agentes'
   
   elif table == 'APERCAB':
-    return 'single_bq_elt.load_apercab_bsc'
+    return 'single_bq_elt.stg_apercab_1'
   
   elif table == 'ASEGURADOS':
-    return 'single_bq_elt.load_maseg_bsc'
+    return 'single_bq_elt.dm_asegurados'
   
   elif table == 'CAUSAS':
-    return 'single_bq_elt.load_cat_causa'
+    return 'single_bq_elt.dm_causas'
   
   elif table == 'COBERTURAS_MOVIMIENTOS':
-    return 'single_bq_elt.load_reservas_bsc'
+    return 'single_bq_elt.rtl_coberturas_movimientos'
   
   elif table == 'DATOS_GENERALES':
-    return 'single_bq_elt.load_datosgenerales'
+    return 'single_bq_elt.dm_datos_generales'
   
   elif table == 'DUA':
-    return 'single_bq_elt.load_datos_dua'
+    return 'single_bq_elt.stg_dua'
   
   elif table == 'DATOS_VEHICULO':
-    return 'single_bq_elt.load_datosvehiculo'
+    return 'single_bq_elt.dm_datos_vehiculo'
   
   elif table == 'ESTADOS':
-    return 'single_bq_elt.merge_estados_mexico'
+    return 'single_bq_elt.dm_estados'
   
   elif table == 'ETIQUETA_SINIESTRO':
-    return 'single_bq_elt.load_etiqueta_siniestro'
+    return 'single_bq_elt.stg_etiqueta_siniestro_1'
   
   elif table == 'GERENTES':
-    return 'single_bq_elt.gerentes_excel_to_csv'
+    return 'single_bq_elt.dm_gerentes'
   
   elif table == 'INCISOS_POLIZAS':
-    return 'single_bq_elt.load_fraud_di'
+    return 'single_bq_elt.stg_incisos_polizas_1'
   
   elif table == 'OFICINAS':
-    return 'single_bq_elt.load_valuacion_bsc'
+    return 'single_bq_elt.dm_oficinas'
   
   elif table == 'PAGOS_POLIZAS':
-    return 'single_bq_elt.load_fraud_rp'
+    return 'single_bq_elt.stg_pagos_polizas'
   
   elif table == 'PAGOS_PROVEEDORES':
-    return 'single_bq_elt.load_pagoprove'
+    return 'single_bq_elt.rtl_pagos_proveedores'
   
   elif table == 'PROVEEDORES':
-    return 'single_bq_elt.load_prestadores'
+    return 'single_bq_elt.stg_proveedores_1'
   
   elif table == 'SINIESTROS':
-    return 'single_bq_elt.load_sas_sinies'
+    return 'single_bq_elt.stg_siniestros'
   
   elif table == 'TIPOS_PROVEEDORES':
-    return 'single_bq_elt.load_tipoproveedor'
+    return 'single_bq_elt.dm_tipos_proveedores'
   
 
 def select_datafusion_inject(table,**kwargs):
