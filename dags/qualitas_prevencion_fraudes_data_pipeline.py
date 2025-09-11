@@ -422,8 +422,6 @@ def load_files():
   claves_ctas_especiales_excel_to_csv >> merge_claves_ctas_especiales >> load_claves_ctas_especiales
   catalogo_direccion_comercial_excel_to_csv >> merge_catalogo_direccion_comercial >> load_catalogo_direccion_comercial
 
-  
-  
 
 @task_group(group_id='unique_bsc_siniestros_operators',dag=dag)
 def unique_bsc_siniestros_operators():
