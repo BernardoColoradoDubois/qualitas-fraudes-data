@@ -132,7 +132,7 @@ def init_landing():
     task_id="validate_date_interval",
     configuration={
       "query": {
-        "query": "SELECT DATE_DIFF(DATE '{{task.params.init_date}}', DATE '{{task.params.final_date}}', DAG) AS days_diff;",
+        "query": "SELECT DATE_DIFF(DATE '{{task.params.init_date}}', DATE '{{task.params.final_date}}', DAY) AS days_diff;",
         "useLegacySql": False,
       },
     },
