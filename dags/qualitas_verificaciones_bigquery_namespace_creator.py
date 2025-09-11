@@ -48,7 +48,6 @@ dag = DAG(
   catchup=False,
   dagrun_timeout=timedelta(minutes=120),
   tags=['MX','AUTOS','VERIFICACIONES','INSUMOS']
-
 )
 
 init = BashOperator(task_id='init',bash_command='echo "Iniciando el DAG"',dag=dag)
