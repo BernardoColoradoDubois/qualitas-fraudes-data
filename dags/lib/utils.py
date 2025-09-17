@@ -557,3 +557,57 @@ def catalogo_direccion_comercial_to_csv(project_id,bucket_name,folder,file,dest_
   output_path = f"{dest_folder}/{dest_file}"
   out_blob = bucket.blob(output_path)
   out_blob.upload_from_string(csv, content_type='text/csv')
+  
+  
+def rechazos_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
+
+  client = storage.Client(project=project_id)
+      
+  # Obtener el bucket
+  bucket = client.bucket(bucket_name)
+      
+  # Obtener el blob (archivo)
+  blob = bucket.blob(f'{folder}/{file}')
+      
+  # Descargar el archivo como bytes
+  excel_data = blob.download_as_bytes()
+    
+  sheet_name = 'Hoja1'
+
+  column_names = [
+    'ASEGURADO',
+    'CAUSA',
+    'DETALLE',
+    'POLIZA',
+    'INCISO',
+    'ASEGURADO',
+    'SERIE',
+    'ESTATUS',
+    'AHORRO',
+    'MES_RECHAZO',
+    'CVE_AGENTE',
+    'AGENTE',
+  ]
+
+  dtypes = {
+    'ASEGURADO': 'string',
+    'CAUSA': 'string',
+    'DETALLE': 'string',
+    'POLIZA': 'string',
+    'INCISO': 'string',
+    'ASEGURADO': 'string',
+    'SERIE': 'string',
+    'ESTATUS': 'string',
+    'AHORRO': 'string',
+    'MES_RECHAZO': 'string',
+    'CVE_AGENTE': 'string',
+    'AGENTE': 'string',
+  }
+  
+  df = pd.read_excel(excel_data,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+
+  csv = df.to_csv(index=False)
+
+  output_path = f"{dest_folder}/{dest_file}"
+  out_blob = bucket.blob(output_path)
+  out_blob.upload_from_string(csv, content_type='text/csv')

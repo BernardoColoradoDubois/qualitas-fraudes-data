@@ -6,7 +6,8 @@ from datetime import timedelta
 from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.decorators import task_group
-from lib.utils import get_bucket_file_contents,upload_storage_csv_to_bigquery,merge_storage_csv,agentes_to_csv,gerentes_to_csv,claves_ctas_especiales_to_csv,catalogo_direccion_comercial_to_csv
+from lib.utils import get_bucket_file_contents,upload_storage_csv_to_bigquery,merge_storage_csv
+from lib.utils import agentes_to_csv,gerentes_to_csv,claves_ctas_especiales_to_csv,catalogo_direccion_comercial_to_csv,rechazos_to_csv
 
 
 default_args = {
@@ -381,7 +382,46 @@ load_estados_mexico = PythonOperator(
   dag=dag
 )
 
+merge_rechazos = PythonOperator(
+  task_id='merge_rechazos',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'RECHAZOS/',
+    'folder_his': 'RECHAZOS_HIS/',
+    'destination_blob_name': 'RECHAZOS_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'utf-8-sig'
+  },
+  dag=dag
+)
 
+load_rechazos = PythonOperator(
+  task_id='load_rechazos',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/RECHAZOS_HIS/RECHAZOS_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'RECHAZOS',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.rechazos.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+rechazos_excel_to_csv = PythonOperator(
+  task_id='rechazos_excel_to_csv',
+  python_callable=rechazos_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'CIENCIA_DATOS/RECHAZOS',
+    'file': 'RECHAZOS.xlsx',
+    'dest_folder': 'RECHAZOS',
+    'dest_file': 'RECHAZOS.csv',
+  },
+  dag=dag
+)
 
 init >> merge_control_de_agentes >> load_control_de_agentes
 init >> merge_apertura_reporte >> load_apertura_reporte
@@ -394,3 +434,4 @@ init >> catalogo_direccion_comercial_excel_to_csv >> merge_catalogo_direccion_co
 init >> agentes_excel_to_csv >> merge_agentes >> load_agentes
 init >> gerentes_excel_to_csv >> merge_gerentes >> load_gerentes
 init >> merge_estados_mexico >> load_estados_mexico
+init >> rechazos_excel_to_csv >> merge_rechazos >> load_rechazos

@@ -1,0 +1,6 @@
+[
+  {"name": "NO_OPERACION", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "TIPO_TRANSACCION", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "FECHA_PRESENTACION", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "IMPORTE_CONTRACARGO", "type": "STRING", "mode": "NULLABLE"}
+]

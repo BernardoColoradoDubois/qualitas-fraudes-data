@@ -1,0 +1,14 @@
+[
+  {"name": "SINIESTRO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "CAUSA", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "DETALLE", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "POLIZA", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "INCISO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "ASEGURADO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "SERIE", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "ESTATUS", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "AHORRO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "MES_RECHAZO", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "CVE_AGENTE", "type": "STRING", "mode": "NULLABLE"},
+  {"name": "AGENTE", "type": "STRING", "mode": "NULLABLE"}
+]
