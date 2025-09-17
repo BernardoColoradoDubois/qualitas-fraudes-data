@@ -2320,7 +2320,7 @@ def injection():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_inject_runtime_args("TAB_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
+    runtime_args=get_datafusion_inject_runtime_args("CAT_COBERTURAS", "STG_COBERTURAS", "DM_COBERTURAS", "XS"),
     dag=dag
   )
 
