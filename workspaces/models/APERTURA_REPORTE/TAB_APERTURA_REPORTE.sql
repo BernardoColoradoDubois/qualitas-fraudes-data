@@ -1,4 +1,4 @@
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.DM_PREVENCION_FRAUDES.DM_APERTURA_REPORTE` AS
+CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}` AS
 SELECT 
   -- Campos numéricos enteros
   SAFE_CAST(CLAVE AS INT64) AS CLAVE,
@@ -129,7 +129,7 @@ SELECT
   
   SYSUSERID
 
-FROM `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.APERTURA_REPORTE`
+FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`;
 
 -- Opcional: Agregar WHERE para filtrar registros válidos
 -- WHERE CLAVE IS NOT NULL AND CLAVE != ''

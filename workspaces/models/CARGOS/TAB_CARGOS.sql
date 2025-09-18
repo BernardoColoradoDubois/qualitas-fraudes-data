@@ -1,3 +1,4 @@
+CREATE OR REPLACE TABLE `{{task.params.DEST_PROJECT_ID}}.{{task.params.DEST_DATASET_NAME}}.{{task.params.DEST_TABLE_NAME}}` AS
 SELECT 
   -- NO_OPERACION: String
   NO_OPERACION,
@@ -68,4 +69,4 @@ SELECT
   -- FECHA_HORA: Date -> DATETIME
   SAFE_CAST(FECHA_HORA AS DATETIME) AS FECHA_HORA
 
-FROM `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.CARGOS`;
+FROM `{{task.params.SOURCE_PROJECT_ID}}.{{task.params.SOURCE_DATASET_NAME}}.{{task.params.SOURCE_TABLE_NAME}}`;
