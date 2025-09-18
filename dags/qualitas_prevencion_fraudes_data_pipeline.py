@@ -1282,7 +1282,7 @@ def file_elt():
   )
 
   tab_cargos = BigQueryInsertJobOperator(
-    task_id="tab_sumas_aseg",
+    task_id="tab_cargos",
     configuration={
       "query": {
         "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CARGOS/TAB_CARGOS.sql'),
