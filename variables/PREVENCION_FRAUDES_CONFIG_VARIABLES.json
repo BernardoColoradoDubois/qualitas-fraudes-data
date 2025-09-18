@@ -1,0 +1,26 @@
+{
+  "DATA_PROJECT_ID":"qlts-nonprod-data-tools",
+  "DATA_PROJECT_REGION":"us-central1",
+  "DATA_DATAFUSION_INSTANCE_NAME":"qlts-data-fusion-dev",
+  "DATA_DATAFUSION_TEMPORARY_BUCKET_NAME":"gcs-qlts-dev-mx-au-bro-verificaciones",
+  "DATA_DATAFUSION_NAMESPACE":"verificaciones",
+  "DATA_DATAPROC_CLUSTER_NAME":"verificaciones-dataproc",
+  "DATA_DATAPROC_PROFILE_NAME":"USER:verificaciones-dataproc",
+  "DATA_COMPOSER_WORKSPACE_BUCKET_NAME" : "us-central1-qlts-composer-d-cc034e9e-bucket",
+
+  "PREVENCION_FRAUDES_PROJECT_ID":"qlts-dev-mx-au-bro-verificacio",
+  "PREVENCION_FRAUDES_BRO_PROJECT_ID":"qlts-dev-mx-au-bro-verificacio",
+  "PREVENCION_FRAUDES_BRO_BUCKET_NAME":"bucket_verificaciones",
+  "PREVENCION_FRAUDES_PLA_PROJECT_ID":"qlts-dev-mx-au-pla-verificacio",
+  "PREVENCION_FRAUDES_ORO_PROJECT_ID":"qlts-dev-mx-au-oro-verificacio",
+  "PREVENCION_FRAUDES_PROJECT_REGION":"us-central1",
+
+  "PREVENCION_FRAUDES_CONNECTION_DEFAULT":"google_cloud_default",
+
+  "PREVENCION_FRAUDES_DATA_PIPELINE_SCHEDULE_INTERVAL":"0 0 1 1 *",
+
+  "PREVENCION_FRAUDES_BRO_DATASET_NAME":"qlts_bro_op_prevencion_fraudes_dev",
+  "PREVENCION_FRAUDES_PLA_DATASET_NAME":"qlts_pla_op_prevencion_fraudes_dev",
+  "PREVENCION_FRAUDES_ORO_DATASET_NAME":"qlts_oro_op_prevencion_fraudes_dev"
+
+}

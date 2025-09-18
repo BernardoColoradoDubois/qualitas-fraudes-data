@@ -382,6 +382,20 @@ load_estados_mexico = PythonOperator(
   dag=dag
 )
 
+rechazos_excel_to_csv = PythonOperator(
+  task_id='rechazos_excel_to_csv',
+  python_callable=rechazos_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'CIENCIA_DATOS/RECHAZOS',
+    'file': 'RECHAZOS.xlsx',
+    'dest_folder': 'RECHAZOS',
+    'dest_file': 'RECHAZOS.csv',
+  },
+  dag=dag
+)
+
 merge_rechazos = PythonOperator(
   task_id='merge_rechazos',
   python_callable=merge_storage_csv,
@@ -409,19 +423,61 @@ load_rechazos = PythonOperator(
   dag=dag
 )
 
-rechazos_excel_to_csv = PythonOperator(
-  task_id='rechazos_excel_to_csv',
-  python_callable=rechazos_to_csv,
+merge_cargos = PythonOperator(
+  task_id='merge_cargos',
+  python_callable=merge_storage_csv,
   op_kwargs={
-    'project_id':'qlts-dev-mx-au-bro-verificacio',
     'bucket_name': 'bucket_verificaciones',
-    'folder': 'CIENCIA_DATOS/RECHAZOS',
-    'file': 'RECHAZOS.xlsx',
-    'dest_folder': 'RECHAZOS',
-    'dest_file': 'RECHAZOS.csv',
+    'folder': 'CIENCIA_DATOS/TESORERIA/PcPay/Cargos',
+    'folder_his': 'CARGOS_HIS/',
+    'destination_blob_name': 'CARGOS_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'utf-8-sig'
   },
   dag=dag
 )
+
+load_cargos = PythonOperator(
+  task_id='load_cargos',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/CARGOS_HIS/CARGOS_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'CARGOS',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.cargos.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+merge_contracargos = PythonOperator(
+  task_id='merge_contracargos',
+  python_callable=merge_storage_csv,
+  op_kwargs={
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'CIENCIA_DATOS/TESORERIA/PcPay/Contracargos',
+    'folder_his': 'CONTRACARGOS_HIS/',
+    'destination_blob_name': 'CONTRACARGOS_HIS.csv',
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    'encoding': 'utf-8-sig'
+  },
+  dag=dag
+)
+
+load_contracargos = PythonOperator(
+  task_id='load_contracargos',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/CONTRACARGOS_HIS/CONTRACARGOS_HIS.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'CONTRACARGOS',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.contracargos.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+
 
 init >> merge_control_de_agentes >> load_control_de_agentes
 init >> merge_apertura_reporte >> load_apertura_reporte
@@ -435,3 +491,5 @@ init >> agentes_excel_to_csv >> merge_agentes >> load_agentes
 init >> gerentes_excel_to_csv >> merge_gerentes >> load_gerentes
 init >> merge_estados_mexico >> load_estados_mexico
 init >> rechazos_excel_to_csv >> merge_rechazos >> load_rechazos
+init >> merge_cargos >> load_cargos
+init >> merge_contracargos >> load_contracargos

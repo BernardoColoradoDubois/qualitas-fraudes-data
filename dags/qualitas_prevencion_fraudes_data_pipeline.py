@@ -18,37 +18,36 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClus
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
 from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,merge_storage_csv,upload_storage_csv_to_bigquery
-from lib.utils import claves_ctas_especiales_to_csv,catalogo_direccion_comercial_to_csv
+from lib.utils import claves_ctas_especiales_to_csv,catalogo_direccion_comercial_to_csv,rechazos_to_csv
 
-VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES", deserialize_json=True)
+PREVENCION_FRAUDES_CONFIG_VARIABLES = Variable.get("PREVENCION_FRAUDES_CONFIG_VARIABLES", deserialize_json=True)
 
-DATA_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_ID']
-DATA_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['DATA_PROJECT_REGION']
-DATA_DATAFUSION_INSTANCE_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAFUSION_INSTANCE_NAME']
-DATA_DATAFUSION_TEMPORARY_BUCKET_NAME =  VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAFUSION_TEMPORARY_BUCKET_NAME']
-DATA_DATAFUSION_NAMESPACE = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAFUSION_NAMESPACE']
-DATA_DATAPROC_CLUSTER_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAPROC_CLUSTER_NAME']
-DATA_DATAPROC_PROFILE_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_DATAPROC_PROFILE_NAME']
-DATA_COMPOSER_WORKSPACE_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES['DATA_COMPOSER_WORKSPACE_BUCKET_NAME']
+DATA_PROJECT_ID = PREVENCION_FRAUDES_CONFIG_VARIABLES['DATA_PROJECT_ID']
+DATA_PROJECT_REGION = PREVENCION_FRAUDES_CONFIG_VARIABLES['DATA_PROJECT_REGION']
+DATA_DATAFUSION_INSTANCE_NAME = PREVENCION_FRAUDES_CONFIG_VARIABLES['DATA_DATAFUSION_INSTANCE_NAME']
+DATA_DATAFUSION_TEMPORARY_BUCKET_NAME =  PREVENCION_FRAUDES_CONFIG_VARIABLES['DATA_DATAFUSION_TEMPORARY_BUCKET_NAME']
+DATA_DATAFUSION_NAMESPACE = PREVENCION_FRAUDES_CONFIG_VARIABLES['DATA_DATAFUSION_NAMESPACE']
+DATA_DATAPROC_CLUSTER_NAME = PREVENCION_FRAUDES_CONFIG_VARIABLES['DATA_DATAPROC_CLUSTER_NAME']
+DATA_DATAPROC_PROFILE_NAME = PREVENCION_FRAUDES_CONFIG_VARIABLES['DATA_DATAPROC_PROFILE_NAME']
+DATA_COMPOSER_WORKSPACE_BUCKET_NAME = PREVENCION_FRAUDES_CONFIG_VARIABLES['DATA_COMPOSER_WORKSPACE_BUCKET_NAME']
 
-VERIFICACIONES_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_ID']
-VERIFICACIONES_BRO_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BRO_PROJECT_ID']
-VERIFICACIONES_BRO_BUCKET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BRO_BUCKET_NAME']
-VERIFICACIONES_PLA_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PLA_PROJECT_ID']
-VERIFICACIONES_ORO_PROJECT_ID = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_ORO_PROJECT_ID']
-VERIFICACIONES_PROJECT_REGION = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PROJECT_REGION']
-VERIFICACIONES_BRO_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_BRO_DATASET_NAME']
-VERIFICACIONES_PLA_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_PLA_DATASET_NAME']
-VERIFICACIONES_ORO_DATASET_NAME = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_ORO_DATASET_NAME']
-VERIFICACIONES_CONNECTION_DEFAULT = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_CONNECTION_DEFAULT']
+PREVENCION_FRAUDES_BRO_PROJECT_ID = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_BRO_PROJECT_ID']
+PREVENCION_FRAUDES_BRO_BUCKET_NAME = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_BRO_BUCKET_NAME']
+PREVENCION_FRAUDES_PLA_PROJECT_ID = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_PLA_PROJECT_ID']
+PREVENCION_FRAUDES_ORO_PROJECT_ID = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_ORO_PROJECT_ID']
+PREVENCION_FRAUDES_PROJECT_REGION = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_PROJECT_REGION']
+PREVENCION_FRAUDES_BRO_DATASET_NAME = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_BRO_DATASET_NAME']
+PREVENCION_FRAUDES_PLA_DATASET_NAME = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_PLA_DATASET_NAME']
+PREVENCION_FRAUDES_ORO_DATASET_NAME = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_ORO_DATASET_NAME']
+PREVENCION_FRAUDES_CONNECTION_DEFAULT = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_CONNECTION_DEFAULT']
 
-VERIFICACIONES_DATA_PIPELINE_SCHEDULE_INTERVAL = VERIFICACIONES_CONFIG_VARIABLES['VERIFICACIONES_DATA_PIPELINE_SCHEDULE_INTERVAL']
+PREVENCION_FRAUDES_DATA_PIPELINE_SCHEDULE_INTERVAL = PREVENCION_FRAUDES_CONFIG_VARIABLES['PREVENCION_FRAUDES_DATA_PIPELINE_SCHEDULE_INTERVAL']
 
-VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG", deserialize_json=True)
-VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
-VERIFICACIONES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
+PREVENCION_FRAUDES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("PREVENCION_FRAUDES_DATAPROC_BIG_CLUSTER_CONFIG", deserialize_json=True)
+PREVENCION_FRAUDES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("PREVENCION_FRAUDES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
+PREVENCION_FRAUDES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
 
-interval = get_date_interval(project_id='qlts-dev-mx-au-oro-verificacio',dataset='qlts_oro_op_verificaciones_dev',table='TAB_CALENDARIO',period=VERIFICACIONES_LOAD_INTERVAL)
+interval = get_date_interval(project_id='qlts-dev-mx-au-oro-verificacio',dataset='qlts_oro_op_verificaciones_dev',table='TAB_CALENDARIO',period=PREVENCION_FRAUDES_LOAD_INTERVAL)
 
 init_date = interval['init_date']
 final_date = interval['final_date']
@@ -62,7 +61,7 @@ def get_datafusion_load_runtime_args(table_name:str,size:str,init_date=None, fin
     'dataproc.cluster.name': DATA_DATAPROC_CLUSTER_NAME,
     'system.profile.name': DATA_DATAPROC_PROFILE_NAME,
     'TEMPORARY_BUCKET_NAME': DATA_DATAFUSION_TEMPORARY_BUCKET_NAME,
-    'DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
+    'DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
     'TABLE_NAME': table_name,  
   }
   
@@ -140,15 +139,15 @@ def init_landing():
       'init_date':init_date,
       'final_date':final_date
     },
-    location=VERIFICACIONES_PROJECT_REGION,
-    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
     dag=dag 
   )
 
   create_big_cluster = DataprocCreateClusterOperator(
     task_id="create_big_cluster",
     project_id=DATA_PROJECT_ID,
-    cluster_config=VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG,
+    cluster_config=PREVENCION_FRAUDES_DATAPROC_BIG_CLUSTER_CONFIG,
     region=DATA_PROJECT_REGION,
     cluster_name=DATA_DATAPROC_CLUSTER_NAME,
     num_retries_if_resource_is_not_ready=3,
@@ -173,11 +172,11 @@ def load_files():
     task_id='merge_control_de_agentes',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CONTROL_DE_AGENTES/',
       'folder_his': 'CONTROL_DE_AGENTES_HIS/',
       'destination_blob_name': 'CONTROL_DE_AGENTES_2025_HIS.csv',
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -187,11 +186,11 @@ def load_files():
     task_id='load_control_de_agentes',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_2025_HIS.csv',
-      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_2025_HIS.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'CONTROL_DE_AGENTES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.control_de_agentes.json')),
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -200,11 +199,11 @@ def load_files():
     task_id='merge_apertura_reporte',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'APERTURA_REPORTE/',
       'folder_his': 'APERTURA_REPORTE_HIS/',
       'destination_blob_name': 'APERTURA_REPORTE_HIS.csv',
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -214,11 +213,11 @@ def load_files():
     task_id='load_apertura_reporte',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/APERTURA_REPORTE_HIS/APERTURA_REPORTE_HIS.csv',
-      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/APERTURA_REPORTE_HIS/APERTURA_REPORTE_HIS.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'APERTURA_REPORTE',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.apertura_reporte.json')),
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -227,11 +226,11 @@ def load_files():
     task_id='merge_produccion1',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'PRODUCCION1/',
       'folder_his': 'PRODUCCION1_HIS/',
       'destination_blob_name': 'PRODUCCION1_HIS.csv',
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -241,11 +240,11 @@ def load_files():
     task_id='load_produccion1',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/PRODUCCION1_HIS/PRODUCCION1_HIS.csv',
-      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/PRODUCCION1_HIS/PRODUCCION1_HIS.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'PRODUCCION1',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.produccion1.json')),
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -254,11 +253,11 @@ def load_files():
     task_id='merge_produccion2',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'PRODUCCION2/',
       'folder_his': 'PRODUCCION2_HIS/',
       'destination_blob_name': 'PRODUCCION2_HIS.csv',
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -268,11 +267,11 @@ def load_files():
     task_id='load_produccion2',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/PRODUCCION2_HIS/PRODUCCION2_HIS.csv',
-      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/PRODUCCION2_HIS/PRODUCCION2_HIS.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'PRODUCCION2',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.produccion2.json')),
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -281,11 +280,11 @@ def load_files():
     task_id='merge_recuperaciones',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'RECUPERACIONES/',
       'folder_his': 'RECUPERACIONES_HIS/',
       'destination_blob_name': 'RECUPERACIONES_HIS.csv',
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -295,11 +294,11 @@ def load_files():
     task_id='load_recuperaciones',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/RECUPERACIONES_HIS/RECUPERACIONES_HIS.csv',
-      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/RECUPERACIONES_HIS/RECUPERACIONES_HIS.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'RECUPERACIONES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.recuperaciones.json')),
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -308,11 +307,11 @@ def load_files():
     task_id='merge_sumas_aseg',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'SUMAS_ASEG/',
       'folder_his': 'SUMAS_ASEG_HIS/',
       'destination_blob_name': 'SUMAS_ASEG_HIS.csv',
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
     dag=dag
@@ -322,11 +321,11 @@ def load_files():
     task_id='load_sumas_aseg',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/SUMAS_ASEG_HIS/SUMAS_ASEG_HIS.csv',
-      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/SUMAS_ASEG_HIS/SUMAS_ASEG_HIS.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'SUMAS_ASEG',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.sumas_aseg.json')),
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -335,8 +334,8 @@ def load_files():
     task_id='claves_ctas_especiales_excel_to_csv',
     python_callable=claves_ctas_especiales_to_csv,
     op_kwargs={
-      'project_id':VERIFICACIONES_BRO_PROJECT_ID,
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CLAVES_CTAS_ESPECIALES_EXCEL',
       'file': 'CLAVES_CTAS_ESPECIALES 3.xlsx',
       'dest_folder': 'CLAVES_CTAS_ESPECIALES',
@@ -349,11 +348,11 @@ def load_files():
     task_id='merge_claves_ctas_especiales',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CLAVES_CTAS_ESPECIALES/',
       'folder_his': 'CLAVES_CTAS_ESPECIALES_HIS/',
       'destination_blob_name': 'CLAVES_CTAS_ESPECIALES_HIS.csv',
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'utf-8-sig'
     },
     dag=dag
@@ -363,11 +362,11 @@ def load_files():
     task_id='load_claves_ctas_especiales',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CLAVES_CTAS_ESPECIALES_HIS/CLAVES_CTAS_ESPECIALES_HIS.csv',
-      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CLAVES_CTAS_ESPECIALES_HIS/CLAVES_CTAS_ESPECIALES_HIS.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'CLAVES_CTAS_ESPECIALES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.claves_ctas_especiales.json')),
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -376,8 +375,8 @@ def load_files():
     task_id='catalogo_direccion_comercial_excel_to_csv',
     python_callable=catalogo_direccion_comercial_to_csv,
     op_kwargs={
-      'project_id':VERIFICACIONES_BRO_PROJECT_ID,
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CIENCIA_DATOS/CATALOGO_DIRECCION_COMERCIAL',
       'file': 'Catalogo_direccion_comercial.xlsx',
       'dest_folder': 'CATALOGO_DIRECCION_COMERCIAL',
@@ -390,11 +389,11 @@ def load_files():
     task_id='merge_catalogo_direccion_comercial',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': VERIFICACIONES_BRO_BUCKET_NAME,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CATALOGO_DIRECCION_COMERCIAL/',
       'folder_his': 'CATALOGO_DIRECCION_COMERCIAL_HIS/',
       'destination_blob_name': 'CATALOGO_DIRECCION_COMERCIAL_HIS.csv',
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'utf-8-sig'
     },
     dag=dag
@@ -404,11 +403,107 @@ def load_files():
     task_id='load_catalogo_direccion_comercial',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{VERIFICACIONES_BRO_BUCKET_NAME}/CATALOGO_DIRECCION_COMERCIAL_HIS/CATALOGO_DIRECCION_COMERCIAL_HIS.csv',
-      'dataset': VERIFICACIONES_BRO_DATASET_NAME,
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CATALOGO_DIRECCION_COMERCIAL_HIS/CATALOGO_DIRECCION_COMERCIAL_HIS.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'CATALOGO_DIRECCION_COMERCIAL',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.catalogo_direccion_comercial.json')),
-      'project_id': VERIFICACIONES_BRO_PROJECT_ID,
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+  
+
+  rechazos_excel_to_csv = PythonOperator(
+    task_id='rechazos_excel_to_csv',
+    python_callable=rechazos_to_csv,
+    op_kwargs={
+      'project_id':'qlts-dev-mx-au-bro-verificacio',
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'CIENCIA_DATOS/RECHAZOS',
+      'file': 'RECHAZOS.xlsx',
+      'dest_folder': 'RECHAZOS',
+      'dest_file': 'RECHAZOS.csv',
+    },
+    dag=dag
+  )
+
+  merge_rechazos = PythonOperator(
+    task_id='merge_rechazos',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'RECHAZOS/',
+      'folder_his': 'RECHAZOS_HIS/',
+      'destination_blob_name': 'RECHAZOS_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_rechazos = PythonOperator(
+    task_id='load_rechazos',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/RECHAZOS_HIS/RECHAZOS_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'RECHAZOS',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.rechazos.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    },
+    dag=dag
+  )
+
+  merge_cargos = PythonOperator(
+    task_id='merge_cargos',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'CIENCIA_DATOS/TESORERIA/PcPay/Cargos',
+      'folder_his': 'CARGOS_HIS/',
+      'destination_blob_name': 'CARGOS_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_cargos = PythonOperator(
+    task_id='load_cargos',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/CARGOS_HIS/CARGOS_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'CARGOS',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.cargos.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+    },
+    dag=dag
+  )
+  
+  merge_contracargos = PythonOperator(
+    task_id='merge_contracargos',
+    python_callable=merge_storage_csv,
+    op_kwargs={
+      'bucket_name': 'bucket_verificaciones',
+      'folder': 'CIENCIA_DATOS/TESORERIA/PcPay/Contracargos',
+      'folder_his': 'CONTRACARGOS_HIS/',
+      'destination_blob_name': 'CONTRACARGOS_HIS.csv',
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'encoding': 'utf-8-sig'
+    },
+    dag=dag
+  )
+
+  load_contracargos = PythonOperator(
+    task_id='load_contracargos',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': 'gs://bucket_verificaciones/CONTRACARGOS_HIS/CONTRACARGOS_HIS.csv',
+      'dataset': 'LAN_VERIFICACIONES',
+      'table': 'CONTRACARGOS',
+      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.contracargos.json')),
+      'project_id': 'qlts-dev-mx-au-bro-verificacio',
     },
     dag=dag
   )
@@ -421,6 +516,9 @@ def load_files():
   merge_sumas_aseg >> load_sumas_aseg
   claves_ctas_especiales_excel_to_csv >> merge_claves_ctas_especiales >> load_claves_ctas_especiales
   catalogo_direccion_comercial_excel_to_csv >> merge_catalogo_direccion_comercial >> load_catalogo_direccion_comercial
+  rechazos_excel_to_csv >> merge_rechazos >> load_rechazos
+  merge_cargos >> load_cargos
+  merge_contracargos >> load_contracargos
 
 
 @task_group(group_id='unique_bsc_siniestros_operators',dag=dag)
