@@ -418,7 +418,7 @@ def load_files():
     python_callable=rechazos_to_csv,
     op_kwargs={
       'project_id':'qlts-dev-mx-au-bro-verificacio',
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CIENCIA_DATOS/RECHAZOS',
       'file': 'RECHAZOS.xlsx',
       'dest_folder': 'RECHAZOS',
@@ -431,7 +431,7 @@ def load_files():
     task_id='merge_rechazos',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'RECHAZOS/',
       'folder_his': 'RECHAZOS_HIS/',
       'destination_blob_name': 'RECHAZOS_HIS.csv',
@@ -445,10 +445,10 @@ def load_files():
     task_id='load_rechazos',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/RECHAZOS_HIS/RECHAZOS_HIS.csv',
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/RECHAZOS_HIS/RECHAZOS_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'RECHAZOS',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.rechazos.json')),
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.rechazos.json')),
       'project_id': 'qlts-dev-mx-au-bro-verificacio',
     },
     dag=dag
@@ -458,7 +458,7 @@ def load_files():
     task_id='merge_cargos',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CIENCIA_DATOS/TESORERIA/PcPay/Cargos',
       'folder_his': 'CARGOS_HIS/',
       'destination_blob_name': 'CARGOS_HIS.csv',
@@ -472,10 +472,10 @@ def load_files():
     task_id='load_cargos',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/CARGOS_HIS/CARGOS_HIS.csv',
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CARGOS_HIS/CARGOS_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'CARGOS',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.cargos.json')),
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.cargos.json')),
       'project_id': 'qlts-dev-mx-au-bro-verificacio',
     },
     dag=dag
@@ -485,7 +485,7 @@ def load_files():
     task_id='merge_contracargos',
     python_callable=merge_storage_csv,
     op_kwargs={
-      'bucket_name': 'bucket_verificaciones',
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CIENCIA_DATOS/TESORERIA/PcPay/Contracargos',
       'folder_his': 'CONTRACARGOS_HIS/',
       'destination_blob_name': 'CONTRACARGOS_HIS.csv',
@@ -499,10 +499,10 @@ def load_files():
     task_id='load_contracargos',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': 'gs://bucket_verificaciones/CONTRACARGOS_HIS/CONTRACARGOS_HIS.csv',
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CONTRACARGOS_HIS/CONTRACARGOS_HIS.csv',
       'dataset': 'LAN_VERIFICACIONES',
       'table': 'CONTRACARGOS',
-      'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.contracargos.json')),
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.contracargos.json')),
       'project_id': 'qlts-dev-mx-au-bro-verificacio',
     },
     dag=dag
