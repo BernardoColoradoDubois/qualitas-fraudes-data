@@ -175,7 +175,7 @@ def load_files():
       'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CONTROL_DE_AGENTES/',
       'folder_his': 'CONTROL_DE_AGENTES_HIS/',
-      'destination_blob_name': 'CONTROL_DE_AGENTES_2025_HIS.csv',
+      'destination_blob_name': 'CONTROL_DE_AGENTES_HIS.csv',
       'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'iso-8859-1'
     },
@@ -186,7 +186,7 @@ def load_files():
     task_id='load_control_de_agentes',
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
-      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_2025_HIS.csv',
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CONTROL_DE_AGENTES_HIS/CONTROL_DE_AGENTES_HIS.csv',
       'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'CONTROL_DE_AGENTES',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.control_de_agentes.json')),
@@ -446,7 +446,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/RECHAZOS_HIS/RECHAZOS_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'RECHAZOS',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.rechazos.json')),
       'project_id': 'qlts-dev-mx-au-bro-verificacio',
@@ -473,7 +473,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CARGOS_HIS/CARGOS_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'CARGOS',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.cargos.json')),
       'project_id': 'qlts-dev-mx-au-bro-verificacio',
@@ -500,7 +500,7 @@ def load_files():
     python_callable=upload_storage_csv_to_bigquery,
     op_kwargs={
       'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/CONTRACARGOS_HIS/CONTRACARGOS_HIS.csv',
-      'dataset': 'LAN_VERIFICACIONES',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'CONTRACARGOS',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.contracargos.json')),
       'project_id': 'qlts-dev-mx-au-bro-verificacio',
