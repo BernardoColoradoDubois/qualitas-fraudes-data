@@ -1132,5 +1132,274 @@ def end_landing():
     region=DATA_PROJECT_REGION,
   )
 
+
+
+@task_group(group_id='file_elt',dag=dag)
+def file_elt():
+  
+  tab_apertura_reporte = BigQueryInsertJobOperator(
+    task_id="tab_apertura_reporte",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/APERTURA_REPORTE/TAB_APERTURA_REPORTE.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'APERTURA_REPORTE',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_APERTURA_REPORTE',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  tab_control_de_agentes = BigQueryInsertJobOperator(
+    task_id="tab_control_de_agentes",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CONTROL_DE_AGENTES/TAB_CONTROL_DE_AGENTES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CONTROL_DE_AGENTES',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_CONTROL_DE_AGENTES',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  tab_produccion1 = BigQueryInsertJobOperator(
+    task_id="tab_produccion1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PRODUCCION1/TAB_PRODUCCION1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'PRODUCCION1',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_PRODUCCION1',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  tab_produccion2 = BigQueryInsertJobOperator(
+    task_id="tab_produccion2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PRODUCCION2/TAB_PRODUCCION2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'PRODUCCION2',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_PRODUCCION2',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  tab_recuperaciones = BigQueryInsertJobOperator(
+    task_id="tab_recuperaciones",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/RECUPERACIONES/TAB_RECUPERACIONES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'RECUPERACIONES',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_RECUPERACIONES',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+
+  tab_sumas_aseg = BigQueryInsertJobOperator(
+    task_id="tab_sumas_aseg",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SUMAS_ASEG/TAB_SUMAS_ASEG.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'SUMAS_ASEG',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_SUMAS_ASEG',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+
+  tab_cargos = BigQueryInsertJobOperator(
+    task_id="tab_sumas_aseg",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CARGOS/TAB_CARGOS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CARGOS',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_CARGOS',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  cat_catalogo_direccion_comercial = BigQueryInsertJobOperator(
+    task_id="cat_catalogo_direccion_comercial",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CATALOGO_DIRECCION_COMERCIAL/CAT_CATALOGO_DIRECCION_COMERCIAL.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CATALOGO_DIRECCION_COMERCIAL',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_CATALOGO_DIRECCION_COMERCIAL',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  cat_claves_ctas_especiales = BigQueryInsertJobOperator(
+    task_id="cat_claves_ctas_especiales",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CLAVES_CTAS_ESPECIALES/CAT_CLAVES_CTAS_ESPECIALES.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CLAVES_CTAS_ESPECIALES',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_CLAVES_CTAS_ESPECIALES',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  tab_contracargos = BigQueryInsertJobOperator(
+    task_id="tab_contracargos",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CONTRACARGOS/TAB_CONTRACARGOS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'CONTRACARGOS',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_CONTRACARGOS',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  tab_rechazos = BigQueryInsertJobOperator(
+    task_id="tab_rechazos",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/RECHAZOS/TAB_RECHAZOS.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'RECHAZOS',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'TAB_RECHAZOS',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+
 # Flujo del DAG - Solo ejecutando los operadores únicos del segundo DAG
-landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing()
+landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt()
