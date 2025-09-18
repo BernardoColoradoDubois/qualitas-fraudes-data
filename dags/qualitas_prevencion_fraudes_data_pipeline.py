@@ -1401,5 +1401,165 @@ def file_elt():
     dag=dag 
   )
 
+
+@task_group(group_id='valuaciones_elt',dag=dag)
+def valuaciones_elt():
+
+  usuariohomologado = BigQueryInsertJobOperator(
+    task_id="usuariohomologado",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/USUARIOHOMOLOGADO/USUARIOHOMOLOGADO.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+
+  todaslaspiezas_1 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_1.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+  todaslaspiezas_2 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_2.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+  todaslaspiezas_3 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_3",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_3.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+  todaslaspiezas_4 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_4",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_4.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+  todaslaspiezas_5 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_5",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_5.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+  todaslaspiezas_6 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_6",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_6.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+  todaslaspiezas_7 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_7",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_7.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+  todaslaspiezas_8 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_8",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_8.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+
+
+  todaslaspiezas_9 = BigQueryInsertJobOperator(
+    task_id="todaslaspiezas_9",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/TODASLASPIEZAS/TODASLASPIEZAS_9.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+  usuariohomologado >> todaslaspiezas_1
+  todaslaspiezas_1 >> todaslaspiezas_2 >> todaslaspiezas_3 >> todaslaspiezas_4 >> \
+  todaslaspiezas_5 >> todaslaspiezas_6 >> todaslaspiezas_7 >> todaslaspiezas_8 >> todaslaspiezas_9
+
+
 # Flujo del DAG - Solo ejecutando los operadores únicos del segundo DAG
-landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt()
+landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> valuaciones_elt()
