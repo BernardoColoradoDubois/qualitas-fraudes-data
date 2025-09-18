@@ -8,7 +8,6 @@
   "DATA_DATAPROC_PROFILE_NAME":"USER:verificaciones-dataproc",
   "DATA_COMPOSER_WORKSPACE_BUCKET_NAME" : "us-central1-qlts-composer-d-cc034e9e-bucket",
 
-  "PREVENCION_FRAUDES_PROJECT_ID":"qlts-dev-mx-au-bro-verificacio",
   "PREVENCION_FRAUDES_BRO_PROJECT_ID":"qlts-dev-mx-au-bro-verificacio",
   "PREVENCION_FRAUDES_BRO_BUCKET_NAME":"bucket_verificaciones",
   "PREVENCION_FRAUDES_PLA_PROJECT_ID":"qlts-dev-mx-au-pla-verificacio",
