@@ -1437,8 +1437,8 @@ def file_elt():
   )
 
 
-@task_group(group_id='valuaciones_elt',dag=dag)
-def valuaciones_elt():
+@task_group(group_id='tlp_elt',dag=dag)
+def tlp_elt():
 
   usuariohomologado = BigQueryInsertJobOperator(
     task_id="usuariohomologado",
@@ -1597,4 +1597,4 @@ def valuaciones_elt():
 
 
 # Flujo del DAG - Solo ejecutando los operadores únicos del segundo DAG
-landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> valuaciones_elt()
+landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> tlp_elt()
