@@ -743,6 +743,58 @@ def landing_siniestros():
 @task_group(group_id='landing_sise',dag=dag)
 def landing_sise():
 
+  load_di = CloudDataFusionStartPipelineOperator(
+    task_id="load_di",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_consultaetl_unv_di',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('DI',size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+
+  load_pv = CloudDataFusionStartPipelineOperator(
+    task_id="load_pv",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_consultaetl_unv_pv',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('PV',size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+
+  load_rp = CloudDataFusionStartPipelineOperator(
+    task_id="load_rp",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_consultaetl_unv_rp',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('RP',size='L', init_date=init_date, final_date=final_date),
+    dag=dag
+  )
+
+
   load_fraud_di = CloudDataFusionStartPipelineOperator(
     task_id="load_fraud_di",
     location=DATA_PROJECT_REGION,
@@ -756,7 +808,7 @@ def landing_sise():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('FRAUD_DI',size='L', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('DI',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -1544,7 +1596,7 @@ def bq_elt():
     params={
       'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
       'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'FRAUD_PV',
+      'SOURCE_TABLE_NAME': 'PV',
       'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
       'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_POLIZAS_VIGENTES_1',
@@ -1674,7 +1726,7 @@ def bq_elt():
     params={
       'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
       'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'FRAUD_RP',
+      'SOURCE_TABLE_NAME': 'RP',
       'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
       'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_PAGOS_POLIZAS',
@@ -1743,7 +1795,7 @@ def bq_elt():
     params={
       'SOURCE_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
       'SOURCE_DATASET_NAME': VERIFICACIONES_LAN_DATASET_NAME,
-      'SOURCE_TABLE_NAME': 'FRAUD_DI',
+      'SOURCE_TABLE_NAME': 'DI',
       'DEST_PROJECT_ID': VERIFICACIONES_PROJECT_ID,
       'DEST_DATASET_NAME': VERIFICACIONES_STG_DATASET_NAME,
       'DEST_TABLE_NAME': 'STG_INCISOS_POLIZAS_1',
