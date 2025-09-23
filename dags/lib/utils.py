@@ -296,13 +296,13 @@ def select_datafusion_load(table,**kwargs):
     return 'single_landing.gerentes_excel_to_csv'
   
   elif table == 'INCISOS_POLIZAS':
-    return 'single_landing.load_fraud_di'
+    return 'single_landing.load_di'
   
   elif table == 'OFICINAS':
     return 'single_landing.load_tsuc_bsc'
   
   elif table == 'PAGOS_POLIZAS':
-    return 'single_landing.load_fraud_rp'
+    return 'single_landing.load_rp'
   
   elif table == 'PAGOS_PROVEEDORES':
     return 'single_landing.load_pagoprove'
@@ -315,6 +315,9 @@ def select_datafusion_load(table,**kwargs):
   
   elif table == 'TIPOS_PROVEEDORES':
     return 'single_landing.load_tipoproveedor'
+
+  elif table == 'POLIZAS_VIGENTES':
+    return 'single_landing.load_pv'
   
   
 def select_bq_elt(table,**kwargs):
@@ -376,6 +379,9 @@ def select_bq_elt(table,**kwargs):
   elif table == 'TIPOS_PROVEEDORES':
     return 'single_bq_elt.dm_tipos_proveedores'
   
+  elif table == 'POLIZAS_VIGENTES':
+    return 'single_bq_elt.stg_polizas_vigentes_1'
+  
 
 def select_datafusion_inject(table,**kwargs):
   
@@ -435,6 +441,9 @@ def select_datafusion_inject(table,**kwargs):
   
   elif table == 'TIPOS_PROVEEDORES':
     return 'single_injection.inject_dm_tipos_proveedores'
+  
+  elif table == 'POLIZAS_VIGENTES':
+    return 'single_injection.inject_dm_polizas_vigentes'
   
   
 def gerentes_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
