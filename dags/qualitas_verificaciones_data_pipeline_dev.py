@@ -597,42 +597,7 @@ def landing_bsc_siniestros():
     dag=dag
   )  
   
-  load_orden_bsc = CloudDataFusionStartPipelineOperator(
-    task_id="load_orden_bsc",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_orden_bsc',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('ORDEN_BSC', size='S',init_date=init_date, final_date=final_date),
-    dag=dag
-  )  
-  
-  load_pagosauditoria_sise = CloudDataFusionStartPipelineOperator(
-    task_id="load_pagosauditoria_sise",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qlts_au_ve_bscsiniestros_sql_pagosauditoria_sise',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('PAGOSAUDITORIA_SISE', size='M',init_date=init_date, final_date=final_date),
-    dag=dag
-  )  
-  
-  
-  
+
 
 @task_group(group_id='landing_siniestros',dag=dag)
 def landing_siniestros():
