@@ -109,7 +109,7 @@ SELECT
     CLAVETALLER,
     CODVALUADOR,
     IDVALUACION
-FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.DATOSGENERALES`;
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES`;
 
 -- Extracción de FECHAS
 CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_FECHAS` AS
@@ -165,7 +165,7 @@ SELECT
     MODELO,
     SERIE,
     IDMARCA
-FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.DATOSVEHICULO`;
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSVEHICULO`;
 
 -- Extracción de MARCA
 CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_MARCA` AS
@@ -226,18 +226,18 @@ SELECT
     Status,
     Tipo,
     POBCOMER
-FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.PRESTADORES`;
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.PRESTADORES`;
 
 -- Extracción de TESTADO_BSC
 CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.POB_COMER` AS
 SELECT 
     Z_ID,
     EDOPOB
-FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.TESTADO_BSC`;
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TESTADO_BSC`;
 
 -- Extracción de tipoProveedor
 CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.ID_TIPOPROVEEDOR` AS
 SELECT 
     id,
     tipo_proveedor
-FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.TIPOPROVEEDOR`;
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TIPOPROVEEDOR`;
