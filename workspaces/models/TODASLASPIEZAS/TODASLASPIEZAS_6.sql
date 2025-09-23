@@ -4,7 +4,7 @@
 -- ================================================================================
 
 -- Cruce de vales con proveedores
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO_0001` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0001` AS
 SELECT 
     t2.IDEXPEDIENTE,
     t2.IDVALE,
@@ -20,13 +20,13 @@ SELECT
     t2.FECHAACTUALIZACION,
     t3.DESCRIPCION AS ESTATUSVALE,
     t2.AUTORIZADOR
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO` t1
-INNER JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_VISTA_VALE` t2 ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_VALEESTATUS` t3 ON t2.IDVALEESTATUS = t3.IDVALEESTATUS
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_PROVEEDOR` t4 ON t2.CODPROVEEDOR = t4.CODPROVEEDOR;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO` t1
+INNER JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_VISTA_VALE` t2 ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_VALEESTATUS` t3 ON t2.IDVALEESTATUS = t3.IDVALEESTATUS
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_PROVEEDOR` t4 ON t2.CODPROVEEDOR = t4.CODPROVEEDOR;
 
 -- Cruce con histórico de vales
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO1` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO1` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t2.IDVALEHISTORICO,
@@ -66,11 +66,11 @@ SELECT
         WHEN t2.IDREFACCION IS NULL THEN 'SIN ORIGEN'
     END AS ORIGEN,
     t2.LLAVEPIEZA
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO_0001` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_VALEHISTORICO` t2 ON t1.IDVALE = t2.IDVALE
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0001` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_VALEHISTORICO` t2 ON t1.IDVALE = t2.IDVALE
 WHERE t2.IDCOSTO IS NOT NULL AND t1.FECHAEXPEDICION >= '2023-01-01 00:00:00';
 
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.VALE_CAUSA_CAMBIO` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.VALE_CAUSA_CAMBIO` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.IDVALEHISTORICO,
@@ -100,11 +100,11 @@ SELECT
     t1.ESTATUSVALE,
     t1.ORIGEN,
     t2.DESCRIPCION AS CAUSACAMBIOVALE
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO1` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_CAUSACAMBIOVALE` t2 ON t1.IDCAUSACAMBIOVALE = t2.IDCAUSACAMBIOVALE;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO1` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_CAUSACAMBIOVALE` t2 ON t1.IDCAUSACAMBIOVALE = t2.IDCAUSACAMBIOVALE;
 
 -- Cruce con tabla COSTO para tipo 'COSTO'
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO1_0003` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO1_0003` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.IDVALEHISTORICO,
@@ -138,11 +138,11 @@ SELECT
     t2.BLINDAJE,
     t2.CLAVENAGS,
     t2.MONTOCONVENIO
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.VALE_CAUSA_CAMBIO` t1
-INNER JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_COSTO` t2 ON t1.IDCOSTO = t2.IDCOSTO AND t1.TIPO = 'COSTO';
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.VALE_CAUSA_CAMBIO` t1
+INNER JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_COSTO` t2 ON t1.IDCOSTO = t2.IDCOSTO AND t1.TIPO = 'COSTO';
 
 -- Cruce con tabla COMPLEMENTO para tipo 'COMPLEMENTO'
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO1_0004` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO1_0004` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.IDVALEHISTORICO,
@@ -176,12 +176,12 @@ SELECT
     t2.BLINDAJE,
     t2.CLAVENAGS,
     t2.MONTOCONVENIO
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.VALE_CAUSA_CAMBIO` t1
-INNER JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_COMPLEMENTO` t2 ON t1.IDCOSTO = t2.IDCOMPLEMENTO AND t1.TIPO = 'COMPLEMENTO';
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.VALE_CAUSA_CAMBIO` t1
+INNER JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_COMPLEMENTO` t2 ON t1.IDCOSTO = t2.IDCOMPLEMENTO AND t1.TIPO = 'COMPLEMENTO';
 
 -- Unión de COSTO y COMPLEMENTO
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.APPEND_TABLE` AS
-SELECT * FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO1_0003`
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.APPEND_TABLE` AS
+SELECT * FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO1_0003`
 UNION ALL
-SELECT * FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO1_0004`;
+SELECT * FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO1_0004`;
 

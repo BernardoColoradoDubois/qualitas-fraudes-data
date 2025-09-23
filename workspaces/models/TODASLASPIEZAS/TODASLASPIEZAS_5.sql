@@ -7,7 +7,7 @@
 
 -- Concentrado inicial - OPTIMIZADO: Dividido en pasos más pequeños
 -- Paso 1: Base con expedientes y datos generales
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1_PASO1` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1_PASO1` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.MIN_of_FECHAAUTORIZACIONVALUADOR,
@@ -17,27 +17,27 @@ SELECT
     t3.CLAVETALLER,
     t3.CODVALUADOR,
     t3.IDVALUACION
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_ENVIOHISTORICO` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_DATOSGENERALES` t3 ON t1.IDEXPEDIENTE = t3.IDEXPEDIENTE;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_DATOSGENERALES` t3 ON t1.IDEXPEDIENTE = t3.IDEXPEDIENTE;
 
 -- Paso 2: Agregar información de expediente
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1_PASO2` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1_PASO2` AS
 SELECT 
     t1.*,
     SUBSTR(t2.NUMEXPEDIENTE, 1, 14) AS NUMVALUACION
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1_PASO1` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.LAN_VERIFICACIONES.EXPEDIENTE` t2 ON CAST(t1.IDEXPEDIENTE AS NUMERIC) = t2.IDEXPEDIENTE;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1_PASO1` t1
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.EXPEDIENTE` t2 ON CAST(t1.IDEXPEDIENTE AS NUMERIC) = t2.IDEXPEDIENTE;
 
 -- Paso 3: Agregar información de valuación
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1_PASO3` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1_PASO3` AS
 SELECT 
     t1.*,
     REGEXP_REPLACE(t4.DESCRIPCION, r'[^a-zA-Z0-9\s]', '') AS ESTATUSVALUACION
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1_PASO2` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_VALUACION` t4 ON t1.IDVALUACION = t4.IDVALUACION;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1_PASO2` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_VALUACION` t4 ON t1.IDVALUACION = t4.IDVALUACION;
 
 -- Paso 4: Agregar información de talleres
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1_PASO4` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1_PASO4` AS
 SELECT 
     t1.*,
     SUBSTR(t5.NOMBRECOMERCIAL, 7) AS NOMBRECDR,
@@ -49,22 +49,22 @@ SELECT
     t5.IDENTIDAD,
     t5.IDOFICINA,
     t5.IDESTADO
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1_PASO3` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.TAB_TALLERES` t5 ON t1.CLAVETALLER = t5.CLAVETALLER;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1_PASO3` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.TAB_TALLERES` t5 ON t1.CLAVETALLER = t5.CLAVETALLER;
 
 -- Paso 5: Agregar fechas - CONCENTRADO_1 FINAL
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1` AS
 SELECT 
     t1.*,
     t6.FECVALUACION,
     t6.FECTERMINADO,
     t6.FECENTREGADO
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1_PASO4` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_FECHAS` t6 ON t1.IDEXPEDIENTE = t6.IDEXPEDIENTE;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1_PASO4` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_FECHAS` t6 ON t1.IDEXPEDIENTE = t6.IDEXPEDIENTE;
 
 -- Concentrado con estatus del expediente - OPTIMIZADO: Dividido en pasos
 -- Paso 1: Base del concentrado
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_PASO1` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_PASO1` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.NUMVALUACION,
@@ -86,47 +86,47 @@ SELECT
     t1.CDRAUTOSURTIDO,
     t1.IDESTADO,
     t1.IDENTIDAD
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_1` t1;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_1` t1;
 
 -- Paso 2: Agregar estatus del expediente
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_PASO2` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_PASO2` AS
 SELECT 
     t1.*,
     t2.ESTATUSEXPEDIENTE
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_PASO1` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.ESTATUS_DEL_EXPEDIENTE` t2 ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_PASO1` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.ESTATUS_DEL_EXPEDIENTE` t2 ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE;
 
 -- Paso 3: Agregar información del cerco
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_PASO3` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_PASO3` AS
 SELECT 
     t1.*,
     t3.NOMBRE AS CERCO
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_PASO2` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_CERCO` t3 ON t1.IDENTIDAD = t3.IDENTIDAD;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_PASO2` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_CERCO` t3 ON t1.IDENTIDAD = t3.IDENTIDAD;
 
 -- Paso 4: Agregar datos del vehículo
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_PASO4` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_PASO4` AS
 SELECT 
     t1.*,
     t4.MARCAVEHICULO,
     t4.TIPOVEHICULO,
     t4.MODELO,
     t4.SERIE
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_PASO3` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DATOS_DEL_VEH_CON_MARCA` t4 ON t1.IDEXPEDIENTE = t4.IDEXPEDIENTE;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_PASO3` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DATOS_DEL_VEH_CON_MARCA` t4 ON t1.IDEXPEDIENTE = t4.IDEXPEDIENTE;
 
 -- Paso 5: Agregar categoría valuador - CON_STATUS_EXP_CONCENTRADO_1 FINAL
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_CONCENTRADO_1` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_CONCENTRADO_1` AS
 SELECT 
     t1.*,
     t5.TIPOVALUADOR,
     t5.CATEGORIAVALUADOR
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_PASO4` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CATEGORIA_VALUADOR` t5 ON t1.CODVALUADOR = t5.CODVALUADOR;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_PASO4` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CATEGORIA_VALUADOR` t5 ON t1.CODVALUADOR = t5.CODVALUADOR;
 
 -- Concentrado final con gerencias - OPTIMIZADO: Dividido en pasos pequeños
 -- Paso 1: Base del concentrado con información básica
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_PASO1` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_PASO1` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.NUMVALUACION,
@@ -155,18 +155,18 @@ SELECT
     t1.CDRCOTIZADOR,
     t1.CDRAUTOSURTIDO,
     t1.IDESTADO
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CON_STATUS_EXP_CONCENTRADO_1` t1;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CON_STATUS_EXP_CONCENTRADO_1` t1;
 
 -- Paso 2: Agregar información de región geográfica
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_PASO2` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_PASO2` AS
 SELECT 
     t1.*,
     t2.IDREGIONGEOGRAFICA
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_PASO1` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.DE_ESTADO` t2 ON t1.IDESTADO = t2.IDESTADO;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_PASO1` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DE_ESTADO` t2 ON t1.IDESTADO = t2.IDESTADO;
 
 -- Paso 3: Calcular gerencia de valuación
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_PASO3` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_PASO3` AS
 SELECT 
     t1.*,
     CASE
@@ -176,10 +176,10 @@ SELECT
         ELSE 'SIN GERENCIA'
     END AS GERENCIAVALUACION,
     CASE WHEN t1.FECTERMINADO IS NOT NULL THEN 1 ELSE 0 END AS VEHICULOTERMINADO
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_PASO2` t1;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_PASO2` t1;
 
 -- Paso 4: Agregar información de prestadores - CONCENTRADO FINAL
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.NUMVALUACION,
@@ -212,11 +212,11 @@ SELECT
     t1.VEHICULOTERMINADO,
     t1.TIPOVALUADOR,
     t1.CATEGORIAVALUADOR
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO_PASO3` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.PRESTADORES_POB_COMER_TIPO` t3 ON t1.CLAVETALLER = t3.Id;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO_PASO3` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.PRESTADORES_POB_COMER_TIPO` t3 ON t1.CLAVETALLER = t3.Id;
 
 -- Concentrado con analista CDR
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.ENVIOHISTORICO_CN_ANALISTACDR` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.ENVIOHISTORICO_CN_ANALISTACDR` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.NUMVALUACION,
@@ -250,5 +250,5 @@ SELECT
     t1.TIPOVALUADOR,
     t1.CATEGORIAVALUADOR,
     t2.ANALISTACDR
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.CONCENTRADO` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.ANALISTA_CDR` t2 ON t1.CLAVETALLER = t2.CLAVETALLER;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONCENTRADO` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.ANALISTA_CDR` t2 ON t1.CLAVETALLER = t2.CLAVETALLER;

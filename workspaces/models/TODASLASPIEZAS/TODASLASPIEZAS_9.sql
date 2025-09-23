@@ -3,7 +3,7 @@
 -- ================================================================================
 
 
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.DM_PREVENCION_FRAUDES.TODASLASPIEZAS` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.TODASLASPIEZAS` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.EJERCICIO,
@@ -96,6 +96,6 @@ SELECT
     t1.AREAASIGNACION,
     t1.PIEZAAUTOSURTIDO,
     t1.MONTOCONVENIO
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.QUERY_FOR_TLP` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.DM_PREVENCION_FRAUDES.USUARIOHOMOLOGADO` t2 ON t1.USUARIO = t2.UsuarioBase
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_TLP` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.USUARIOHOMOLOGADO` t2 ON t1.USUARIO = t2.UsuarioBase
 WHERE t1.FECVALUACION >= '2024-01-01 00:00:00';

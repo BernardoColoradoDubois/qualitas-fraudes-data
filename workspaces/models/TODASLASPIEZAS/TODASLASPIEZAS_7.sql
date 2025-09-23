@@ -5,7 +5,7 @@
 -- ================================================================================
 
 -- Fechas mínimas y máximas por expediente-proveedor-pieza
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.FECEXP_FECENTREGA_TE` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.FECEXP_FECENTREGA_TE` AS
 SELECT DISTINCT 
     t1.IDEXPEDIENTE,
     t1.CODPROVEEDOR,
@@ -15,7 +15,7 @@ SELECT DISTINCT
     t1.NUMPARTE,
     t1.REFERENCIA,
     t1.DESCRIPCIONREFACCION
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.APPEND_TABLE` t1
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.APPEND_TABLE` t1
 GROUP BY 
     t1.IDEXPEDIENTE,
     t1.CODPROVEEDOR,
@@ -25,7 +25,7 @@ GROUP BY
     t1.DESCRIPCIONREFACCION;
 
 -- Cálculo de tiempo de entrega
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.TE` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.TE` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.CODPROVEEDOR,
@@ -34,10 +34,10 @@ SELECT
     t1.NUMPARTE,
     t1.REFERENCIA,
     t1.DESCRIPCIONREFACCION
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.FECEXP_FECENTREGA_TE` t1;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.FECEXP_FECENTREGA_TE` t1;
 
 -- Tabla final con tiempos de entrega
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.APPEND_TABLE_TE` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.APPEND_TABLE_TE` AS
 SELECT 
     t1.IDEXPEDIENTE,
     t1.IDVALEHISTORICO,
@@ -74,8 +74,8 @@ SELECT
     t2.TIEMPOENTREGA,
     DATE_DIFF(DATE(t1.FECENTREGAREFACCIONARIA), DATE(t1.FECHAEXPEDICION), DAY) AS TIEMPOENTREGA1,
     DATE_DIFF(DATE(t1.FECRECEPCION), DATE(t1.FECHAEXPEDICION), DAY) AS TIEMPORECEPCION
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.APPEND_TABLE` t1
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.TE` t2 ON 
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.APPEND_TABLE` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.TE` t2 ON 
     t1.IDEXPEDIENTE = t2.IDEXPEDIENTE 
     AND t1.CODPROVEEDOR = t2.CODPROVEEDOR 
     AND t1.NUMPARTE = t2.NUMPARTE 
@@ -83,7 +83,7 @@ LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.TE` t2 ON
     AND t1.DESCRIPCIONREFACCION = t2.DESCRIPCIONREFACCION;
 
 -- Unión final con información del expediente
-CREATE OR REPLACE TABLE `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.UNION_01` AS
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.UNION_01` AS
 SELECT 
     a.*,
     b.NUMVALUACION,
@@ -117,6 +117,6 @@ SELECT
     b.TIPOVALUADOR,
     b.CATEGORIAVALUADOR,
     b.ANALISTACDR
-FROM `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.APPEND_TABLE_TE` a
-LEFT JOIN `qlts-dev-mx-au-bro-verificacio.STG_PREVENCION_FRAUDES.ENVIOHISTORICO_CN_ANALISTACDR` b ON a.IDEXPEDIENTE = b.IDEXPEDIENTE;
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.APPEND_TABLE_TE` a
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.ENVIOHISTORICO_CN_ANALISTACDR` b ON a.IDEXPEDIENTE = b.IDEXPEDIENTE;
 
