@@ -1597,7 +1597,36 @@ def tlp_elt():
 
 @task_group(group_id='supervisor_cdr_elt',dag=dag)
 def supervisor_cdr_elt():
-  pass
-
+  
+  ejecutivas_seg = BigQueryInsertJobOperator(
+    task_id="ejecutivas_seg",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/EJECUTIVAS_SEG/EJECUTIVAS_SEG.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+    
+  supervisor_cdr = BigQueryInsertJobOperator(
+    task_id="supervisor_cdr",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SUPERVISOR_CDR/SUPERVISOR_CDR.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+  
 # Flujo del DAG - Solo ejecutando los operadores únicos del segundo DAG
-landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> tlp_elt()
+landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> tlp_elt() >> supervisor_cdr_elt()
