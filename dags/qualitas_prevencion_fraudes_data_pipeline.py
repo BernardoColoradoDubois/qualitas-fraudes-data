@@ -1595,6 +1595,9 @@ def tlp_elt():
   todaslaspiezas_1 >> todaslaspiezas_2 >> todaslaspiezas_3 >> todaslaspiezas_4 >> \
   todaslaspiezas_5 >> todaslaspiezas_6 >> todaslaspiezas_7 >> todaslaspiezas_8 >> todaslaspiezas_9
 
+@task_group(group_id='supervisor_cdr_elt',dag=dag)
+def supervisor_cdr_elt():
+  pass
 
 # Flujo del DAG - Solo ejecutando los operadores únicos del segundo DAG
 landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> tlp_elt()

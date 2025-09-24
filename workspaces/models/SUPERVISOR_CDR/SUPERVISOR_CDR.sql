@@ -1,0 +1,789 @@
+-- SUPERVISOR_CDR - Traducción de SAS a BigQuery
+-- Dataset final: DM_PREVENCION_FRAUDES
+-- Tablas intermedias: qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev
+
+-- qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev
+-- qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev
+
+
+-- 1. Cruce entre VALUACIONES y APERCAB_REING
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_VALUACION` AS
+SELECT DISTINCT 
+    t1.VALUACION,
+    t1.CAUSA,
+    t1.CAUSA_HOMOLOGADA,
+    t2.CVE_AGENTE,
+    t1.Agente,
+    t1.Oficina,
+    t1.Oficina_Beneficiario,
+    t1.Gerente,
+    t1.Director,
+    t1.REF,
+    t1.MO,
+    t1.Importe_Reparaciones,
+    t1.SUBRAMO,
+    t1.Fecha_Captura
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.VALUACIONES` t1
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.APERCAB_REING` t2 
+    ON t1.REPORTE = t2.REPORTE;
+
+-- 2. Supervisores de servicio
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SUPERVISOR_SERVICIO` AS
+SELECT DISTINCT 
+    t1.CLAVEANALISTA AS CLAVEANALISTA_SUPSERV,
+    t1.NOMBRENNALISTA AS NOMBRE_SUPERSERV,
+    t2.CLAVETALLER,
+    t2.CODVALUADOR,
+    t1.IDREGIONGEOGRAFICA
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ANALISTACDR` t1
+INNER JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ASIGNACIONCDR` t2 
+    ON t1.IDANALISTACDR = t2.IDANALISTACDR
+WHERE t1.CLAVEANALISTA LIKE '%SUPQ%'
+ORDER BY t1.CLAVEANALISTA, t2.CLAVETALLER;
+
+-- 3. Códigos de causa
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CODIGO_CAUSA` AS
+SELECT DISTINCT 
+    t1.Z_ID,
+    t1.CAUSA,
+    t1.CAUSA_HOMOLOGADA
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.TCAUSA_BSC` t1
+WHERE t1.CAUSA_HOMOLOGADA != 'DESCONOCIDA';
+
+-- 4. Conceptos distintos
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Conceptos` AS
+SELECT DISTINCT t1.CONCEPTO
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.COSTO` t1
+WHERE t1.CONCEPTO IS NOT NULL;
+
+-- 5. Suma de montos por expediente y concepto (COSTO)
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.BuscaMontosPortal_Inicial` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    t1.CONCEPTO,
+    SUM(t1.MONTO) AS SUM_of_MONTO
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.COSTO` t1
+GROUP BY t1.IDEXPEDIENTE, t1.CONCEPTO;
+
+-- 6. Expedientes con descripción específica
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.REAL_CE` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    t1.DESCRIPCION
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.COSTO` t1
+WHERE t1.DESCRIPCION = 'COSTO_POR_MOB_CARRIL_EXP' 
+    AND t1.IDEXPEDIENTE IS NOT NULL;
+
+-- 7. Suma de montos por expediente y concepto (COMPLEMENTO)
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.BuscaMontosPortal_Complemento` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    t1.CONCEPTO,
+    SUM(t1.MONTO) AS SUM_of_MONTO
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.COMPLEMENTO` t1
+GROUP BY t1.IDEXPEDIENTE, t1.CONCEPTO;
+
+-- 8. Fechas máximas de promesa real
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_FECHAPROMESAREALANLCDR` AS
+SELECT 
+    CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE,
+    MAX(t1.FECHAPROMESAREAL) AS MAX_of_FECHAPROMESAREAL,
+    MAX(t1.FECHAACTUALIZACION_FPR) AS MAX_of_FECHAACTUALIZACION_FPR
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.FECHAPROMESAREALANLCDR` t1
+GROUP BY t1.IDEXPEDIENTE
+ORDER BY t1.IDEXPEDIENTE;
+
+-- 9. Expedientes de investigación
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.ExtraeExpedientesINVEST` AS
+SELECT DISTINCT CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTOINVESTIGACION` t1;
+
+-- 10. Prestadores con información cruzada
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Prestadores` AS
+SELECT 
+    t1.Id AS CLAVETALLER,
+    t3.EDOPOB AS Pob_Comer,
+    t1.Marca AS MarcaCDR,
+    t1.Nombre AS NombreCDR,
+    t2.tipo_proveedor AS TipoCDR,
+    t1.Nom_Comer AS Nom_CDR_Comer
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.PRESTADORES` t1
+INNER JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TIPOPROVEEDOR` t2 
+    ON t1.Tipo = t2.id
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.TESTADO_BSC` t3 
+    ON t1.POBCOMER = t3.Z_ID;
+
+-- 11. Autorización no reparación
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.REP_NO_AUT` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    MAX(t1.IDHISTORICOTERMINOENTREGA) AS MAX_of_IDHISTORICOTERMINOENTREGA
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTORICOTERMINOENTREGA` t1
+WHERE t1.TIPOFECHA = 'AUTORIZA VAL. NO REPARACION'
+GROUP BY t1.IDEXPEDIENTE;
+
+-- 12. Máximo ID complementos
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.MAX_ID_EXP` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    MAX(t1.IDHISTORICOTERMINOENTREGA) AS MAX_of_IDHISTORICOTERMINOENTREGA
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTORICOTERMINOENTREGA` t1
+WHERE t1.TIPOFECHA IN ('ENVIO COMPLEMENTO TALLER VALUADOR', 'ENVIO COMPLEMENTO ADMINISTRATIVO VALUADOR')
+GROUP BY t1.IDEXPEDIENTE;
+
+-- 13. Mínima fecha de entrega
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.MIN_FEC_ENTREGA` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    MIN(t1.FECHA) AS MIN_of_FECHA
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTORICOTERMINOENTREGA` t1
+WHERE t1.TIPOFECHA IN ('ENTREGA', 'ENTREGA UNIDAD')
+GROUP BY t1.IDEXPEDIENTE;
+
+-- 14. Query para histórico término entrega
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_HISTORICOTERMINOENTREG` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    MIN(t1.FECHA) AS MIN_of_FECHA,
+    COUNT(t1.IDHISTORICOTERMINOENTREGA) AS COUNT_of_IDHISTORICOTERMINOENTRE
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTORICOTERMINOENTREGA` t1
+WHERE t1.TIPOFECHA IN ('TERMINO', 'TERMINO UNIDAD')
+GROUP BY t1.IDEXPEDIENTE
+ORDER BY t1.IDEXPEDIENTE;
+
+-- 15. Conteo de expedientes con múltiples términos
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_HISTORICOTERMINOE_0001` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    COUNT(t1.IDEXPEDIENTE) AS COUNT_of_IDEXPEDIENTE
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTORICOTERMINOENTREGA` t1
+WHERE t1.TIPOFECHA IN ('TERMINO UNIDAD', 'TERMINO')
+GROUP BY t1.IDEXPEDIENTE
+HAVING COUNT(t1.IDEXPEDIENTE) > 1
+ORDER BY t1.IDEXPEDIENTE;
+
+-- 16. Mínima entrega
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.MIN_ENTREGA` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    MIN(t1.FECHA) AS MIN_of_FECHA,
+    COUNT(t1.IDHISTORICOTERMINOENTREGA) AS COUNT_of_IDHISTORICOTERMINOENTRE
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTORICOTERMINOENTREGA` t1
+WHERE t1.TIPOFECHA IN ('ENTREGA UNIDAD', 'ENTREGA')
+GROUP BY t1.IDEXPEDIENTE
+ORDER BY t1.IDEXPEDIENTE;
+
+-- 17. Información de talleres
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.TALLERES` AS
+SELECT 
+    t1.CLAVETALLER,
+    t1.TIPO AS TipoCDR_Portal,
+    t2.NOMBRE AS EstadoCDR,
+    CAST(t2.IDREGIONGEOGRAFICA AS STRING) AS RegionValuacion,
+    t4.CLAVESUPERVISOR,
+    t4.NOMBRESUPERVISOR AS NOMBRENNALISTA
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.TALLERES` t1
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTADO` t2 
+    ON t1.IDESTADO = t2.IDESTADO
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.RELACIONCDR_SICDR` t3 
+    ON t1.CLAVETALLER = t3.CLAVETALLER
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.SUPERVISORINTEGRAL` t4 
+    ON t3.IDSICDR = t4.IDSUPERVISORINTEGRAL;
+
+-- 18. Identificación de tránsito
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Transito` AS
+SELECT 
+    CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE,
+    1 AS Transito
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES` t1,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUS` t2,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUSEXPEDIENTES` t3,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.TALLERES` t4,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTADO` t5
+WHERE CAST(t1.IDEXPEDIENTE AS STRING) = t2.IDEXPEDIENTE 
+    AND t2.IDESTATUSEXPEDIENTE = t3.IDESTATUSEXPEDIENTE 
+    AND t1.CLAVETALLER = t4.CLAVETALLER 
+    AND t4.IDESTADO = t5.IDESTADO
+    AND t2.TRANSITO = 1 
+    AND t2.PISO = 0 
+    AND t2.IDESTATUSEXPEDIENTE IN ('02','03','05','10','04','06','07','09','11','21','22','23','28','30');
+
+-- 19. Pendiente tránsito
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.PENDIENTE_TRANSITO` AS
+SELECT 
+    CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE,
+    1 AS Transito
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES` t1,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUS` t2,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUSEXPEDIENTES` t3,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.TALLERES` t4,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTADO` t5
+WHERE CAST(t1.IDEXPEDIENTE AS STRING) = t2.IDEXPEDIENTE 
+    AND t2.IDESTATUSEXPEDIENTE = t3.IDESTATUSEXPEDIENTE 
+    AND t1.CLAVETALLER = t4.CLAVETALLER 
+    AND t4.IDESTADO = t5.IDESTADO
+    AND t2.TRANSITO = 1 
+    AND t2.PISO = 0 
+    AND t2.IDESTATUSEXPEDIENTE = '32';
+
+-- 20. Identificación de piso
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Piso` AS
+SELECT 
+    CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE,
+    1 AS Piso
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES` t1,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUS` t2,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUSEXPEDIENTES` t3,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.TALLERES` t4,
+     `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTADO` t5
+WHERE CAST(t1.IDEXPEDIENTE AS STRING) = t2.IDEXPEDIENTE 
+    AND t2.IDESTATUSEXPEDIENTE = t3.IDESTATUSEXPEDIENTE 
+    AND t1.CLAVETALLER = t4.CLAVETALLER 
+    AND t4.IDESTADO = t5.IDESTADO
+    AND t2.IDESTATUSEXPEDIENTE IN ('02','03','05','08','10','04','06','07','09','11','21','23','28')
+    AND t2.PISO = 1;
+
+-- 21. Información de piezas (PZA)
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.PZA` AS
+SELECT 
+    CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE,
+    t1.IDVALUACION,
+    t1.CLAVETALLER,
+    t2.COTIZADOR AS CDRCOTIZADOR,
+    t2.FRONTERIZO AS CDRAUTOSURTIDO,
+    t3.FECHAEXPEDICION,
+    t3.FECHAACTUALIZACION,
+    t3.IDVALEESTATUS,
+    t4.FECENVIO,
+    t4.FECENTREGAREFACCIONARIA,
+    t4.FECRECEPCION,
+    t4.NUMPARTE,
+    t4.REFERENCIA,
+    t4.DESCRIPCION,
+    CONCAT(CAST(t1.IDEXPEDIENTE AS STRING), COALESCE(TRIM(t4.REFERENCIA), ''), COALESCE(TRIM(t4.NUMPARTE), ''), COALESCE(TRIM(t4.DESCRIPCION), '')) AS LLAVEPIEZA
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES` t1
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.TALLERES` t2 
+    ON t1.CLAVETALLER = t2.CLAVETALLER
+INNER JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.VALE` t3 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t3.IDEXPEDIENTE
+INNER JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.VALEHISTORICO` t4 
+    ON t3.IDVALE = t4.IDVALE
+WHERE t1.EJERCICIO >= '21';
+
+-- 22. Asignados
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Asignado` AS
+SELECT 
+    CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE,
+    1 AS Asignado
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES` t1
+INNER JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUS` t2 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t2.IDEXPEDIENTE
+WHERE t2.IDESTATUSEXPEDIENTE = '01';
+
+-- 23. Datos del vehículo
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DATOSVEHICULO` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    t2.DESCRIPCION AS Color,
+    t3.DESCRIPCION AS UNIDAD,
+    t4.DESCRIPCION AS Marca_Vehiculo,
+    t1.TIPO,
+    t1.MODELO,
+    t1.PLACAS,
+    t1.SERIE
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSVEHICULO` t1
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.COLOR` t2 
+    ON t1.IDCOLOR = t2.IDCOLOR
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.UNIDAD` t3 
+    ON t1.IDUNIDAD = t3.IDUNIDAD
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.MARCA` t4 
+    ON t1.IDMARCA = t4.IDMARCA;
+
+-- 24. Mínimo envío histórico
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    MIN(t1.FECHAENVIOTALLER) AS MIN_of_FECHAENVIOTALLER
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ENVIOHISTORICO` t1
+WHERE t1.FECHAENVIOTALLER IS NOT NULL 
+    AND t1.IDEXPEDIENTE IS NOT NULL
+GROUP BY t1.IDEXPEDIENTE
+ORDER BY t1.IDEXPEDIENTE;
+
+-- 25. Mínimo autorización valuador
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0000` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    MIN(t1.FECHAAUTORIZACIONVALUADOR) AS MIN_of_FECHAAUTORIZACIONVALUADOR
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ENVIOHISTORICO` t1
+WHERE t1.IDEXPEDIENTE IS NOT NULL
+GROUP BY t1.IDEXPEDIENTE;
+
+-- 26. Conteo autorización valuador
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0001` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    COUNT(DISTINCT t1.FECHAAUTORIZACIONVALUADOR) AS COUNT_DISTINCT_of_FECHAAUTORIZAC
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ENVIOHISTORICO` t1
+WHERE t1.IDEXPEDIENTE IS NOT NULL
+GROUP BY t1.IDEXPEDIENTE;
+
+-- 27. Máximo envío taller
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0002` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    MAX(t1.FECHAENVIOTALLER) AS MAX_of_FECHAENVIOTALLER
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ENVIOHISTORICO` t1
+WHERE t1.FECHAENVIOTALLER IS NOT NULL 
+    AND t1.IDEXPEDIENTE IS NOT NULL
+GROUP BY t1.IDEXPEDIENTE;
+
+-- 28. Máximo autorización valuador
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0003` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    MAX(t1.FECHAAUTORIZACIONVALUADOR) AS MAX_of_FECHAAUTORIZACIONVALUADOR
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ENVIOHISTORICO` t1
+WHERE t1.FECHAAUTORIZACIONVALUADOR IS NOT NULL 
+    AND t1.IDEXPEDIENTE IS NOT NULL
+GROUP BY t1.IDEXPEDIENTE;
+
+-- 29. Selección de expedientes con cálculos de tiempo
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SeleccionaExpedientes` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    t1.FECHAENVIOTALLER,
+    t1.FECHAASIGNACIONVALUADOR,
+    t1.FECHAAUTORIZACIONVALUADOR,
+    DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAENVIOTALLER, MINUTE) / 60.0 AS HORAS_VALUACION,
+    DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAASIGNACIONVALUADOR, MINUTE) / 60.0 AS HORAS_VALUADOR,
+    DATETIME_DIFF(t1.FECHAASIGNACIONVALUADOR, t1.FECHAENVIOTALLER, MINUTE) / 60.0 AS HORAS_CARRUSEL,
+    CASE 
+        WHEN DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAENVIOTALLER, MINUTE) IS NULL 
+             OR DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAENVIOTALLER, SECOND) < -18000
+             OR DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAASIGNACIONVALUADOR, MINUTE) IS NULL 
+             OR DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAASIGNACIONVALUADOR, SECOND) < -18000
+             OR DATETIME_DIFF(t1.FECHAASIGNACIONVALUADOR, t1.FECHAENVIOTALLER, MINUTE) IS NULL
+        THEN 0 
+        ELSE 1 
+    END AS expValido,
+    CASE 
+        WHEN DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAENVIOTALLER, MINUTE) IS NULL 
+             OR DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAENVIOTALLER, SECOND) < -18000 
+        THEN 'EnvíoAutorizaciónInválido'
+        WHEN DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAASIGNACIONVALUADOR, MINUTE) IS NULL 
+             OR DATETIME_DIFF(t1.FECHAAUTORIZACIONVALUADOR, t1.FECHAASIGNACIONVALUADOR, SECOND) < -18000 
+        THEN 'CarruselAutorizaciónInválido'
+        WHEN DATETIME_DIFF(t1.FECHAASIGNACIONVALUADOR, t1.FECHAENVIOTALLER, MINUTE) IS NULL 
+        THEN 'EnvíoCarruselInválido'
+        ELSE ''
+    END AS tipoDesvio
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ENVIOHISTORICO` t1
+WHERE t1.IDEXPEDIENTE IS NOT NULL
+ORDER BY t1.IDEXPEDIENTE, t1.FECHAENVIOTALLER;
+
+-- 30. Expedientes y conceptos
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.EXPEDIENTES` AS
+SELECT 
+    CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE,
+    t2.CONCEPTO
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.EXPEDIENTE` t1
+CROSS JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Conceptos` t2
+ORDER BY t1.IDEXPEDIENTE;
+
+-- 31. Consolidación de montos portal
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.ConsolidaMontosPortal` AS
+SELECT 
+    t3.IDEXPEDIENTE,
+    t3.CONCEPTO,
+    CASE
+        WHEN t1.SUM_of_MONTO IS NULL AND t2.SUM_of_MONTO IS NULL THEN 0
+        WHEN t1.SUM_of_MONTO IS NULL AND t2.SUM_of_MONTO IS NOT NULL THEN t2.SUM_of_MONTO
+        WHEN t1.SUM_of_MONTO IS NOT NULL AND t2.SUM_of_MONTO IS NULL THEN t1.SUM_of_MONTO
+        ELSE t1.SUM_of_MONTO + t2.SUM_of_MONTO
+    END AS MONTO
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.EXPEDIENTES` t3
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.BuscaMontosPortal_Inicial` t1 
+    ON CAST(t3.IDEXPEDIENTE AS STRING) = CAST(t1.IDEXPEDIENTE AS STRING) AND t3.CONCEPTO = t1.CONCEPTO
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.BuscaMontosPortal_Complemento` t2 
+    ON CAST(t3.IDEXPEDIENTE AS STRING) = CAST(t2.IDEXPEDIENTE AS STRING) AND t3.CONCEPTO = t2.CONCEPTO;
+
+-- 32. Transformación de datos (PIVOT)
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.TRNSTRANSPOSED` AS
+SELECT 
+    IDEXPEDIENTE,
+    SUM(CASE WHEN CONCEPTO = 'HYP' THEN MONTO END) AS HYP,
+    SUM(CASE WHEN CONCEPTO = 'MOB' THEN MONTO END) AS MOB,
+    SUM(CASE WHEN CONCEPTO = 'REF' THEN MONTO END) AS REF
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.ConsolidaMontosPortal`
+GROUP BY IDEXPEDIENTE;
+
+-- 33. Consolidación de montos
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.CONSOLIDAMONTOS` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    CASE
+        WHEN t1.HYP IS NULL THEN COALESCE(t1.MOB, 0)
+        WHEN t1.MOB IS NULL THEN COALESCE(t1.HYP, 0)
+        WHEN t1.HYP IS NOT NULL AND t1.MOB IS NOT NULL THEN t1.HYP + t1.MOB
+        ELSE 0
+    END AS MO,
+    COALESCE(t1.REF, 0) AS REF
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.TRNSTRANSPOSED` t1;
+
+-- 34. Separar desviaciones
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SeparaDesviaciones` AS
+SELECT DISTINCT t1.IDEXPEDIENTE
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SeleccionaExpedientes` t1
+WHERE t1.expValido = 0;
+
+-- 35. Envíos
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Envios` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    t1.FECHAENVIOTALLER,
+    CASE WHEN t1.IDEXPEDIENTE != t2.IDEXPEDIENTE OR t2.IDEXPEDIENTE IS NULL THEN 1 ELSE 0 END AS ExpedienteValidoTiempos
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SeleccionaExpedientes` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SeparaDesviaciones` t2 
+    ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE;
+
+-- 36. Autorizaciones
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Autorizaciones` AS
+SELECT 
+    t1.IDEXPEDIENTE,
+    t1.FECHAAUTORIZACIONVALUADOR
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SeleccionaExpedientes` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SeparaDesviaciones` t2 
+    ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE;
+
+-- 37. Fecha autorización no reparación
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.FEC_AUT_NO_REP` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    t2.FECHA AS FECHA_NO_AUT
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.REP_NO_AUT` t1
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTORICOTERMINOENTREGA` t2 
+    ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE 
+    AND t1.MAX_of_IDHISTORICOTERMINOENTREGA = t2.IDHISTORICOTERMINOENTREGA;
+
+-- 38. Máxima fecha expediente
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.MAX_FEC_EXP` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    t2.FECHA
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.MAX_ID_EXP` t1
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.HISTORICOTERMINOENTREGA` t2 
+    ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE 
+    AND t1.MAX_of_IDHISTORICOTERMINOENTREGA = t2.IDHISTORICOTERMINOENTREGA;
+
+-- 39. Reingreso
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.REINGRESO` AS
+SELECT DISTINCT 
+    t1.IDEXPEDIENTE,
+    t1.FECHA,
+    t2.MIN_of_FECHA,
+    t3.FECHA_NO_AUT,
+    CASE
+        WHEN t2.MIN_of_FECHA IS NOT NULL 
+             AND (DATETIME_DIFF(t1.FECHA, t2.MIN_of_FECHA, DAY) > 1) 
+             AND t1.FECHA > t3.FECHA_NO_AUT
+        THEN 1
+        ELSE 0
+    END AS Reingreso_Portal
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.MAX_FEC_EXP` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.MIN_FEC_ENTREGA` t2 
+    ON t1.IDEXPEDIENTE = t2.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.FEC_AUT_NO_REP` t3 
+    ON t1.IDEXPEDIENTE = t3.IDEXPEDIENTE;
+
+-- 40. Bandejas
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Bandejas` AS
+SELECT 
+    CAST(t1.IDEXPEDIENTE AS STRING) AS IDEXPEDIENTE,
+    t1.CLAVETALLER,
+    t2.Piso,
+    t3.Transito,
+    t4.Asignado,
+    t5.Transito AS Pendiente_Transito
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES` t1
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Piso` t2 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t2.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Transito` t3 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t3.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Asignado` t4 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t4.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.PENDIENTE_TRANSITO` t5 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t5.IDEXPEDIENTE;
+
+-- 41. Bandeja consolidada
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.bandeja` AS
+SELECT 
+    t1.CLAVETALLER,
+    SUM(COALESCE(t1.Asignado, 0)) AS Asignados,
+    SUM(COALESCE(t1.Transito, 0)) AS Transitos,
+    SUM(COALESCE(t1.Piso, 0)) AS Pisos,
+    SUM(COALESCE(t1.Pendiente_Transito, 0)) AS Pendiente_Transito
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Bandejas` t1
+GROUP BY t1.CLAVETALLER;
+
+-- 42. Query para todas las piezas
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_TODASLASPIEZAS` AS
+SELECT 
+    t3.IDEXPEDIENTE,
+    COUNT(t3.IDEXPEDIENTE) AS PIEZASAUTORIZADAS,
+    SUM(
+        CASE 
+            WHEN t3.CDRCOTIZADOR = 1 THEN 
+                CASE WHEN t3.FECENTREGAREFACCIONARIA IS NOT NULL THEN 1 ELSE 0 END
+            ELSE 
+                CASE WHEN t3.FECHAACTUALIZACION IS NOT NULL AND t3.FECHAACTUALIZACION != t3.FECHAEXPEDICION THEN 1 ELSE 0 END
+        END
+    ) AS PIEZASENTREGADAS
+FROM `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.PZA` t3
+WHERE t3.IDVALUACION = '01' AND t3.IDVALEESTATUS = '01'
+GROUP BY t3.IDEXPEDIENTE;
+-- Crear la tabla final SUPERVISOR_CDR en DM_PREVENCION_FRAUDES con TODOS los campos - CORREGIDO
+CREATE OR REPLACE TABLE `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SUPERVISOR_CDR` AS
+SELECT 
+    -- Identificadores principales
+    CAST(t1.IDEXPEDIENTE AS STRING) AS idExp,
+    t1.EJERCICIO AS Ejercicio,
+    t1.NUMREPORTE AS Reporte,
+    SAFE_CAST(t1.NUMSINIESTRO AS INT64) AS Siniestro,
+    t1.CODAFECTADO,
+    t1.TIPORIESGO,
+    t1.CODIGOASEGURADO,
+    t1.NUMPOLIZA,
+    t1.NUMENDOSO,
+    t1.NUMINCISO,
+    t1.NOMCONDUCTOR,
+    
+    -- Información de causa
+    t3.CAUSA,
+    t3.CAUSA_HOMOLOGADA,
+    t1.CAUSACODIGO AS CAUSACODIGO_DG,
+    t1.CAUSADESCRIP AS CAUSADESCRIP_DG,
+    
+    -- Información del vehículo
+    t28.Marca_Vehiculo AS MarcaVehiculo,
+    t28.TIPO,
+    t28.MODELO,
+    t28.Color,
+    t28.PLACAS,
+    t28.SERIE,
+    t28.UNIDAD,
+    
+    -- Información comercial
+    ' ' AS CLIENTE,
+    ' ' AS OFICINA,
+    ' ' AS GRUPO_NEGOCIO,
+    t3.CVE_AGENTE,
+    t3.Agente,
+    t1.AGENTE AS AGENTE_DG,
+    t3.Gerente,
+    t3.Oficina AS OficinaEmision,
+    t1.OFIEMICODIGO AS Oficina_Emision_DG,
+    t1.OFIEMIDESCRIP AS Ofi_Emi_DG,
+    t3.Oficina_Beneficiario AS OficinaSiniestros,
+    t3.Director,
+    
+    -- Montos
+    t1.PRESUPUESTOMOB,
+    SAFE_CAST(t1.PIEZASCAMBIO AS BIGNUMERIC) AS PIEZASCAMBIO,
+    t1.SUMAASEG AS SUMAASEG_DG,
+    t1.MONTODEDUCIBLE AS MONTODEDUCIBLE_DG,
+    
+    -- Status y flags
+    t4.TRANSITO,
+    t4.PISO,
+    CASE WHEN t4.IDESTATUSEXPEDIENTE IN ('02','03','05','10','04','06','07','09','11','21','22','28','32','30') 
+              AND t4.PISO = 0 AND t4.TRANSITO = 1 THEN 1 ELSE 0 END AS Transito_Activo,
+    CASE WHEN t4.IDESTATUSEXPEDIENTE IN ('02','03','05','08','10','04','06','07','09','11','21','22','23','28','31') 
+              AND t4.PISO = 1 THEN 1 ELSE 0 END AS Piso_Activo,
+    t4.GRUA,
+    CASE WHEN t17.COUNT_DISTINCT_of_FECHAAUTORIZAC > 1 THEN 1 ELSE 0 END AS Complemento,
+    
+    -- Información del taller
+    t1.CLAVETALLER,
+    t6.Asignados,
+    t6.Transitos,
+    t6.Pisos,
+    t6.Pendiente_Transito,
+    
+    -- Información del valuador
+    t1.CODVALUADOR,
+    t1.ORIGEN AS HerramientaValuacion,
+    t8.DESCRIPCION AS EstatusValuacion,
+    CASE 
+        WHEN t1.CODVALUADOR IS NOT NULL THEN
+            CASE WHEN t2.EQUIPOPESADO = 1 THEN 'EP' ELSE 'AUTOS' END
+        ELSE 'SIN VALUADOR'
+    END AS TipoValuador,
+    
+    -- Bandeja
+    CASE 
+        WHEN t5.IDESTATUSEXPEDIENTE IN ('02','03','05','08','10','04','06','07','09','11','16','17','21','22','23','28','30') 
+             AND t4.PISO = 1 THEN 'PISO'
+        WHEN t5.IDESTATUSEXPEDIENTE IN ('02','03','05','08','10','04','06','07','09','11','16','17','28','30') 
+             AND t4.TRANSITO = 1 AND t4.PISO = 0 THEN 'TRANSITO'
+        ELSE 'SIN BANDEJA'
+    END AS Bandeja,
+    
+    -- Fechas
+    t3.Fecha_Captura AS FECHACAPTURA,
+    t7.FECSINIESTRO,
+    t7.FECHAOCURRIDOSISE,
+    t7.FECASIGNACION,
+    t7.FECADJUDICACION,
+    t7.FECADJUDICACION AS Fec_Adjudicacion,
+    t9.MIN_of_FECHAENVIOTALLER AS FECENVIO,
+    t7.FECVALUACION,
+    t2_fpr.MAX_of_FECHAACTUALIZACION_FPR AS FecModificacion,
+    t7.FECINGRESO,
+    t7.FECINGRESO AS Fec_Ingreso,
+    t7.FECTERMINADO,
+    t21.MIN_of_FECHA AS PRIMERTERMINO,
+    t13.MIN_of_FECHA AS PRIMERENTREGA,
+    t21.MIN_of_FECHA AS PRIMERTERMINO1,
+    t7.FECTERMINADO AS Fec_Terminado,
+    t7.FECENTREGADO,
+    
+    -- Fechas de promesa
+    CASE 
+        WHEN t2_fpr.IDEXPEDIENTE = CAST(t1.IDEXPEDIENTE AS STRING) THEN t2_fpr.MAX_of_FECHAPROMESAREAL
+        ELSE t7.FECPROMESA
+    END AS FecPromesa,
+    t2_fpr.MAX_of_FECHAPROMESAREAL AS FecPromesa1,
+    t7.FECHAESTENT,
+    
+    -- Fechas de envío y autorización
+    t18.MAX_of_FECHAENVIOTALLER AS UltimoEnvioCDR,
+    t7.FECAUTORIZACION,
+    t14.MIN_of_FECHAAUTORIZACIONVALUADOR AS PrimeraAutorizacion,
+    t19.MAX_of_FECHAAUTORIZACIONVALUADOR AS UltimaAutorizacion,
+    
+    -- Cálculos de días
+    DATETIME_DIFF(t21.MIN_of_FECHA, t7.FECTERMINADO, DAY) AS DIFDIASTERMINO,
+    DATETIME_DIFF(t18.MAX_of_FECHAENVIOTALLER, t19.MAX_of_FECHAAUTORIZACIONVALUADOR, DAY) AS DiasDifEnvioAutorizacion,
+    CASE WHEN t19.MAX_of_FECHAAUTORIZACIONVALUADOR > t18.MAX_of_FECHAENVIOTALLER THEN 1 ELSE 0 END AS FecAutMayor,
+    CAST(t7.DIASREPARACION AS INT64) AS DiasReparacion,
+    CASE 
+        WHEN t9.MIN_of_FECHAENVIOTALLER IS NOT NULL 
+        THEN DATETIME_DIFF(t9.MIN_of_FECHAENVIOTALLER, t7.FECADJUDICACION, DAY)
+        ELSE DATETIME_DIFF(CURRENT_DATETIME(), t7.FECADJUDICACION, DAY)
+    END AS DiasEnv,
+    CASE 
+        WHEN t7.FECENVIO IS NOT NULL AND t7.FECVALUACION IS NOT NULL
+        THEN DATETIME_DIFF(t7.FECVALUACION, t7.FECENVIO, DAY)
+    END AS DiasValuacion,
+    
+    -- Status del expediente
+    t5.DESCRIPCION AS EstatusExpediente,
+    
+    -- Información regional
+    t27.RegionValuacion,
+    t27.EstadoCDR,
+    t12.Pob_Comer,
+    t27.CLAVESUPERVISOR,
+    t27.NOMBRENNALISTA,
+    t_sup.CLAVEANALISTA_SUPSERV,
+    t_sup.NOMBRE_SUPERSERV,
+    t27.TipoCDR_Portal,
+    t12.TipoCDR,
+    t12.MarcaCDR,
+    t12.NombreCDR,
+    t12.Nom_CDR_Comer,
+    
+    -- Flags adicionales
+    CASE WHEN CAST(t1.IDEXPEDIENTE AS STRING) = t22.IDEXPEDIENTE THEN 1 ELSE 0 END AS CAMBIOTERMINO,
+    CASE WHEN t7.FECENTREGADO IS NOT NULL THEN 1 ELSE 0 END AS VehEntregado,
+    CASE 
+        WHEN EXTRACT(MONTH FROM CURRENT_DATE()) = 1 THEN
+            CASE WHEN EXTRACT(YEAR FROM t7.FECTERMINADO) = EXTRACT(YEAR FROM CURRENT_DATE()) - 1 
+                      AND EXTRACT(MONTH FROM t7.FECTERMINADO) = 11 THEN 1 ELSE 0 END
+        WHEN EXTRACT(MONTH FROM CURRENT_DATE()) = 2 THEN
+            CASE WHEN EXTRACT(YEAR FROM t7.FECTERMINADO) = EXTRACT(YEAR FROM CURRENT_DATE()) - 1 
+                      AND EXTRACT(MONTH FROM t7.FECTERMINADO) = 12 THEN 1 ELSE 0 END
+        ELSE
+            CASE WHEN EXTRACT(YEAR FROM t7.FECTERMINADO) = EXTRACT(YEAR FROM CURRENT_DATE()) 
+                      AND EXTRACT(MONTH FROM t7.FECTERMINADO) = EXTRACT(MONTH FROM CURRENT_DATE()) - 2 THEN 1 ELSE 0 END
+    END AS TablaSupervisor,
+    CASE WHEN t4.HISTOSINSINIESTRO IS NOT NULL THEN 1 ELSE 0 END AS SinSiniestro,
+    
+    -- Cambio de fecha
+    CASE WHEN t2_fpr.IDEXPEDIENTE = CAST(t1.IDEXPEDIENTE AS STRING) THEN 1 ELSE 0 END AS CambioFecha,
+    
+    -- Información de piezas
+    COALESCE(t_piezas.PIEZASAUTORIZADAS, 0) AS PIEZASAUTORIZADAS,
+    COALESCE(t_piezas.PIEZASENTREGADAS, 0) AS PIEZASENTREGADAS,
+    
+    -- Montos REF y MO
+    COALESCE(t3.REF, 0) AS REF,
+    COALESCE(t3.MO, 0) AS MO,
+    COALESCE(t3.Importe_Reparaciones, 0) AS Importe_Reparaciones,
+    
+    -- Información de reingreso
+    COALESCE(t_reingreso.Reingreso_Portal, 0) AS Reingreso_Portal,
+    
+    -- SUBRAMO
+    t1.SUBRAMO,
+    
+    -- Información ejecutiva
+    t_ejecutiva.CUENTA,
+    t_ejecutiva.EJECUTIVA,
+    
+    -- REAL_CE
+    CASE WHEN CAST(t_real_ce.IDEXPEDIENTE AS STRING) = CAST(t1.IDEXPEDIENTE AS STRING) THEN 1 ELSE 0 END AS REAL_CE
+    
+FROM `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_verificaciones_dev.DATOSGENERALES` t1
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.VALUADOR` t2 
+    ON t1.CODVALUADOR = t2.CODVALUADOR
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.FECHAS` t7 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t7.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUS` t4 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t4.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.ESTATUSEXPEDIENTES` t5 
+    ON t4.IDESTATUSEXPEDIENTE = t5.IDESTATUSEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.bandeja` t6 
+    ON t1.CLAVETALLER = t6.CLAVETALLER
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.VALUACION` t8 
+    ON t1.IDVALUACION = t8.IDVALUACION
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO` t9 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t9.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.Prestadores` t12 
+    ON t1.CLAVETALLER = t12.CLAVETALLER
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.MIN_ENTREGA` t13 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t13.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0000` t14 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t14.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0001` t17 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t17.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0002` t18 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t18.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_ENVIOHISTORICO_0003` t19 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t19.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_HISTORICOTERMINOENTREG` t21 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t21.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_HISTORICOTERMINOE_0001` t22 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t22.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-bro-verificacio.qlts_bro_op_prevencion_fraudes_dev.EXPEDIENTE` t26 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = CAST(t26.IDEXPEDIENTE AS STRING)
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.TALLERES` t27 
+    ON t1.CLAVETALLER = t27.CLAVETALLER
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.DATOSVEHICULO` t28 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t28.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_FECHAPROMESAREALANLCDR` t2_fpr 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t2_fpr.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_VALUACION` t3 
+    ON CAST(SUBSTR(t26.NUMEXPEDIENTE, 1, 14) AS STRING) = CAST(t3.VALUACION AS STRING)
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.SUPERVISOR_SERVICIO` t_sup 
+    ON t1.CLAVETALLER = t_sup.CLAVETALLER
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.QUERY_FOR_TODASLASPIEZAS` t_piezas 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t_piezas.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.REINGRESO` t_reingreso 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = t_reingreso.IDEXPEDIENTE
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.REAL_CE` t_real_ce 
+    ON CAST(t1.IDEXPEDIENTE AS STRING) = CAST(t_real_ce.IDEXPEDIENTE AS STRING)
+LEFT JOIN `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.EJECUTIVAS_SEG` t_ejecutiva 
+    ON t3.CVE_AGENTE = t_ejecutiva.CVE_AGENTE
+WHERE t1.IDEXPEDIENTE IS NOT NULL;
