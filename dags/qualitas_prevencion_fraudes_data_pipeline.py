@@ -1628,5 +1628,7 @@ def supervisor_cdr_elt():
     dag=dag 
   )
   
+  ejecutivas_seg >> supervisor_cdr
+  
 # Flujo del DAG - Solo ejecutando los operadores únicos del segundo DAG
 landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> tlp_elt() >> supervisor_cdr_elt()
