@@ -721,7 +721,7 @@ def landing_sise():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('FRAUD_DI',size='L', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('DI',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -738,7 +738,7 @@ def landing_sise():
     pipeline_timeout=3600,
     deferrable=True,
     poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('FRAUD_PV',size='L', init_date=init_date, final_date=final_date),
+    runtime_args=get_datafusion_load_runtime_args('PV',size='L', init_date=init_date, final_date=final_date),
     dag=dag
   )
 
@@ -760,56 +760,6 @@ def landing_sise():
   )
 
 
-  load_fraud_di = CloudDataFusionStartPipelineOperator(
-    task_id="load_fraud_di",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_di',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('DI',size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-
-  load_fraud_pv = CloudDataFusionStartPipelineOperator(
-    task_id="load_fraud_pv",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_pv',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('PV',size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
-
-  load_fraud_rp = CloudDataFusionStartPipelineOperator(
-    task_id="load_fraud_rp",
-    location=DATA_PROJECT_REGION,
-    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
-    namespace=DATA_DATAFUSION_NAMESPACE,
-    pipeline_name='carga_qtls_au_ve_cntnrdes_srv_ora_fraud_rp',
-    project_id=DATA_PROJECT_ID,
-    pipeline_type = DataFusionPipelineType.BATCH,
-    success_states=["COMPLETED"],
-    asynchronous=False,
-    pipeline_timeout=3600,
-    deferrable=True,
-    poll_interval=30,
-    runtime_args=get_datafusion_load_runtime_args('FRAUD_RP',size='L', init_date=init_date, final_date=final_date),
-    dag=dag
-  )
   
 
 @task_group(group_id='landing_dua',dag=dag)
