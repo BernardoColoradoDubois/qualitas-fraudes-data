@@ -22,7 +22,7 @@
   "VERIFICACIONES_CONNECTION_DEFAULT":"google_cloud_default",
 
 
-  "VERIFICACIONES_DATA_PIPELINE_SCHEDULE_INTERVAL":"0 17 * * *",
+  "VERIFICACIONES_DATA_PIPELINE_SCHEDULE_INTERVAL":"0 12 * * *",
 
   "APP_ORACLE_HOST":"qualitas-clm.cgriqmyweq5c.us-east-2.rds.amazonaws.com",
   "APP_ORACLE_SERVICE_NAME":"ORCL",
