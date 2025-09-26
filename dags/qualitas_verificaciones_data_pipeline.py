@@ -2574,8 +2574,8 @@ def activate_prevencion_fraudes():
     python_callable=select_trigger_prevencion_fraudes,
     op_kwargs={
       'trigger':VERIFICACIONES_PREVENCION_FRAUDES_TRIGGER,
-      'trigger_label': 'activate_prevencion_fraudes.trigger_prevencion_fraudes',
-      'no_trigger_label': 'activate_prevencion_fraudes.no_trigger_prevencion_fraudes'
+      'yes_label': 'activate_prevencion_fraudes.trigger_prevencion_fraudes',
+      'no_label': 'activate_prevencion_fraudes.no_trigger_prevencion_fraudes'
     },
     provide_context=True,
     dag=dag
