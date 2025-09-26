@@ -119,7 +119,7 @@ dag = DAG(
   max_active_runs=1,
   catchup=False,
   dagrun_timeout=timedelta(minutes=400),
-  tags=['MX','AUTOS','VERIFICACIONES','UNIQUE_OPERATORS']
+  tags=['MX','AUTOS','PREVENCION_FRAUDES']
 )
 
 landing = BashOperator(task_id='landing',bash_command='echo init landing',dag=dag)
@@ -1172,11 +1172,11 @@ def end_landing():
 @task_group(group_id='file_elt',dag=dag)
 def file_elt():
   
-  tab_apertura_reporte = BigQueryInsertJobOperator(
-    task_id="tab_apertura_reporte",
+  apertura_reporte = BigQueryInsertJobOperator(
+    task_id="apertura_reporte",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/APERTURA_REPORTE/TAB_APERTURA_REPORTE.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/APERTURA_REPORTE/APERTURA_REPORTE.sql'),
         "useLegacySql": False,
       }
     },
@@ -1196,11 +1196,11 @@ def file_elt():
     dag=dag 
   )
   
-  tab_control_de_agentes = BigQueryInsertJobOperator(
-    task_id="tab_control_de_agentes",
+  control_de_agentes = BigQueryInsertJobOperator(
+    task_id="control_de_agentes",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CONTROL_DE_AGENTES/TAB_CONTROL_DE_AGENTES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CONTROL_DE_AGENTES/CONTROL_DE_AGENTES.sql'),
         "useLegacySql": False,
       }
     },
@@ -1220,11 +1220,11 @@ def file_elt():
     dag=dag 
   )
   
-  tab_produccion1 = BigQueryInsertJobOperator(
-    task_id="tab_produccion1",
+  produccion1 = BigQueryInsertJobOperator(
+    task_id="produccion1",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PRODUCCION1/TAB_PRODUCCION1.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PRODUCCION1/PRODUCCION1.sql'),
         "useLegacySql": False,
       }
     },
@@ -1244,11 +1244,11 @@ def file_elt():
     dag=dag 
   )
   
-  tab_produccion2 = BigQueryInsertJobOperator(
-    task_id="tab_produccion2",
+  produccion2 = BigQueryInsertJobOperator(
+    task_id="produccion2",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PRODUCCION2/TAB_PRODUCCION2.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PRODUCCION2/PRODUCCION2.sql'),
         "useLegacySql": False,
       }
     },
@@ -1268,11 +1268,11 @@ def file_elt():
     dag=dag 
   )
   
-  tab_recuperaciones = BigQueryInsertJobOperator(
-    task_id="tab_recuperaciones",
+  recuperaciones = BigQueryInsertJobOperator(
+    task_id="recuperaciones",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/RECUPERACIONES/TAB_RECUPERACIONES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/RECUPERACIONES/RECUPERACIONES.sql'),
         "useLegacySql": False,
       }
     },
@@ -1292,11 +1292,11 @@ def file_elt():
     dag=dag 
   )
 
-  tab_sumas_aseg = BigQueryInsertJobOperator(
-    task_id="tab_sumas_aseg",
+  sumas_aseg = BigQueryInsertJobOperator(
+    task_id="sumas_aseg",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SUMAS_ASEG/TAB_SUMAS_ASEG.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/SUMAS_ASEG/SUMAS_ASEG.sql'),
         "useLegacySql": False,
       }
     },
@@ -1316,11 +1316,11 @@ def file_elt():
     dag=dag 
   )
 
-  tab_cargos = BigQueryInsertJobOperator(
-    task_id="tab_cargos",
+  cargos = BigQueryInsertJobOperator(
+    task_id="cargos",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CARGOS/TAB_CARGOS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CARGOS/CARGOS.sql'),
         "useLegacySql": False,
       }
     },
@@ -1340,11 +1340,11 @@ def file_elt():
     dag=dag 
   )
   
-  cat_catalogo_direccion_comercial = BigQueryInsertJobOperator(
-    task_id="cat_catalogo_direccion_comercial",
+  catalogo_direccion_comercial = BigQueryInsertJobOperator(
+    task_id="catalogo_direccion_comercial",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CATALOGO_DIRECCION_COMERCIAL/CAT_CATALOGO_DIRECCION_COMERCIAL.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CATALOGO_DIRECCION_COMERCIAL/CATALOGO_DIRECCION_COMERCIAL.sql'),
         "useLegacySql": False,
       }
     },
@@ -1364,11 +1364,11 @@ def file_elt():
     dag=dag 
   )
   
-  cat_claves_ctas_especiales = BigQueryInsertJobOperator(
-    task_id="cat_claves_ctas_especiales",
+  claves_ctas_especiales = BigQueryInsertJobOperator(
+    task_id="claves_ctas_especiales",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CLAVES_CTAS_ESPECIALES/CAT_CLAVES_CTAS_ESPECIALES.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CLAVES_CTAS_ESPECIALES/CLAVES_CTAS_ESPECIALES.sql'),
         "useLegacySql": False,
       }
     },
@@ -1388,11 +1388,11 @@ def file_elt():
     dag=dag 
   )
   
-  tab_contracargos = BigQueryInsertJobOperator(
-    task_id="tab_contracargos",
+  contracargos = BigQueryInsertJobOperator(
+    task_id="contracargos",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CONTRACARGOS/TAB_CONTRACARGOS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CONTRACARGOS/CONTRACARGOS.sql'),
         "useLegacySql": False,
       }
     },
@@ -1412,11 +1412,11 @@ def file_elt():
     dag=dag 
   )
   
-  tab_rechazos = BigQueryInsertJobOperator(
-    task_id="tab_rechazos",
+  rechazos = BigQueryInsertJobOperator(
+    task_id="rechazos",
     configuration={
       "query": {
-        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/RECHAZOS/TAB_RECHAZOS.sql'),
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/RECHAZOS/RECHAZOS.sql'),
         "useLegacySql": False,
       }
     },

@@ -20,6 +20,8 @@ qlts-composer-update-all:
 	gsutil cp ./dags/qualitas_prevencion_fraudes_data_pipeline.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/qualitas_prevencion_fraudes_data_pipeline.py;\
 	gsutil cp ./dags/qualitas_verificaciones_single_load_data_pipeline.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/qualitas_verificaciones_single_load_data_pipeline.py;\
 	gsutil cp ./dags/list_python_packages.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/list_python_packages.py;\
+	gsutil cp ./dags/DAG_A.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/DAG_A.py;\
+	gsutil cp ./dags/DAG_B.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/DAG_B.py;\
 	gsutil cp ./dags/load_csv.py gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/load_csv.py;\
 	gsutil -m cp -r ./dags/lib/* gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/dags/lib/;\
 	gsutil -m cp -r ./workspaces/* gs://${QLTS_GCP_COMPOSER_WORK_BUCKET_NAME}/workspaces/;

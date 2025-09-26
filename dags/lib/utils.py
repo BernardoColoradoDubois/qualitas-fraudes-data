@@ -207,6 +207,15 @@ def get_cluster_tipe_creator(init_date:str,final_date:str,small_cluster_label:st
   else:
     return  big_cluster_label
   
+  
+def select_trigger_prevencion_fraudes(trigger:str,yes_label:str,no_label:str,**kwargs):
+  
+  if trigger == 'YES':
+    return yes_label
+    
+  else:
+    return  no_label
+  
 
 
 def agentes_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):

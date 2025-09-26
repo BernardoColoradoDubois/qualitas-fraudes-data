@@ -4,6 +4,7 @@ from airflow import DAG
 from airflow.decorators import task
 from datetime import timedelta
 from airflow.operators.python import PythonOperator,BranchPythonOperator
+from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from airflow.operators.bash import BashOperator
 from airflow.decorators import task_group
 from airflow.models import Variable
@@ -19,6 +20,7 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClus
 
 from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,upload_storage_csv_to_bigquery,merge_storage_csv
 from lib.utils import agentes_to_csv,gerentes_to_csv,catalogo_direccion_comercial_to_csv,claves_ctas_especiales_to_csv
+from lib.utils import select_trigger_prevencion_fraudes
 
 VERIFICACIONES_CONFIG_VARIABLES = Variable.get("VERIFICACIONES_CONFIG_VARIABLES", deserialize_json=True)
 
@@ -54,6 +56,8 @@ VERIFICACIONES_DATA_PIPELINE_SCHEDULE_INTERVAL = VERIFICACIONES_CONFIG_VARIABLES
 VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_BIG_CLUSTER_CONFIG", deserialize_json=True)
 VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG = Variable.get("VERIFICACIONES_DATAPROC_SMALL_CLUSTER_CONFIG", deserialize_json=True)
 VERIFICACIONES_LOAD_INTERVAL = Variable.get("VERIFICACIONES_LOAD_INTERVAL", default_var="YESTERDAY")
+
+VERIFICACIONES_PREVENCION_FRAUDES_TRIGGER = Variable.get("VERIFICACIONES_PREVENCION_FRAUDES_TRIGGER", default_var='NO')
 
 interval = get_date_interval(project_id='qlts-dev-mx-au-oro-verificacio',dataset='qlts_oro_op_verificaciones_dev',table='TAB_CALENDARIO',period=VERIFICACIONES_LOAD_INTERVAL)
 
@@ -2561,4 +2565,30 @@ def end_injection():
     region=DATA_PROJECT_REGION
   )
   
-landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones(),load_files()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection()
+  
+@task_group(group_id='activate_prevencion_fraudes',dag=dag)
+def activate_prevencion_fraudes():
+  
+  select_trigger = BranchPythonOperator(
+    task_id="select_trigger",
+    python_callable=select_trigger_prevencion_fraudes,
+    op_kwargs={
+      'trigger':VERIFICACIONES_PREVENCION_FRAUDES_TRIGGER,
+      'trigger_label': 'activate_prevencion_fraudes.trigger_prevencion_fraudes',
+      'no_trigger_label': 'activate_prevencion_fraudes.no_trigger_prevencion_fraudes'
+    },
+    provide_context=True,
+    dag=dag
+  )
+  
+  trigger_prevencion_fraudes = TriggerDagRunOperator(
+    task_id='trigger_prevencion_fraudes',
+    trigger_dag_id='qualitas_prevencion_fraudes_data_pipeline',
+  )
+  
+  no_trigger_prevencion_fraudes = BashOperator(task_id='no_trigger_prevencion_fraudes',bash_command='echo "No Trigger"',dag=dag
+  )
+  
+  select_trigger >> [trigger_prevencion_fraudes,no_trigger_prevencion_fraudes]
+  
+landing >> init_landing() >> [landing_bsc_siniestros(),landing_siniestros(),landing_sise(),landing_dua(),landing_valuaciones(),load_files()] >> end_landing() >> bq_elt() >> recreate_cluster() >> injection() >> end_injection() >> activate_prevencion_fraudes()
