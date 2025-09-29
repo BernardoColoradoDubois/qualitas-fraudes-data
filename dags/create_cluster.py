@@ -77,3 +77,4 @@ create_big_cluster = DataprocCreateClusterOperator(
   dag=dag
 )
 
+cluster_selector >> [create_big_cluster, create_small_cluster, create_test_cluster]

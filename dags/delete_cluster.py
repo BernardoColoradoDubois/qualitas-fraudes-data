@@ -2,9 +2,14 @@ import airflow
 from airflow import DAG
 from airflow.decorators import task
 from datetime import timedelta
+from airflow.models import Variable
+
 
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
+CLUSTER_MANAGER = Variable.get("CLUSTER_MANAGER", deserialize_json=True)
+CLUSTER_TYPE = CLUSTER_MANAGER['cluster_type']
+CLUSTER_NAME = CLUSTER_MANAGER['cluster_name']
 
 default_args = {
     'owner': 'airflow',
@@ -27,7 +32,7 @@ dag = DAG(
 delete_cluster = DataprocDeleteClusterOperator(
   task_id="delete_cluster",
   project_id="qlts-nonprod-data-tools",
-  cluster_name="verificaciones-dataproc",
+  cluster_name=CLUSTER_NAME,
   region="us-central1",
   dag=dag
 )
