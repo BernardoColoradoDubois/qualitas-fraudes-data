@@ -629,3 +629,15 @@ def rechazos_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**k
   output_path = f"{dest_folder}/{dest_file}"
   out_blob = bucket.blob(output_path)
   out_blob.upload_from_string(csv, content_type='text/csv')
+  
+  
+def cluster_select(cluster_type:str,test_cluster_label,small_cluster_label:str,big_cluster_label)->str:
+  
+  if type == 'TEST':
+    return test_cluster_label
+    
+  elif type == 'SMALL':
+    return small_cluster_label
+    
+  elif type == 'BIG':
+    return big_cluster_label
