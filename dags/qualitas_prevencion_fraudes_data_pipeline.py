@@ -1630,5 +1630,23 @@ def supervisor_cdr_elt():
   
   ejecutivas_seg >> supervisor_cdr
   
+@task_group(group_id='other_tables_elt',dag=dag) 
+def other_tables_elt():
+
+  cliente_unico_h = BigQueryInsertJobOperator(
+    task_id="cliente_unico_h",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/CLIENTE_UNICO_H/CLIENTE_UNICO_H.sql'),
+        "useLegacySql": False,
+      }
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+    dag=dag 
+  )
+  
 # Flujo del DAG - Solo ejecutando los operadores únicos del segundo DAG
-landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> tlp_elt() >> supervisor_cdr_elt()
+landing >> init_landing() >> [load_files(),unique_bsc_siniestros_operators(),unique_valuaciones_operators()] >> end_landing() >> file_elt() >> tlp_elt() >> supervisor_cdr_elt() >> other_tables_elt()
