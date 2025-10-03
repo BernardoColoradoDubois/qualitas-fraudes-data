@@ -2154,6 +2154,91 @@ def bq_elt():
     gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
     dag=dag 
   )
+  
+  dm_valuacion= BigQueryInsertJobOperator(
+    task_id="dm_valuacion",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/VALUACION/DM_VALUACION.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'VALUACION',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_VALUACION'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_proveedor= BigQueryInsertJobOperator(
+    task_id="dm_proveedor",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/PROVEEDOR/DM_PROVEEDOR.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'PROVEEDOR',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_PROVEEDOR'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_refaccion= BigQueryInsertJobOperator(
+    task_id="dm_refaccion",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/REFACCION/DM_REFACCION.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'REFACCION',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_REFACCION'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+  
+  dm_marca= BigQueryInsertJobOperator(
+    task_id="dm_marca",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/MARCA/DM_MARCA.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': VERIFICACIONES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': VERIFICACIONES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'MARCA',
+      'DEST_PROJECT_ID': VERIFICACIONES_ORO_PROJECT_ID,
+      'DEST_DATASET_NAME': VERIFICACIONES_ORO_DATASET_NAME,
+      'DEST_TABLE_NAME': 'CAT_MARCA'
+    },
+    location=VERIFICACIONES_PROJECT_REGION,
+    gcp_conn_id=VERIFICACIONES_CONNECTION_DEFAULT,
+    dag=dag 
+  )
+
 
 
   rtl_pagos_proveedores  >> dm_pagos_proveedores
@@ -2597,6 +2682,74 @@ def injection():
     dag=dag
   )
   
+  inject_dm_valuacion = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_valuacion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='descarga_qlts_au_ve_bq_cat_valuacion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("CAT_VALUACION", "STG_VALUACION", "DM_VALUACION", "L"),
+    dag=dag
+  )
+  
+  inject_dm_proveedor = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_proveedor",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='descarga_qlts_au_ve_bq_cat_proveedor',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("CAT_PROVEEDOR", "STG_PROVEEDOR", "DM_PROVEEDOR", "L"),
+    dag=dag
+  )
+  
+  inject_dm_refaccion = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_refaccion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='descarga_qlts_au_ve_bq_cat_refaccion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("CAT_REFACCION", "STG_REFACCION", "DM_REFACCION", "L"),
+    dag=dag
+  )
+  
+  inject_dm_marca = CloudDataFusionStartPipelineOperator(
+    task_id="inject_dm_marca",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='descarga_qlts_au_ve_bq_cat_marca',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_inject_runtime_args("CAT_MARCA", "STG_MARCA", "DM_MARCA", "L"),
+    dag=dag
+  )
+  
   # TODOS LOS INYECT APUNTAN A SINIESTROS PARA 
   [ 
    inject_dm_estados
@@ -2620,6 +2773,10 @@ def injection():
    ,inject_dm_gerentes
    ,inject_dm_apercab
    ,inject_dm_datos_vehiculo
+   ,inject_dm_valuacion
+   ,inject_dm_proveedor
+   ,inject_dm_refaccion
+   ,inject_dm_marca   
   ] >> inject_dm_siniestros
   
 @task_group(group_id='end_injection',dag=dag)
