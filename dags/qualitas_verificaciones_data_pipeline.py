@@ -828,6 +828,73 @@ def landing_valuaciones():
     dag=dag
   )  
 
+  load_valuacion = CloudDataFusionStartPipelineOperator(
+    task_id="load_valuacion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_valuacion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('VALUACION', size='XS'),
+    dag=dag
+  )  
+  
+  load_proveedor = CloudDataFusionStartPipelineOperator(
+    task_id="load_proveedor",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_proveedor',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('PROVEEDOR', size='S'),
+    dag=dag
+  )  
+  
+  load_refaccion = CloudDataFusionStartPipelineOperator(
+    task_id="load_refaccion",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_refaccion',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('REFACCION', size='XS'),
+    dag=dag
+  )  
+  
+  load_marca = CloudDataFusionStartPipelineOperator(
+    task_id="load_marca",
+    location=DATA_PROJECT_REGION,
+    instance_name=DATA_DATAFUSION_INSTANCE_NAME,
+    namespace=DATA_DATAFUSION_NAMESPACE,
+    pipeline_name='carga_qlts_au_ve_valmxpro_srv_ora_marca',
+    project_id=DATA_PROJECT_ID,
+    pipeline_type = DataFusionPipelineType.BATCH,
+    success_states=["COMPLETED"],
+    asynchronous=False,
+    pipeline_timeout=3600,
+    deferrable=True,
+    poll_interval=30,
+    runtime_args=get_datafusion_load_runtime_args('MARCA', size='XS'),
+    dag=dag
+  ) 
  
   
 
