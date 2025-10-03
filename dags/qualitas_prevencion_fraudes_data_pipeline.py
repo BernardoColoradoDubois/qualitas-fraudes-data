@@ -18,7 +18,7 @@ from airflow.providers.google.cloud.operators.dataproc import DataprocCreateClus
 from airflow.providers.google.cloud.operators.dataproc import DataprocDeleteClusterOperator
 
 from lib.utils import get_bucket_file_contents,get_date_interval,get_cluster_tipe_creator,merge_storage_csv,upload_storage_csv_to_bigquery
-from lib.utils import claves_ctas_especiales_to_csv,catalogo_direccion_comercial_to_csv,rechazos_to_csv
+from lib.utils import claves_ctas_especiales_to_csv,catalogo_direccion_comercial_to_csv,rechazos_to_csv,qcs_param_prev_to_csv
 
 PREVENCION_FRAUDES_CONFIG_VARIABLES = Variable.get("PREVENCION_FRAUDES_CONFIG_VARIABLES", deserialize_json=True)
 
@@ -417,7 +417,7 @@ def load_files():
     task_id='rechazos_excel_to_csv',
     python_callable=rechazos_to_csv,
     op_kwargs={
-      'project_id':'qlts-dev-mx-au-bro-verificacio',
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
       'folder': 'CIENCIA_DATOS/RECHAZOS',
       'file': 'RECHAZOS.xlsx',
@@ -435,7 +435,7 @@ def load_files():
       'folder': 'RECHAZOS/',
       'folder_his': 'RECHAZOS_HIS/',
       'destination_blob_name': 'RECHAZOS_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'utf-8-sig'
     },
     dag=dag
@@ -449,7 +449,7 @@ def load_files():
       'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'RECHAZOS',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.rechazos.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -462,7 +462,7 @@ def load_files():
       'folder': 'CIENCIA_DATOS/TESORERIA/PcPay/Cargos',
       'folder_his': 'CARGOS_HIS/',
       'destination_blob_name': 'CARGOS_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'utf-8-sig'
     },
     dag=dag
@@ -476,7 +476,7 @@ def load_files():
       'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'CARGOS',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.cargos.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
@@ -489,7 +489,7 @@ def load_files():
       'folder': 'CIENCIA_DATOS/TESORERIA/PcPay/Contracargos',
       'folder_his': 'CONTRACARGOS_HIS/',
       'destination_blob_name': 'CONTRACARGOS_HIS.csv',
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
       'encoding': 'utf-8-sig'
     },
     dag=dag
@@ -503,10 +503,406 @@ def load_files():
       'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
       'table': 'CONTRACARGOS',
       'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.contracargos.json')),
-      'project_id': 'qlts-dev-mx-au-bro-verificacio',
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
     },
     dag=dag
   )
+  
+  qcs_param_prev_r1_1_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r1_1_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R1_1.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R1_1',
+      'dest_file': 'QCS_PARAM_PREV_R1_1.csv',
+    },
+  )
+
+  load_qcs_param_prev_r1_1 = PythonOperator(
+    task_id='load_qcs_param_prev_r1_1',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R1_1/QCS_PARAM_PREV_R1_1.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R1_1',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r1_2_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r1_2_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R1_2.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R1_2',
+      'dest_file': 'QCS_PARAM_PREV_R1_2.csv',
+    },
+  )
+
+  load_qcs_param_prev_r1_2 = PythonOperator(
+    task_id='load_qcs_param_prev_r1_2',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R1_2/QCS_PARAM_PREV_R1_2.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R1_2',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r1_3_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r1_3_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R1_3.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R1_3',
+      'dest_file': 'QCS_PARAM_PREV_R1_3.csv',
+    },
+  )
+
+  load_qcs_param_prev_r1_3 = PythonOperator(
+    task_id='load_qcs_param_prev_r1_3',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R1_3/QCS_PARAM_PREV_R1_3.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R1_3',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r1_4_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r1_4_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R1_4.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R1_4',
+      'dest_file': 'QCS_PARAM_PREV_R1_4.csv',
+    },
+  )
+
+  load_qcs_param_prev_r1_4 = PythonOperator(
+    task_id='load_qcs_param_prev_r1_4',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R1_4/QCS_PARAM_PREV_R1_4.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R1_4',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r1_5_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r1_5_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R1_5.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R1_5',
+      'dest_file': 'QCS_PARAM_PREV_R1_5.csv',
+    },
+  )
+
+  load_qcs_param_prev_r1_5 = PythonOperator(
+    task_id='load_qcs_param_prev_r1_5',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R1_5/QCS_PARAM_PREV_R1_5.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R1_5',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+
+  qcs_param_prev_r1_6_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r1_6_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R1_6.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R1_6',
+      'dest_file': 'QCS_PARAM_PREV_R1_6.csv',
+    },
+  )
+
+
+  load_qcs_param_prev_r1_6 = PythonOperator(
+    task_id='load_qcs_param_prev_r1_6',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R1_6/QCS_PARAM_PREV_R1_6.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R1_6',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+
+  qcs_param_prev_r3_1_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r3_1_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R3_1.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R3_1',
+      'dest_file': 'QCS_PARAM_PREV_R3_1.csv',
+    },
+  )
+
+  load_qcs_param_prev_r3_1 = PythonOperator(
+    task_id='load_qcs_param_prev_r3_1',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R3_1/QCS_PARAM_PREV_R3_1.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R3_1',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+
+  qcs_param_prev_r4_1_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r4_1_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R4_1.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R4_1',
+      'dest_file': 'QCS_PARAM_PREV_R4_1.csv',
+    },
+  )
+
+  load_qcs_param_prev_r4_1 = PythonOperator(
+    task_id='load_qcs_param_prev_r4_1',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R4_1/QCS_PARAM_PREV_R4_1.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R4_1',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+
+  qcs_param_prev_r4_2_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r4_2_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R4_2.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R4_2',
+      'dest_file': 'QCS_PARAM_PREV_R4_2.csv',
+    },
+  )
+
+  load_qcs_param_prev_r4_2 = PythonOperator(
+    task_id='load_qcs_param_prev_r4_2',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R4_2/QCS_PARAM_PREV_R4_2.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R4_2',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r5_1_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r5_1_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R5_1.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R5_1',
+      'dest_file': 'QCS_PARAM_PREV_R5_1.csv',
+    },
+  )
+
+  load_qcs_param_prev_r5_1 = PythonOperator(
+    task_id='load_qcs_param_prev_r5_1',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R5_1/QCS_PARAM_PREV_R5_1.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R5_1',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r5_2_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r5_2_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R5_2.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R5_2',
+      'dest_file': 'QCS_PARAM_PREV_R5_2.csv',
+    },
+  )
+
+  load_qcs_param_prev_r5_2 = PythonOperator(
+    task_id='load_qcs_param_prev_r5_2',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R5_2/QCS_PARAM_PREV_R5_2.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R5_2',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r6_1_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r6_1_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R6_1.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R6_1',
+      'dest_file': 'QCS_PARAM_PREV_R6_1.csv',
+    },
+  )
+
+  load_qcs_param_prev_r6_1 = PythonOperator(
+    task_id='load_qcs_param_prev_r6_1',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R6_1/QCS_PARAM_PREV_R6_1.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R6_1',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r6_2_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r6_2_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R6_2.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R6_2',
+      'dest_file': 'QCS_PARAM_PREV_R6_2.csv',
+    },
+  )
+
+  load_qcs_param_prev_r6_2 = PythonOperator(
+    task_id='load_qcs_param_prev_r6_2',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R6_2/QCS_PARAM_PREV_R6_2.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R6_2',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r6_3_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r6_3_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R6_3.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R6_3',
+      'dest_file': 'QCS_PARAM_PREV_R6_3.csv',
+    },
+  )
+
+  load_qcs_param_prev_r6_3 = PythonOperator(
+    task_id='load_qcs_param_prev_r6_3',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R6_3/QCS_PARAM_PREV_R6_3.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R6_3',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
+  qcs_param_prev_r6_4_to_csv = PythonOperator(
+    task_id='qcs_param_prev_r6_4_to_csv',
+    python_callable=qcs_param_prev_to_csv,
+    op_kwargs={
+      'project_id':PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'bucket_name': PREVENCION_FRAUDES_BRO_BUCKET_NAME,
+      'folder': 'QCS_PARAM_PREV',
+      'file': 'QCS_PARAM_PREV_R6_4.xlsx',
+      'dest_folder': 'QCS_PARAM_PREV_R6_4',
+      'dest_file': 'QCS_PARAM_PREV_R6_4.csv',
+    },
+  )
+
+  load_qcs_param_prev_r6_4 = PythonOperator(
+    task_id='load_qcs_param_prev_r6_4',
+    python_callable=upload_storage_csv_to_bigquery,
+    op_kwargs={
+      'gcs_uri': f'gs://{PREVENCION_FRAUDES_BRO_BUCKET_NAME}/QCS_PARAM_PREV_R6_4/QCS_PARAM_PREV_R6_4.csv',
+      'dataset': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'table': 'QCS_PARAM_PREV_R6_4',
+      'schema_fields': json.loads(get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/schemas/files.qcs_param_prev.json')),
+      'project_id': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+    },
+    dag=dag
+  )
+
 
   merge_control_de_agentes >> load_control_de_agentes
   merge_apertura_reporte >> load_apertura_reporte
@@ -519,6 +915,26 @@ def load_files():
   rechazos_excel_to_csv >> merge_rechazos >> load_rechazos
   merge_cargos >> load_cargos
   merge_contracargos >> load_contracargos
+  
+  qcs_param_prev_r1_1_to_csv >> load_qcs_param_prev_r1_1
+  qcs_param_prev_r1_2_to_csv >> load_qcs_param_prev_r1_2
+  qcs_param_prev_r1_3_to_csv >> load_qcs_param_prev_r1_3
+  qcs_param_prev_r1_4_to_csv >> load_qcs_param_prev_r1_4
+  qcs_param_prev_r1_5_to_csv >> load_qcs_param_prev_r1_5
+  qcs_param_prev_r1_6_to_csv >> load_qcs_param_prev_r1_6
+
+  qcs_param_prev_r3_1_to_csv >> load_qcs_param_prev_r3_1
+
+  qcs_param_prev_r4_1_to_csv >> load_qcs_param_prev_r4_1
+  qcs_param_prev_r4_2_to_csv >> load_qcs_param_prev_r4_2
+
+  qcs_param_prev_r5_1_to_csv >> load_qcs_param_prev_r5_1
+  qcs_param_prev_r5_2_to_csv >> load_qcs_param_prev_r5_2
+
+  qcs_param_prev_r6_1_to_csv >> load_qcs_param_prev_r6_1
+  qcs_param_prev_r6_2_to_csv >> load_qcs_param_prev_r6_2
+  qcs_param_prev_r6_3_to_csv >> load_qcs_param_prev_r6_3
+  qcs_param_prev_r6_4_to_csv >> load_qcs_param_prev_r6_4
 
 
 @task_group(group_id='unique_bsc_siniestros_operators',dag=dag)
@@ -1435,6 +1851,367 @@ def file_elt():
 
     dag=dag 
   )
+  
+  qcs_param_prev_r1_1 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r1_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R1_1',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R1_1',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r1_2 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r1_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R1_2',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R1_2',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+
+  qcs_param_prev_r1_3 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r1_3",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R1_3',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R1_3',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r1_4 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r1_4",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R1_4',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R1_4',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r1_5 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r1_5",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R1_5',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R1_5',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+
+  qcs_param_prev_r1_6 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r1_6",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R1_6',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R1_6',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+
+  qcs_param_prev_r3_1 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r3_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R3_1',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R3_1',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r4_1 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r4_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R4_1',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R4_1',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r4_2 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r4_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R4_2',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R4_2',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r5_1 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r5_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R5_1',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R5_1',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r5_2 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r5_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R5_2',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R5_2',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r6_1 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r6_1",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R6_1',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R6_1',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r6_2 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r6_2",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R6_2',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R6_2',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+
+  qcs_param_prev_r6_3 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r6_3",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R6_3',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R6_3',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+  
+  qcs_param_prev_r6_4 = BigQueryInsertJobOperator(
+    task_id="qcs_param_prev_r6_4",
+    configuration={
+      "query": {
+        "query": get_bucket_file_contents(path=f'gs://{DATA_COMPOSER_WORKSPACE_BUCKET_NAME}/workspaces/models/QCS_PARAM_PREV/QCS_PARAM_PREV.sql'),
+        "useLegacySql": False,
+      }
+    },
+    params={
+      'SOURCE_PROJECT_ID': PREVENCION_FRAUDES_BRO_PROJECT_ID,
+      'SOURCE_DATASET_NAME': PREVENCION_FRAUDES_BRO_DATASET_NAME,
+      'SOURCE_TABLE_NAME': 'QCS_PARAM_PREV_R6_4',
+      'DEST_PROJECT_ID': PREVENCION_FRAUDES_PLA_PROJECT_ID,
+      'DEST_DATASET_NAME': PREVENCION_FRAUDES_PLA_DATASET_NAME,
+      'DEST_TABLE_NAME': 'QCS_PARAM_PREV_R6_4',
+    },
+    location=PREVENCION_FRAUDES_PROJECT_REGION,
+    gcp_conn_id=PREVENCION_FRAUDES_CONNECTION_DEFAULT,
+    deferrable=True,
+    poll_interval=30,
+
+    dag=dag 
+  )
+
 
 
 @task_group(group_id='tlp_elt',dag=dag)

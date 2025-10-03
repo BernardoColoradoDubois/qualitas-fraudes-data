@@ -7,7 +7,7 @@ from airflow.operators.python import PythonOperator
 from airflow.operators.bash import BashOperator
 from airflow.decorators import task_group
 from lib.utils import get_bucket_file_contents,upload_storage_csv_to_bigquery,merge_storage_csv
-from lib.utils import agentes_to_csv,gerentes_to_csv,claves_ctas_especiales_to_csv,catalogo_direccion_comercial_to_csv,rechazos_to_csv
+from lib.utils import agentes_to_csv,gerentes_to_csv,claves_ctas_especiales_to_csv,catalogo_direccion_comercial_to_csv,rechazos_to_csv,qcs_param_prev_to_csv
 
 
 default_args = {
@@ -477,6 +477,414 @@ load_contracargos = PythonOperator(
   dag=dag
 )
 
+qcs_param_prev_r1_1_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r1_1_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R1_1.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R1_1',
+    'dest_file': 'QCS_PARAM_PREV_R1_1.csv',
+  },
+)
+
+load_qcs_param_prev_r1_1 = PythonOperator(
+  task_id='load_qcs_param_prev_r1_1',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R1_1/QCS_PARAM_PREV_R1_1.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R1_1',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r1_2_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r1_2_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R1_2.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R1_2',
+    'dest_file': 'QCS_PARAM_PREV_R1_2.csv',
+  },
+)
+
+load_qcs_param_prev_r1_2 = PythonOperator(
+  task_id='load_qcs_param_prev_r1_2',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R1_2/QCS_PARAM_PREV_R1_2.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R1_2',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r1_3_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r1_3_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R1_3.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R1_3',
+    'dest_file': 'QCS_PARAM_PREV_R1_3.csv',
+  },
+)
+
+load_qcs_param_prev_r1_3 = PythonOperator(
+  task_id='load_qcs_param_prev_r1_3',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R1_3/QCS_PARAM_PREV_R1_3.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R1_3',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r1_4_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r1_4_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R1_4.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R1_4',
+    'dest_file': 'QCS_PARAM_PREV_R1_4.csv',
+  },
+)
+
+load_qcs_param_prev_r1_4 = PythonOperator(
+  task_id='load_qcs_param_prev_r1_4',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R1_4/QCS_PARAM_PREV_R1_4.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R1_4',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r1_5_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r1_5_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R1_5.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R1_5',
+    'dest_file': 'QCS_PARAM_PREV_R1_5.csv',
+  },
+)
+
+load_qcs_param_prev_r1_5 = PythonOperator(
+  task_id='load_qcs_param_prev_r1_5',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R1_5/QCS_PARAM_PREV_R1_5.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R1_5',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+
+qcs_param_prev_r1_6_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r1_6_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R1_6.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R1_6',
+    'dest_file': 'QCS_PARAM_PREV_R1_6.csv',
+  },
+)
+
+
+load_qcs_param_prev_r1_6 = PythonOperator(
+  task_id='load_qcs_param_prev_r1_6',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R1_6/QCS_PARAM_PREV_R1_6.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R1_6',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+
+qcs_param_prev_r3_1_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r3_1_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R3_1.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R3_1',
+    'dest_file': 'QCS_PARAM_PREV_R3_1.csv',
+  },
+)
+
+load_qcs_param_prev_r3_1 = PythonOperator(
+  task_id='load_qcs_param_prev_r3_1',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R3_1/QCS_PARAM_PREV_R3_1.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R3_1',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+
+qcs_param_prev_r4_1_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r4_1_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R4_1.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R4_1',
+    'dest_file': 'QCS_PARAM_PREV_R4_1.csv',
+  },
+)
+
+load_qcs_param_prev_r4_1 = PythonOperator(
+  task_id='load_qcs_param_prev_r4_1',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R4_1/QCS_PARAM_PREV_R4_1.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R4_1',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+
+qcs_param_prev_r4_2_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r4_2_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R4_2.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R4_2',
+    'dest_file': 'QCS_PARAM_PREV_R4_2.csv',
+  },
+)
+
+load_qcs_param_prev_r4_2 = PythonOperator(
+  task_id='load_qcs_param_prev_r4_2',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R4_2/QCS_PARAM_PREV_R4_2.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R4_2',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r5_1_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r5_1_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R5_1.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R5_1',
+    'dest_file': 'QCS_PARAM_PREV_R5_1.csv',
+  },
+)
+
+load_qcs_param_prev_r5_1 = PythonOperator(
+  task_id='load_qcs_param_prev_r5_1',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R5_1/QCS_PARAM_PREV_R5_1.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R5_1',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r5_2_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r5_2_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R5_2.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R5_2',
+    'dest_file': 'QCS_PARAM_PREV_R5_2.csv',
+  },
+)
+
+load_qcs_param_prev_r5_2 = PythonOperator(
+  task_id='load_qcs_param_prev_r5_2',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R5_2/QCS_PARAM_PREV_R5_2.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R5_2',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r6_1_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r6_1_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R6_1.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R6_1',
+    'dest_file': 'QCS_PARAM_PREV_R6_1.csv',
+  },
+)
+
+load_qcs_param_prev_r6_1 = PythonOperator(
+  task_id='load_qcs_param_prev_r6_1',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R6_1/QCS_PARAM_PREV_R6_1.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R6_1',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r6_2_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r6_2_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R6_2.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R6_2',
+    'dest_file': 'QCS_PARAM_PREV_R6_2.csv',
+  },
+)
+
+load_qcs_param_prev_r6_2 = PythonOperator(
+  task_id='load_qcs_param_prev_r6_2',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R6_2/QCS_PARAM_PREV_R6_2.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R6_2',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r6_3_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r6_3_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R6_3.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R6_3',
+    'dest_file': 'QCS_PARAM_PREV_R6_3.csv',
+  },
+)
+
+load_qcs_param_prev_r6_3 = PythonOperator(
+  task_id='load_qcs_param_prev_r6_3',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R6_3/QCS_PARAM_PREV_R6_3.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R6_3',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+qcs_param_prev_r6_4_to_csv = PythonOperator(
+  task_id='qcs_param_prev_r6_4_to_csv',
+  python_callable=qcs_param_prev_to_csv,
+  op_kwargs={
+    'project_id':'qlts-dev-mx-au-bro-verificacio',
+    'bucket_name': 'bucket_verificaciones',
+    'folder': 'QCS_PARAM_PREV',
+    'file': 'QCS_PARAM_PREV_R6_4.xlsx',
+    'dest_folder': 'QCS_PARAM_PREV_R6_4',
+    'dest_file': 'QCS_PARAM_PREV_R6_4.csv',
+  },
+)
+
+load_qcs_param_prev_r6_4 = PythonOperator(
+  task_id='load_qcs_param_prev_r6_4',
+  python_callable=upload_storage_csv_to_bigquery,
+  op_kwargs={
+    'gcs_uri': 'gs://bucket_verificaciones/QCS_PARAM_PREV_R6_4/QCS_PARAM_PREV_R6_4.csv',
+    'dataset': 'LAN_VERIFICACIONES',
+    'table': 'QCS_PARAM_PREV_R6_4',
+    'schema_fields': json.loads(get_bucket_file_contents(path='gs://us-central1-qlts-composer-d-cc034e9e-bucket/workspaces/schemas/files.qcs_param_prev.json')),
+    'project_id': 'qlts-dev-mx-au-bro-verificacio',
+  },
+  dag=dag
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 init >> merge_control_de_agentes >> load_control_de_agentes
@@ -493,3 +901,23 @@ init >> merge_estados_mexico >> load_estados_mexico
 init >> rechazos_excel_to_csv >> merge_rechazos >> load_rechazos
 init >> merge_cargos >> load_cargos
 init >> merge_contracargos >> load_contracargos
+
+init >> qcs_param_prev_r1_1_to_csv >> load_qcs_param_prev_r1_1
+init >> qcs_param_prev_r1_2_to_csv >> load_qcs_param_prev_r1_2
+init >> qcs_param_prev_r1_3_to_csv >> load_qcs_param_prev_r1_3
+init >> qcs_param_prev_r1_4_to_csv >> load_qcs_param_prev_r1_4
+init >> qcs_param_prev_r1_5_to_csv >> load_qcs_param_prev_r1_5
+init >> qcs_param_prev_r1_6_to_csv >> load_qcs_param_prev_r1_6
+
+init >> qcs_param_prev_r3_1_to_csv >> load_qcs_param_prev_r3_1
+
+init >> qcs_param_prev_r4_1_to_csv >> load_qcs_param_prev_r4_1
+init >> qcs_param_prev_r4_2_to_csv >> load_qcs_param_prev_r4_2
+
+init >> qcs_param_prev_r5_1_to_csv >> load_qcs_param_prev_r5_1
+init >> qcs_param_prev_r5_2_to_csv >> load_qcs_param_prev_r5_2
+
+init >> qcs_param_prev_r6_1_to_csv >> load_qcs_param_prev_r6_1
+init >> qcs_param_prev_r6_2_to_csv >> load_qcs_param_prev_r6_2
+init >> qcs_param_prev_r6_3_to_csv >> load_qcs_param_prev_r6_3
+init >> qcs_param_prev_r6_4_to_csv >> load_qcs_param_prev_r6_4

@@ -1,4 +1,4 @@
-CREATE OR REPLACE VIEW `qlts-dev-mx-au-pla-verificacio.qlts_bro_op_prevencion_fraudes_dev.USUARIO_UNICO_H` AS
+CREATE OR REPLACE VIEW `qlts-dev-mx-au-pla-verificacio.qlts_pla_op_prevencion_fraudes_dev.USUARIO_UNICO_H` AS
 SELECT DISTINCT  
   PV.COD_ASEG AS ASEGURADO_GR
   ,PV.COD_ASEG AS ASEGURADO

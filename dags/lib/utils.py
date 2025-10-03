@@ -643,3 +643,45 @@ def cluster_select(cluster_type:str,test_cluster_label:str,small_cluster_label:s
     
   elif cluster_type == 'BIG':
     return big_cluster_label
+  
+  
+  
+def qcs_param_prev_to_csv(project_id,bucket_name,folder,file,dest_folder,dest_file,**kwargs):
+
+  client = storage.Client(project=project_id)
+      
+  # Obtener el bucket
+  bucket = client.bucket(bucket_name)
+      
+  # Obtener el blob (archivo)
+  blob = bucket.blob(f'{folder}/{file}')
+      
+  # Descargar el archivo como bytes
+  excel_data = blob.download_as_bytes()
+    
+  sheet_name = 'SQL 1 - Query Results'
+
+  column_names = [
+    'NAME_OF_THE_RULE',
+    'PARAMETER_NAME',
+    'PARAMETER_VALUE',
+    'SYSUSERID',
+    'BATCHDATE'
+  ]
+
+  dtypes = {
+    'NAME_OF_THE_RULE': 'string',
+    'PARAMETER_NAME': 'string',
+    'PARAMETER_VALUE': 'string',
+    'SYSUSERID': 'string',
+    'BATCHDATE': 'string'
+  }
+  
+  df = pd.read_excel(excel_data,engine='openpyxl',sheet_name=sheet_name,skiprows=1,header=None,names=column_names,index_col=False,dtype=dtypes)
+
+  csv = df.to_csv(index=False)
+
+  output_path = f"{dest_folder}/{dest_file}"
+  out_blob = bucket.blob(output_path)
+  out_blob.upload_from_string(csv, content_type='text/csv')
+  
